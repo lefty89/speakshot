@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Service provider that handles the camera object
      */
-    private CameraService mCameraService;
+    public CameraService mCameraService;
 
     /**
      * Target surface to draw the camera view into

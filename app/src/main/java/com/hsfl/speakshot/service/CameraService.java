@@ -1,10 +1,16 @@
 package com.hsfl.speakshot.service;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Camera;
+import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 import android.view.SurfaceHolder;
-import java.io.IOException;
+
+import java.io.*;
 import java.util.List;
 
 public class CameraService {
@@ -230,4 +236,92 @@ public class CameraService {
             return mCameraService;
         }
     }
+
+
+
+
+
+
+
+
+
+    public void takePicture() {
+
+        if (mCamera != null) {
+
+            Camera.ShutterCallback shutterCallback = new Camera.ShutterCallback() {
+                public void onShutter() {
+                    Log.d(TAG, "onShutter'd");
+                }
+            };
+
+            Camera.PictureCallback rawCallback = new Camera.PictureCallback() {
+                public void onPictureTaken(byte[] data, Camera camera) {
+                    Log.d(TAG, "onPictureTaken - raw");
+                }
+            };
+
+            Camera.PictureCallback jpegCallback = new Camera.PictureCallback() {
+                public void onPictureTaken(byte[] data, Camera camera) {
+                    new SaveImageTask().execute(data);
+                    startPreview();
+                    Log.d(TAG, "onPictureTaken - jpeg");
+                }
+            };
+
+            mCamera.takePicture(shutterCallback, rawCallback, jpegCallback);
+        }
+    }
+
+    private class SaveImageTask extends AsyncTask<byte[], Void, Void> {
+
+        @Override
+        protected Void doInBackground(byte[]... data) {
+            FileOutputStream outStream = null;
+
+            // Write to SD Card
+            try {
+                File sdCard = Environment.getExternalStorageDirectory();
+                File dir = new File (sdCard.getAbsolutePath() + "/camtest");
+                dir.mkdirs();
+
+                 //String fileName = String.format("%d.jpg", System.currentTimeMillis());
+                String fileName = "img.jpg";
+                File outFile = new File(dir, fileName);
+
+                outStream = new FileOutputStream(outFile);
+                try {
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(data[0], 0, data[0].length);
+                    Matrix matrix = new Matrix();
+                    matrix.setRotate(mCameraInfo.orientation);
+
+                    Bitmap rotatedBmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
+                    rotatedBmp.compress(Bitmap.CompressFormat.JPEG, 100, outStream); // bmp is your Bitmap instance  // Bitmap.CompressFormat.PNG
+
+                    outStream.flush();
+                    outStream.close();
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                Log.d(TAG, "onPictureTaken - wrote bytes: " + data.length + " to " + outFile.getAbsolutePath());
+
+                //refreshGallery(outFile);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+            }
+            return null;
+        }
+
+    }
+
+
+
+
+
+
+
 }

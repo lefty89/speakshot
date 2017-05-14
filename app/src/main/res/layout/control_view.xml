@@ -1,17 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools" android:orientation="vertical"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:gravity="bottom"
-              android:background="@android:color/transparent">
-    <Button
-            android:text="Vibrate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:id="@+id/btn_vibrate"/>
-    <Button
-            android:id="@+id/btn_picture"
+              android:background="@android:color/transparent" >
+
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/Widget.AppCompat.Button" android:text="picture" android:textAlignment="center"/>
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/btn_picture"
+                android:text="Picture"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight=".50" />
+            <Button
+                android:id="@+id/btn_ocr"
+                android:text="OCR"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight=".50" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_vibrate"
+            android:text="Vibrate"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
 </LinearLayout>
+
+
+
+
+
+
+
