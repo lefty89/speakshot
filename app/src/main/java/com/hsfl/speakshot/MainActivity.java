@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.vision.text.TextBlock;
 import com.hsfl.speakshot.service.audio.AudioService;
@@ -18,7 +19,7 @@ import com.hsfl.speakshot.ui.CameraSourcePreview;
 
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OcrService.IOcrCallback {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     /**
@@ -60,25 +61,29 @@ public class MainActivity extends AppCompatActivity {
                     .setFacing(android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK).build();
             // ocr service
             mOcrService = new OcrService.Builder(context).build();
-            mOcrService.setProcessor(new TextBlockProcessor(context, new OcrService.IOcrCallback() {
-                @Override
-                public void receiveDetections(SparseArray<TextBlock> items) {
-                    Toast.makeText(context, "OCR items found: " + items.size(), Toast.LENGTH_SHORT).show();
-                    for (int i = 0; i < items.size(); ++i) {
-                        TextBlock item = items.valueAt(i);
-                        if (item != null && item.getValue() != null) {
-                            Log.d("OcrDetectorProcessor", "Text detected! " + item.getValue());
-                        }
-                    }
-                }
-            }));
+            mOcrService.setProcessor(new TextBlockProcessor(context, this));
             // audio service
             mAudioService = new AudioService.Builder(context)
-                    .setSpeechRate(6)
-                    .setPitch(5)
+                    .setSpeechRate(0)
+                    .setPitch(0)
                     .setLocale(Locale.GERMAN)
                     .build();
         }
+    }
+
+    @Override
+    public void receiveDetections(SparseArray<TextBlock> items) {
+        StringBuilder txt = new StringBuilder();
+        final TextView textOutput = (TextView)findViewById(R.id.txt_output);
+
+        Toast.makeText(getApplicationContext(), "OCR items found: " + items.size(), Toast.LENGTH_SHORT).show();
+        for (int i = 0; i < items.size(); ++i) {
+            TextBlock item = items.valueAt(i);
+            if (item != null && item.getValue() != null) {
+                txt.append(item.getValue());
+            }
+        }
+        textOutput.setText(txt.toString());
     }
 
     @Override

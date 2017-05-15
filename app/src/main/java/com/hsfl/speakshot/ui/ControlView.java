@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
 import java.io.File;
@@ -16,10 +17,13 @@ import java.io.File;
 public class ControlView extends LinearLayout {
     private static final String TAG = ControlView.class.getSimpleName();
 
-    public ControlView(Context context, AttributeSet attrs) {
+    public ControlView(final Context context, AttributeSet attrs) {
         super(context, attrs);
         inflate(getContext(), R.layout.control_view, this);
         final MainActivity main = (MainActivity)getContext();
+
+        // text view
+        final TextView textOutput = (TextView)findViewById(R.id.txt_output);
 
         // snap picture
         final Button picButton = (Button)findViewById(R.id.btn_picture);
@@ -43,7 +47,7 @@ public class ControlView extends LinearLayout {
         final Button ocrStreamButton = (Button)findViewById(R.id.btn_ocr_stream);
         ocrStreamButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
+                Toast.makeText(context, "Not yet implemented", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -55,14 +59,11 @@ public class ControlView extends LinearLayout {
             }
         });
 
-        // text view
-        final TextView textOutput = (TextView)findViewById(R.id.txt_output);
-
         // start audio in
         final Button audioInButton = (Button)findViewById(R.id.btn_audio_in);
         audioInButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
+                main.mAudioService.listen();
             }
         });
 
