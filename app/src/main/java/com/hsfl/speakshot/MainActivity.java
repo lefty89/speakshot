@@ -10,10 +10,13 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.widget.Toast;
 import com.google.android.gms.vision.text.TextBlock;
+import com.hsfl.speakshot.service.audio.AudioService;
 import com.hsfl.speakshot.service.camera.CameraService;
 import com.hsfl.speakshot.service.ocr.OcrService;
 import com.hsfl.speakshot.service.ocr.processor.TextBlockProcessor;
 import com.hsfl.speakshot.ui.CameraSourcePreview;
+
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -22,10 +25,16 @@ public class MainActivity extends AppCompatActivity {
      * Service provider that handles the camera object
      */
     public CameraService mCameraService;
+
     /**
      * Service provider that handles the ocr handlig
      */
     public OcrService mOcrService;
+
+    /**
+     * Service provider that handles the ocr handlig
+     */
+    public AudioService mAudioService;
 
     /**
      * Target surface to draw the camera view into
@@ -63,6 +72,12 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }));
+            // audio service
+            mAudioService = new AudioService.Builder(context)
+                    .setSpeechRate(6)
+                    .setPitch(5)
+                    .setLocale(Locale.GERMAN)
+                    .build();
         }
     }
 

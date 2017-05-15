@@ -1,36 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:orientation="vertical"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:gravity="bottom"
-              android:background="@android:color/transparent" >
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="bottom"
+    android:background="@android:color/transparent" >
 
-        <LinearLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
+    <TextView
+            android:text="TextView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <Button
-                android:id="@+id/btn_picture"
-                android:text="Picture"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight=".50" />
-            <Button
-                android:id="@+id/btn_ocr"
-                android:text="OCR"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight=".50" />
-        </LinearLayout>
+            android:layout_height="wrap_content" android:id="@+id/txt_output" android:paddingEnd="10dp"
+            android:paddingLeft="10dp" android:paddingRight="10dp" android:paddingStart="10dp"
+            android:paddingTop="10dp" android:paddingBottom="10dp" android:padding="10dp"
+            android:background="@android:color/background_light" tools:alpha="0.5" android:textAlignment="center"/>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btn_vibrate"
-            android:text="Vibrate"
+            android:id="@+id/btn_audio_in"
+            android:text="Audio IN"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight=".50" />
+
+        <Button
+            android:id="@+id/btn_audio_out"
+            android:text="Audio OUT"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight=".50" />
+    </LinearLayout>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/btn_picture"
+            android:text="Picture"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight=".30" />
+        <Button
+            android:id="@+id/btn_ocr_pic"
+            android:text="OCR"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight=".30" />
+        <Button
+            android:id="@+id/btn_ocr_stream"
+            android:text="Stream"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight=".30" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_vibrate"
+        android:text="Vibrate"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>
 
 

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
 import java.io.File;
@@ -18,42 +19,59 @@ public class ControlView extends LinearLayout {
     public ControlView(Context context, AttributeSet attrs) {
         super(context, attrs);
         inflate(getContext(), R.layout.control_view, this);
+        final MainActivity main = (MainActivity)getContext();
 
+        // snap picture
         final Button picButton = (Button)findViewById(R.id.btn_picture);
         picButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                takePic();
+                main.mCameraService.takePicture();
             }
         });
 
-        final Button ocrButton = (Button)findViewById(R.id.btn_ocr);
-        ocrButton.setOnClickListener(new View.OnClickListener() {
+        // start picture ocr
+        final Button ocrPicButton = (Button)findViewById(R.id.btn_ocr_pic);
+        ocrPicButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startOCR();
+                File sd = Environment.getExternalStorageDirectory();
+                String photoPath = sd.getAbsolutePath() + "/camtest/img.jpg";
+                main.mOcrService.analyseImage(photoPath);
             }
         });
 
+        // start stream ocr
+        final Button ocrStreamButton = (Button)findViewById(R.id.btn_ocr_stream);
+        ocrStreamButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+            }
+        });
+
+        // start vibration
         final Button vibButton = (Button)findViewById(R.id.btn_vibrate);
         vibButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 ((Vibrator)getContext().getSystemService(android.content.Context.VIBRATOR_SERVICE)).vibrate(800);
             }
         });
-    }
 
-    private void takePic() {
-        Log.d(TAG, "takePic");
-        MainActivity main = (MainActivity)getContext();
-        main.mCameraService.takePicture();
-    }
+        // text view
+        final TextView textOutput = (TextView)findViewById(R.id.txt_output);
 
-    private void startOCR() {
-        Log.d(TAG, "startOCR");
+        // start audio in
+        final Button audioInButton = (Button)findViewById(R.id.btn_audio_in);
+        audioInButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
 
-        File sd = Environment.getExternalStorageDirectory();
-        String photoPath = sd.getAbsolutePath() + "/camtest/img.jpg";
+            }
+        });
 
-        MainActivity main = (MainActivity)getContext();
-        main.mOcrService.analyseImage(photoPath);
+        // start audio out
+        final Button audioOutButton = (Button)findViewById(R.id.btn_audio_out);
+        audioOutButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                main.mAudioService.speak(textOutput.getText().toString());
+            }
+        });
     }
 }
