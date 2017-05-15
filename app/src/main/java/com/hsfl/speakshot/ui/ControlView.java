@@ -62,7 +62,7 @@ public class ControlView extends LinearLayout {
         final Button audioInButton = (Button)findViewById(R.id.btn_audio_in);
         audioInButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
+                main.mAudioService.listen();
             }
         });
 
