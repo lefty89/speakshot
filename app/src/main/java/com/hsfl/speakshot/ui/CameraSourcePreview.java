@@ -19,7 +19,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.*;
-import com.hsfl.speakshot.service.CameraService;
+import com.hsfl.speakshot.service.camera.CameraService;
 
 import java.io.IOException;
 

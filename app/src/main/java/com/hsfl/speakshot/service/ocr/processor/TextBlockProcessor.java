@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hsfl.speakshot;
+package com.hsfl.speakshot.service.ocr.processor;
 
 import android.content.Context;
 import android.util.Log;
@@ -22,17 +22,20 @@ import android.util.SparseArray;
 import android.widget.Toast;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.text.TextBlock;
+import com.hsfl.speakshot.service.ocr.OcrService;
 
 /**
  * A very simple Processor which gets detected TextBlocks and adds them to the overlay
  * as OcrGraphics.
  */
-public class OcrDetectorProcessor implements Detector.Processor<TextBlock> {
+public class TextBlockProcessor implements Detector.Processor<TextBlock> {
 
-    Context mContext;
+    private Context mContext;
+    private OcrService.IOcrCallback mCallback;
 
-    public OcrDetectorProcessor(Context context) {
-        mContext = context;
+    public TextBlockProcessor(Context context, OcrService.IOcrCallback callback) {
+        mContext  = context;
+        mCallback = callback;
     }
 
     /**
@@ -45,17 +48,8 @@ public class OcrDetectorProcessor implements Detector.Processor<TextBlock> {
     @Override
     public void receiveDetections(Detector.Detections<TextBlock> detections) {
         Log.d("OcrDetectorProcessor", "receiveDetections");
-
         SparseArray<TextBlock> items = detections.getDetectedItems();
-        Toast.makeText(mContext, "FOUND: "+items.size(), Toast.LENGTH_LONG).show();
-
-
-        for (int i = 0; i < items.size(); ++i) {
-            TextBlock item = items.valueAt(i);
-            if (item != null && item.getValue() != null) {
-                Log.d("OcrDetectorProcessor", "Text detected! " + item.getValue());
-            }
-        }
+        mCallback.receiveDetections(items);
     }
 
     /**
