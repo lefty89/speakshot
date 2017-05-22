@@ -2,6 +2,7 @@ package com.hsfl.speakshot.service.audio;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.CountDownTimer;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -44,14 +45,24 @@ public class AudioService implements TextToSpeech.OnInitListener {
      * Showing google speech input dialog
      * */
     public void listen() {
-        Log.d(TAG, "LISTEN: " + SpeechRecognizer.isRecognitionAvailable(mContext));
-        if (true ||SpeechRecognizer.isRecognitionAvailable(mContext)) {
+
+        if (SpeechRecognizer.isRecognitionAvailable(mContext)) {
             Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
             intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,"voice.recognition.test");
 
             intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS,5);
             mSpeechRecognizer.startListening(intent);
+            new CountDownTimer(4000, 1000) {
+                public void onTick(long millisUntilFinished) {
+                    //do nothing, just let it tick
+                }
+                public void onFinish() {
+                    mSpeechRecognizer.stopListening();
+                }
+            }.start();
+        } else {
+            Log.d(TAG, "Speech recognition is not available");
         }
     }
 
