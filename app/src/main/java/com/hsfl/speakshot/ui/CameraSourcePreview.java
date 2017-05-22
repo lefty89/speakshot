@@ -82,10 +82,6 @@ public class CameraSourcePreview extends ViewGroup implements SurfaceHolder.Call
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
         if (mCameraService != null) {
-            WindowManager winManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-            int rotation = winManager.getDefaultDisplay().getRotation();
-            mCameraService.setDisplayOrientation(rotation * -90);
-            mCameraService.setOptimalPreviewSize(getMeasuredWidth(), getMeasuredHeight());
             mCameraService.startPreview();
             requestLayout();
         }

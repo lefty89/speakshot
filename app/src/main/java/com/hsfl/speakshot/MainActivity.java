@@ -12,24 +12,20 @@ import android.widget.Toast;
 import com.google.android.gms.vision.text.TextBlock;
 import com.hsfl.speakshot.service.audio.AudioService;
 import com.hsfl.speakshot.service.camera.CameraService;
-import com.hsfl.speakshot.service.ocr.OcrService;
-import com.hsfl.speakshot.service.ocr.processor.TextBlockProcessor;
 import com.hsfl.speakshot.ui.CameraSourcePreview;
 
+import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Observable;
+import java.util.Observer;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  implements Observer {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     /**
      * Service provider that handles the camera object
      */
     public CameraService mCameraService;
-
-    /**
-     * Service provider that handles the ocr handlig
-     */
-    public OcrService mOcrService;
 
     /**
      * Service provider that handles the ocr handlig
@@ -58,20 +54,9 @@ public class MainActivity extends AppCompatActivity {
             // to other detection examples to enable the text recognizer to detect small pieces of text.
             mCameraService = new CameraService.Builder(context)
                     .setFacing(android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK).build();
-            // ocr service
-            mOcrService = new OcrService.Builder(context).build();
-            mOcrService.setProcessor(new TextBlockProcessor(context, new OcrService.IOcrCallback() {
-                @Override
-                public void receiveDetections(SparseArray<TextBlock> items) {
-                    Toast.makeText(context, "OCR items found: " + items.size(), Toast.LENGTH_SHORT).show();
-                    for (int i = 0; i < items.size(); ++i) {
-                        TextBlock item = items.valueAt(i);
-                        if (item != null && item.getValue() != null) {
-                            Log.d("OcrDetectorProcessor", "Text detected! " + item.getValue());
-                        }
-                    }
-                }
-            }));
+            // adds observer
+            mCameraService.addObserver(this);
+
             // audio service
             mAudioService = new AudioService.Builder(context)
                     .setSpeechRate(6)
@@ -91,5 +76,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         mCameraService.releaseCamera();
         super.onPause();
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        Bundle b = (Bundle)arg;
+        ArrayList<String> texts = b.getStringArrayList("texts");
+
+        Toast.makeText(getApplicationContext(), "Items found: " + String.valueOf(texts.size()), Toast.LENGTH_SHORT).show();
+        for (int i=0; i<texts.size(); i++) {
+            Toast.makeText(getApplicationContext(), "Text " + i + ": " + texts.get(i), Toast.LENGTH_SHORT).show();
+        }
+
     }
 }

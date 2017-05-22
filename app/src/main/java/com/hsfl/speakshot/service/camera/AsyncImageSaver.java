@@ -18,15 +18,17 @@ import java.io.IOException;
 class AsyncImageSaver extends AsyncTask<byte[], Void, Void> {
     private static final String TAG = CameraService.class.getSimpleName();
 
-    private static final String mImageName     = "img.jpg";
-    private static final String mPathOnStorage = "/camtest"; // "/data/data/com.hsfl.speakshot"
     /**
      * the camera orientation on which amout the image is rotated
      */
+    private String mImageName;
+    private String mPathOnStorage; // "/data/data/com.hsfl.speakshot"
     private int mOrientation = 0;
 
-    AsyncImageSaver(int orientation) {
+    AsyncImageSaver(int orientation, String path, String name) {
         mOrientation = orientation;
+        mPathOnStorage = path;
+        mImageName = name;
     }
 
     @Override

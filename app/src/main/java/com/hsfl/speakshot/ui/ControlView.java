@@ -11,7 +11,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
+import com.hsfl.speakshot.service.camera.CameraService;
+
 import java.io.File;
+import java.util.Observable;
+import java.util.Observer;
 
 public class ControlView extends LinearLayout {
     private static final String TAG = ControlView.class.getSimpleName();
@@ -33,9 +37,7 @@ public class ControlView extends LinearLayout {
         final Button ocrPicButton = (Button)findViewById(R.id.btn_ocr_pic);
         ocrPicButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                File sd = Environment.getExternalStorageDirectory();
-                String photoPath = sd.getAbsolutePath() + "/camtest/img.jpg";
-                main.mOcrService.analyseImage(photoPath);
+                main.mCameraService.analyseImage();
             }
         });
 
@@ -43,7 +45,7 @@ public class ControlView extends LinearLayout {
         final Button ocrStreamButton = (Button)findViewById(R.id.btn_ocr_stream);
         ocrStreamButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
+                main.mCameraService.analyseStream();
             }
         });
 
