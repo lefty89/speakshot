@@ -50,7 +50,7 @@ public class SpeechListener implements RecognitionListener {
             Log.d(TAG, "result " + data.get(i));
             str += data.get(i);
         }
-        Toast.makeText(mContext, "RES: " + str, Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, str, Toast.LENGTH_SHORT).show();
     }
 
     public void onPartialResults(Bundle partialResults) {
