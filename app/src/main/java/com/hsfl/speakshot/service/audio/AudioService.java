@@ -58,7 +58,7 @@ public class AudioService implements TextToSpeech.OnInitListener {
                     //do nothing, just let it tick
                 }
                 public void onFinish() {
-                    mSpeechRecognizer.stopListening();
+                    mSpeechRecognizer.cancel();
                 }
             }.start();
         } else {
