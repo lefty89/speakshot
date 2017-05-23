@@ -1,6 +1,7 @@
 package com.hsfl.speakshot;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
@@ -19,8 +20,13 @@ import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 
-public class MainActivity extends AppCompatActivity  implements Observer {
+public class MainActivity extends AppCompatActivity implements Observer {
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    /**
+     * the app theme
+     */
+    public static  int THEME = R.style.AppTheme;
 
     /**
      * Service provider that handles the camera object
@@ -40,6 +46,7 @@ public class MainActivity extends AppCompatActivity  implements Observer {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(THEME);
         setContentView(R.layout.activity_main);
         // hides the title bar
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -80,6 +87,9 @@ public class MainActivity extends AppCompatActivity  implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
+
+
+
         Bundle b = (Bundle)arg;
         ArrayList<String> texts = b.getStringArrayList("texts");
 

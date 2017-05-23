@@ -57,6 +57,24 @@ public class ControlView extends LinearLayout {
             }
         });
 
+        // dark theme
+        final Button themeDarkButton = (Button)findViewById(R.id.btn_theme_dark);
+        themeDarkButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                MainActivity.THEME =  R.style.AppTheme_Dark;
+                main.recreate();
+            }
+        });
+
+        // light theme
+        final Button themeLightButton = (Button)findViewById(R.id.btn_theme_light);
+        themeLightButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                MainActivity.THEME =  R.style.AppTheme;
+                main.recreate();
+            }
+        });
+
         // text view
         final TextView textOutput = (TextView)findViewById(R.id.txt_output);
 
