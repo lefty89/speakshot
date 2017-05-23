@@ -1,21 +1,14 @@
 package com.hsfl.speakshot.ui;
 
 import android.content.Context;
-import android.os.Environment;
 import android.os.Vibrator;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
-import com.hsfl.speakshot.service.camera.CameraService;
-
-import java.io.File;
-import java.util.Observable;
-import java.util.Observer;
 
 public class ControlView extends LinearLayout {
     private static final String TAG = ControlView.class.getSimpleName();
@@ -75,9 +68,6 @@ public class ControlView extends LinearLayout {
             }
         });
 
-        // text view
-        final TextView textOutput = (TextView)findViewById(R.id.txt_output);
-
         // start audio in
         final Button audioInButton = (Button)findViewById(R.id.btn_audio_in);
         audioInButton.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +75,9 @@ public class ControlView extends LinearLayout {
                 main.mAudioService.listen();
             }
         });
+
+        // text view
+        final TextView textOutput = (TextView)findViewById(R.id.txt_output);
 
         // start audio out
         final Button audioOutButton = (Button)findViewById(R.id.btn_audio_out);

@@ -32,8 +32,8 @@ public class CameraService extends Observable {
     /**
      * the target camera dimensions
      */
-    private final int mRequestedPreviewWidth   = 1024;
-    private final int mRequestedPreviewHeight  = 768;
+    private final int mRequestedPreviewWidth   = 1920;
+    private final int mRequestedPreviewHeight  = 1080;
     private Size mPreviewSize;
 
     /**

@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.vision.text.TextBlock;
 import com.hsfl.speakshot.service.audio.AudioService;
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements Observer {
         super.onCreate(savedInstanceState);
         setTheme(THEME);
         setContentView(R.layout.activity_main);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         // hides the title bar
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         //getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -66,8 +69,8 @@ public class MainActivity extends AppCompatActivity implements Observer {
 
             // audio service
             mAudioService = new AudioService.Builder(context)
-                    .setSpeechRate(6)
-                    .setPitch(5)
+                    .setSpeechRate(0)
+                    .setPitch(0)
                     .setLocale(Locale.GERMAN)
                     .build();
         }
@@ -88,15 +91,19 @@ public class MainActivity extends AppCompatActivity implements Observer {
     @Override
     public void update(Observable o, Object arg) {
 
-
+        StringBuilder sb = new StringBuilder();
 
         Bundle b = (Bundle)arg;
         ArrayList<String> texts = b.getStringArrayList("texts");
 
-        Toast.makeText(getApplicationContext(), "Items found: " + String.valueOf(texts.size()), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "Items found: " + String.valueOf(texts.size()), Toast.LENGTH_SHORT).show();
         for (int i=0; i<texts.size(); i++) {
-            Toast.makeText(getApplicationContext(), "Text " + i + ": " + texts.get(i), Toast.LENGTH_SHORT).show();
+            sb.append(texts.get(i) + " ");
+            //Toast.makeText(getApplicationContext(), "Text " + i + ": " + texts.get(i), Toast.LENGTH_SHORT).show();
         }
 
+        // text view
+        final TextView textOutput = (TextView)findViewById(R.id.txt_output);
+        textOutput.setText(sb.toString());
     }
 }
