@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/darker_gray" android:weightSum="1">
+
+    <TextView
+            android:id="@+id/read_fragment_orc_output"
+            android:text="Text"
+            android:layout_width="match_parent"
+            android:layout_height="451dp" android:padding="10dp"
+            android:paddingBottom="10dp" android:paddingEnd="10dp" android:paddingLeft="10dp"
+            android:paddingRight="10dp" android:paddingStart="10dp" android:paddingTop="10dp"
+            android:layout_weight="0.99"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:text="Prev"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/read_fragment_prev" android:layout_weight="1"/>
+        <Button
+            android:text="Play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/read_fragment_play" android:layout_weight="1"/>
+        <Button
+            android:text="Next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/read_fragment_next" android:layout_weight="1"/>
+        <Button
+            android:text="X"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/read_fragment_close" android:layout_weight="1"/>
+    </LinearLayout>
+</LinearLayout>
+
+
+
+
+
+
+

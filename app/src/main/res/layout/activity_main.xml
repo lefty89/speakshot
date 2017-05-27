@@ -4,7 +4,6 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:weightSum="1"
     android:id="@+id/layout">
 
     <com.hsfl.speakshot.ui.CameraSourcePreview
@@ -12,8 +11,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.hsfl.speakshot.ui.ControlView
-        android:id="@+id/control_view"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="top|right">
+        <Button
+            android:text="Settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_settings" />
+        <ToggleButton
+            android:text="Mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_mode_select"/>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

@@ -1,21 +1,22 @@
 package com.hsfl.speakshot;
 
 import android.Manifest;
-import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.SparseArray;
+import android.view.View;
 import android.view.WindowManager;
-import android.widget.TextView;
-import android.widget.Toast;
-import com.google.android.gms.vision.text.TextBlock;
+import android.widget.ToggleButton;
 import com.hsfl.speakshot.service.audio.AudioService;
 import com.hsfl.speakshot.service.camera.CameraService;
 import com.hsfl.speakshot.ui.CameraSourcePreview;
+import com.hsfl.speakshot.ui.ReadFragment;
+import com.hsfl.speakshot.ui.SearchFragment;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -24,6 +25,9 @@ import java.util.Observer;
 
 public class MainActivity extends AppCompatActivity implements Observer {
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    private final boolean MODE_SEARCH = false;
+    private final boolean MODE_READ = true;
 
     /**
      * the app theme
@@ -48,32 +52,34 @@ public class MainActivity extends AppCompatActivity implements Observer {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // sets theme and app settings
         setTheme(THEME);
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        // hides the title bar
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        // background camera view
         mPreview = (CameraSourcePreview)findViewById(R.id.camera_view);
-        // Check for the camera permission before accessing the camera.  If the
-        // permission is not granted yet, request permission.
+        // request camera permission.
         int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
         if (rc == PackageManager.PERMISSION_GRANTED) {
             final Context context = getApplicationContext();
-            // Creates and starts the camera.  Note that this uses a higher resolution in comparison
-            // to other detection examples to enable the text recognizer to detect small pieces of text.
-            mCameraService = new CameraService.Builder(context)
-                    .setFacing(android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK).build();
-            // adds observer
+            // initializes the camera service
+            mCameraService = new CameraService.Builder(context).setFacing(android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK).build();
+            // adds an observer for the text recognizer
             mCameraService.addObserver(this);
-
-            // audio service
-            mAudioService = new AudioService.Builder(context)
-                    .setSpeechRate(0)
-                    .setPitch(0)
-                    .setLocale(Locale.GERMAN)
-                    .build();
+            // initializes the audio service
+            mAudioService = new AudioService.Builder(context).setSpeechRate(0).setPitch(0).setLocale(Locale.GERMAN).build();
         }
+
+        // switch button to change the mode
+        final ToggleButton modeSwitch = (ToggleButton)findViewById(R.id.btn_mode_select);
+        modeSwitch.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                setAppMode(modeSwitch.isChecked());
+            }
+        });
+        setAppMode(MODE_SEARCH);
     }
 
     @Override
@@ -101,9 +107,26 @@ public class MainActivity extends AppCompatActivity implements Observer {
             sb.append(texts.get(i) + " ");
             //Toast.makeText(getApplicationContext(), "Text " + i + ": " + texts.get(i), Toast.LENGTH_SHORT).show();
         }
+    }
 
-        // text view
-        final TextView textOutput = (TextView)findViewById(R.id.txt_output);
-        textOutput.setText(sb.toString());
+    /**
+     * switches the app between read and search mode
+     * @param b either MODE_READ or MODE_SEARCH
+     */
+    private void setAppMode(boolean b) {
+
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+
+        // gets the fragment
+        Fragment fragment = (b) ? new ReadFragment() : new SearchFragment();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        ft.replace(R.id.fragment_container, fragment);
+        ft.addToBackStack(null);
+
+        // Commit the transaction
+        ft.commit();
     }
 }

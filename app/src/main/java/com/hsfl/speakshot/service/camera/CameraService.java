@@ -2,6 +2,8 @@ package com.hsfl.speakshot.service.camera;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.os.*;
@@ -84,7 +86,7 @@ public class CameraService extends Observable {
     /**
      * Takes a picture
      */
-    public void takePicture() {
+    public void analyzePicture() {
 
         if (mCamera != null) {
             Camera.ShutterCallback shutterCallback = new Camera.ShutterCallback() {
@@ -95,8 +97,15 @@ public class CameraService extends Observable {
             };
             Camera.PictureCallback jpegCallback = new Camera.PictureCallback() {
                 public void onPictureTaken(byte[] data, Camera camera) {
-                    new AsyncImageSaver(mCameraInfo.orientation, mPathOnStorage, mImageName).execute(data);
-                    startPreview();
+
+                    // saves the image asynchronously to the external storage
+                    new AsyncImageSaver(mContext, mCameraInfo.orientation, mPathOnStorage, mImageName).execute(data);
+
+                    // starts the ocr for this image
+                    mOcrHandler.ocrSingleImage(data);
+
+                    // restarts the background preview
+                    // startPreview();
                 }
             };
             mCamera.takePicture(shutterCallback, rawCallback, jpegCallback);

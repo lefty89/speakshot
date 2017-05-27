@@ -111,6 +111,21 @@ public class OcrHandler implements Camera.PreviewCallback {
     }
 
     /**
+     * Analyzes a given image
+     * @param name
+     */
+    public void ocrSingleImage(byte[] data) {
+        synchronized (mCameraLock) {
+            Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+            Frame.Builder fb = new Frame.Builder()
+                    .setRotation((mRotation / 90))
+                    .setBitmap(bmp);
+            // use detector class
+            mTextRecognizer.receiveFrame(fb.build());
+        }
+    }
+
+    /**
      * toggleOcrDetector
      */
     public void toggleOcrDetector() {
