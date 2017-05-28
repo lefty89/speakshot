@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-public class SearchFragment extends Fragment implements Observer {
+public class SearchFragment extends Fragment implements Observer, View.OnTouchListener {
     private static final String TAG = SearchFragment.class.getSimpleName();
 
     /**
@@ -41,44 +42,12 @@ public class SearchFragment extends Fragment implements Observer {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mInflatedView = inflater.inflate(R.layout.search_fragment, container, false);
+        // add touch listener
+        mInflatedView.setOnTouchListener(this);
 
         mCameraService = CameraService.getInstance();
         // adds an observer for the text recognizer
         mCameraService.addObserver(this);
-
-        // take picture
-        final Button searchButton = (Button)mInflatedView.findViewById(R.id.btn_search);
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                if (searchTerm.equals("")) {
-                    // open modal
-                    final EditText txt = new EditText(getActivity());
-                    new AlertDialog.Builder(getActivity())
-                            .setTitle("Moustachify Link")
-                            .setMessage("Paste in the link of an image to moustachify!")
-                            .setView(txt)
-                            .setPositiveButton("Moustachify", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    // start searching
-                                    searchTerm = txt.getText().toString();
-                                    mCameraService.analyseStream();
-                                    Toast.makeText(getActivity().getApplicationContext(), "Searching for: " + searchTerm, Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                }
-                            })
-                            .show();
-                } else {
-                    // stop searching
-                    searchTerm = "";
-                    mCameraService.analyseStream();
-                    Toast.makeText(getActivity().getApplicationContext(), "Stop searching", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
 
         // light toggle
         final ToggleButton lightSwitch = (ToggleButton)mInflatedView.findViewById(R.id.btn_light_toggle);
@@ -110,5 +79,38 @@ public class SearchFragment extends Fragment implements Observer {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+
+        if (searchTerm.equals("")) {
+            // open modal
+            final EditText txt = new EditText(getActivity());
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("Search for word")
+                    .setView(txt)
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            // start searching
+                            searchTerm = txt.getText().toString();
+                            mCameraService.analyseStream();
+                            Toast.makeText(getActivity().getApplicationContext(), "Searching for: " + searchTerm, Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                        }
+                    })
+                    .show();
+        } else {
+            // stop searching
+            searchTerm = "";
+            mCameraService.analyseStream();
+            Toast.makeText(getActivity().getApplicationContext(), "Stop searching", Toast.LENGTH_SHORT).show();
+        }
+
+
+        return false;
     }
 }
