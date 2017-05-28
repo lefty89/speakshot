@@ -251,16 +251,28 @@ public class CameraService extends Observable {
     /**
      * Toggles the camera light
      */
-    public void toggleLight() {
-        Camera.Parameters params = mCamera.getParameters();
-        String lightState = (params.getFlashMode().equals(Camera.Parameters.FLASH_MODE_OFF)) ?
-                Camera.Parameters.FLASH_MODE_TORCH :
-                Camera.Parameters.FLASH_MODE_OFF;
-        params.setFlashMode(lightState);
-        mCamera.setParameters(params);
-        mCamera.startPreview();
+    public void setFlashLightEnabled(boolean b) {
+        if (mCamera != null) {
+            Camera.Parameters params = mCamera.getParameters();
+            String lightState = (b) ? Camera.Parameters.FLASH_MODE_TORCH : Camera.Parameters.FLASH_MODE_OFF;
+            params.setFlashMode(lightState);
+            mCamera.setParameters(params);
+            mCamera.startPreview();
+        }
+
     }
 
+    /**
+     * Toggles the camera light
+     */
+    public boolean isFlashLightEnabled() {
+        boolean b = false;
+        if (mCamera != null) {
+            Camera.Parameters params = mCamera.getParameters();
+            b = (params.getFlashMode().equals(Camera.Parameters.FLASH_MODE_TORCH));
+        }
+        return b;
+    }
 
     /**
      * Sets the display orientation (automatically adds the camera default rotation)

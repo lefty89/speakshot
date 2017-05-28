@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
 import com.hsfl.speakshot.service.camera.CameraService;
@@ -76,8 +77,15 @@ public class SearchFragment extends Fragment implements Observer {
                     mCameraService.analyseStream();
                     Toast.makeText(getActivity().getApplicationContext(), "Stop searching", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
 
-
+        // light toggle
+        final ToggleButton lightSwitch = (ToggleButton)mInflatedView.findViewById(R.id.btn_light_toggle);
+        lightSwitch.setChecked(mCameraService.isFlashLightEnabled());
+        lightSwitch.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mCameraService.setFlashLightEnabled(lightSwitch.isChecked());
             }
         });
 

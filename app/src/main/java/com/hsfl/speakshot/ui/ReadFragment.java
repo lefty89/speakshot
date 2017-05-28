@@ -75,9 +75,10 @@ public class ReadFragment extends Fragment implements Observer {
 
         // light toggle
         final ToggleButton lightSwitch = (ToggleButton)mInflatedView.findViewById(R.id.btn_light_toggle);
+        lightSwitch.setChecked(mCameraService.isFlashLightEnabled());
         lightSwitch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mCameraService.toggleLight();
+                mCameraService.setFlashLightEnabled(lightSwitch.isChecked());
             }
         });
 
