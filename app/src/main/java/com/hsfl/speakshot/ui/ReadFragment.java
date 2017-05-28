@@ -72,7 +72,6 @@ public class ReadFragment extends Fragment implements Observer {
         lightSwitch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 cameraService.toggleLight();
-                Toast.makeText(getActivity().getApplicationContext(), "LIGHT", Toast.LENGTH_LONG).show();
             }
         });
 

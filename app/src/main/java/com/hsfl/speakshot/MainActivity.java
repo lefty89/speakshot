@@ -23,9 +23,12 @@ import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 
-public class MainActivity extends AppCompatActivity implements Observer {
+public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    /**
+     * main app modes
+     */
     private final boolean MODE_SEARCH = false;
     private final boolean MODE_READ = true;
 
@@ -66,8 +69,6 @@ public class MainActivity extends AppCompatActivity implements Observer {
             final Context context = getApplicationContext();
             // initializes the camera service
             mCameraService = new CameraService.Builder(context).setFacing(android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK).build();
-            // adds an observer for the text recognizer
-            mCameraService.addObserver(this);
             // initializes the audio service
             mAudioService = new AudioService.Builder(context).setSpeechRate(0).setPitch(0).setLocale(Locale.GERMAN).build();
         }
@@ -92,21 +93,6 @@ public class MainActivity extends AppCompatActivity implements Observer {
     protected void onPause() {
         mCameraService.releaseCamera();
         super.onPause();
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-
-        StringBuilder sb = new StringBuilder();
-
-        Bundle b = (Bundle)arg;
-        ArrayList<String> texts = b.getStringArrayList("texts");
-
-        //Toast.makeText(getApplicationContext(), "Items found: " + String.valueOf(texts.size()), Toast.LENGTH_SHORT).show();
-        for (int i=0; i<texts.size(); i++) {
-            sb.append(texts.get(i) + " ");
-            //Toast.makeText(getApplicationContext(), "Text " + i + ": " + texts.get(i), Toast.LENGTH_SHORT).show();
-        }
     }
 
     /**
