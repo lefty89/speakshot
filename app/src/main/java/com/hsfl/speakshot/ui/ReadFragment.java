@@ -36,6 +36,11 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
      */
     private ArrayList<String> detectedTexts;
 
+    /**
+     * the current image as raw bytes
+     */
+    private byte[] capturedImage;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mInflatedView = inflater.inflate(R.layout.read_fragment, container, false);
@@ -89,16 +94,22 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
 
     @Override
     public void update(Observable o, Object arg) {
-        ArrayList<String> texts = ((Bundle)arg).getStringArrayList("texts");
-        //ArrayList<String> dummy = new ArrayList<>(Arrays.asList("Buenos Aires", "Córdoba", "La Plata"));
 
-        if (texts.size() > 0) {
+        // gets the detected texts
+        ArrayList<String> texts = ((Bundle)arg).getStringArrayList("texts");
+        if ((texts != null) && (texts.size() > 0)) {
             detectedTexts = texts;
             // enable / disable result button
             mInflatedView.findViewById(R.id.btn_show_results).setEnabled(true);
         } else {
             Toast.makeText(getActivity().getApplicationContext(), "Nothing found", Toast.LENGTH_LONG).show();
             mCameraService.startPreview();
+        }
+
+        // gets the captured image
+        byte[] image = ((Bundle)arg).getByteArray("image");
+        if (image != null) {
+            capturedImage = image;
         }
     }
 

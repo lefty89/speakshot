@@ -27,9 +27,20 @@ public class OcrHandler implements Camera.PreviewCallback {
     private static final String TAG = OcrHandler.class.getSimpleName();
 
     private Camera mCamera;
-    private Size mPreviewSize;
+
+    /**
+     * The camera source return handler
+     */
+    private Handler mHandler;
+
+    /**
+     * The screen orientation
+     */
     private int mRotation = 0;
 
+    /**
+     * Time in milliseconds to throw until analyzing the next image
+     */
     private final int mDebounceTime = 5000;
 
     /**
@@ -59,18 +70,18 @@ public class OcrHandler implements Camera.PreviewCallback {
     /**
      * constructor
      */
-    public OcrHandler(final Context context, Camera camera, Size size, int rotation, Handler handler) {
+    public OcrHandler(final Context context, Camera camera, int rotation, Handler handler) {
         synchronized (mCameraLock) {
             if (mCamera != null) {
                 return;
             }
             mCamera = camera;
-            mPreviewSize = size;
             mRotation = rotation;
+            mHandler = handler;
 
             // create the TextRecognizer
             mTextRecognizer = new TextRecognizer.Builder(context).build();
-            mTextRecognizer.setProcessor(new TextBlockProcessor(context, handler));
+            mTextRecognizer.setProcessor(new TextBlockProcessor(handler));
 
             // connecting the frame processor
             mFrameProcessor = new FrameProcessingRunnable(mTextRecognizer);
@@ -95,7 +106,6 @@ public class OcrHandler implements Camera.PreviewCallback {
         synchronized (mCameraLock) {
             File file = new File(name);
             if(file.exists() && file.canRead()) {
-                Log.d(TAG, "ocrSingleImage");
 
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inPreferredConfig = Bitmap.Config.ARGB_8888;
@@ -122,6 +132,7 @@ public class OcrHandler implements Camera.PreviewCallback {
                     .setBitmap(bmp);
             // use detector class
             mTextRecognizer.receiveFrame(fb.build());
+            notifyAboutImage(data);
         }
     }
 
@@ -144,7 +155,10 @@ public class OcrHandler implements Camera.PreviewCallback {
     private void startOcrDetector() {
         synchronized (mCameraLock) {
             // creates preview buffers
-            mCamera.addCallbackBuffer(createPreviewBuffer(mPreviewSize));
+            mCamera.addCallbackBuffer(createPreviewBuffer(
+                mCamera.getParameters().getPreviewSize().width,
+                mCamera.getParameters().getPreviewSize().height
+            ));
 
             // start processor
             mProcessingThread = new Thread(mFrameProcessor);
@@ -188,9 +202,9 @@ public class OcrHandler implements Camera.PreviewCallback {
      *
      * @return a new preview buffer of the appropriate size for the current camera settings
      */
-    private byte[] createPreviewBuffer(Size previewSize) {
+    private byte[] createPreviewBuffer(int width, int height) {
         int bitsPerPixel = ImageFormat.getBitsPerPixel(ImageFormat.NV21);
-        long sizeInBits = previewSize.getHeight() * previewSize.getWidth() * bitsPerPixel;
+        long sizeInBits = height * width * bitsPerPixel;
         int bufferSize = (int) Math.ceil(sizeInBits / 8.0d) + 1;
 
         //
@@ -212,6 +226,25 @@ public class OcrHandler implements Camera.PreviewCallback {
     }
 
     /**
+     * returns the captured image back to the camera service
+     * @param image
+     */
+    private void notifyAboutImage(byte[] image) {
+
+        Bundle b = new Bundle();
+        b.putByteArray("image", image);
+
+        // create a message from the message handler to send it back to the main UI
+        Message msg = mHandler.obtainMessage();
+        //specify the type of message
+        msg.what = 1;
+        //attach the bundle to the message
+        msg.setData(b);
+        //send the message back to main UI thread
+        mHandler.sendMessage(msg);
+    }
+
+    /**
      * Called when the camera has a new preview frame.
      */
     @Override
@@ -220,6 +253,7 @@ public class OcrHandler implements Camera.PreviewCallback {
         debouncer.debounce(Void.class, new Runnable() {
             @Override public void run() {
                 mFrameProcessor.setNextFrame(data, camera);
+                notifyAboutImage(data);
             }
         }, mDebounceTime, TimeUnit.MILLISECONDS);
     }
@@ -335,7 +369,7 @@ public class OcrHandler implements Camera.PreviewCallback {
                         return;
                     }
                     outputFrame = new Frame.Builder()
-                            .setImageData(mPendingFrameData, mPreviewSize.getWidth(), mPreviewSize.getHeight(), ImageFormat.NV21)
+                            .setImageData(mPendingFrameData, mCamera.getParameters().getPreviewSize().width, mCamera.getParameters().getPreviewSize().height, ImageFormat.NV21)
                             .setId(mPendingFrameId)
                             .setTimestampMillis(mPendingTimeMillis)
                             .setRotation((mRotation / 90))

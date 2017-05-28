@@ -15,29 +15,33 @@
  */
 package com.hsfl.speakshot.service.camera.ocr.processor;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.util.SparseArray;
-import android.widget.Toast;
+
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.text.TextBlock;
 
 import java.util.ArrayList;
 
 /**
- * A very simple Processor which gets detected TextBlocks and adds them to the overlay
- * as OcrGraphics.
+ * A very simple Processor which gets detected TextBlocks
  */
 public class TextBlockProcessor implements Detector.Processor<TextBlock> {
+    private static final String TAG = TextBlockProcessor.class.getSimpleName();
 
-    private Context mContext;
+    /**
+     * Callback handler
+     */
     private Handler mHandler;
 
-    public TextBlockProcessor(Context context, Handler handler) {
-        mContext = context;
+    /**
+     * Constructor
+     * @param handler
+     */
+    public TextBlockProcessor(Handler handler) {
         mHandler = handler;
     }
 
@@ -79,6 +83,6 @@ public class TextBlockProcessor implements Detector.Processor<TextBlock> {
      */
     @Override
     public void release() {
-        Log.d("OcrDetectorProcessor", "release");
+        Log.d(TAG, "release");
     }
 }

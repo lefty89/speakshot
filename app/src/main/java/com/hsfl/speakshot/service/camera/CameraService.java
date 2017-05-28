@@ -195,7 +195,7 @@ public class CameraService extends Observable {
                 mCamera.setDisplayOrientation(displayOrientation);
 
                 // initializes the ocr engine
-                mOcrHandler = new OcrHandler(context, mCamera, mPreviewSize, displayOrientation, new Handler() {
+                mOcrHandler = new OcrHandler(context, mCamera, displayOrientation, new Handler() {
                     public void handleMessage(Message msg) {
                         if (msg.what == 1) {
                             setChanged();

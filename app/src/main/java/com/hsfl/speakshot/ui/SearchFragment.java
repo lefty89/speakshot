@@ -100,13 +100,15 @@ public class SearchFragment extends Fragment implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        ArrayList<String> texts = ((Bundle)arg).getStringArrayList("texts");
-        for (int i=0; i<texts.size(); i++) {
-            if (texts.get(i).contains(searchTerm)) {
-                Toast.makeText(getActivity().getApplicationContext(), "Term " + searchTerm + " found", Toast.LENGTH_SHORT).show();
-                ((Vibrator)getActivity().getApplication().getSystemService(android.content.Context.VIBRATOR_SERVICE)).vibrate(800);
+        // gets the detected texts
+        ArrayList<String> texts = ((Bundle) arg).getStringArrayList("texts");
+        if ((texts != null) && (texts.size() > 0)) {
+            for (int i = 0; i < texts.size(); i++) {
+                if (texts.get(i).contains(searchTerm)) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Term " + searchTerm + " found", Toast.LENGTH_SHORT).show();
+                    ((Vibrator) getActivity().getApplication().getSystemService(android.content.Context.VIBRATOR_SERVICE)).vibrate(800);
+                }
             }
         }
     }
-
 }
