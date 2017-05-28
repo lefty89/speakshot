@@ -3,9 +3,9 @@ package com.hsfl.speakshot.ui;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.graphics.Camera;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -18,7 +18,7 @@ import com.hsfl.speakshot.service.camera.CameraService;
 import java.util.*;
 
 
-public class ReadFragment extends Fragment implements Observer {
+public class ReadFragment extends Fragment implements Observer, View.OnTouchListener {
     private static final String TAG = ReadFragment.class.getSimpleName();
 
     /**
@@ -40,18 +40,13 @@ public class ReadFragment extends Fragment implements Observer {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mInflatedView = inflater.inflate(R.layout.read_fragment, container, false);
 
+        // add touch listener
+        mInflatedView.setOnTouchListener(this);
+
         mCameraService = CameraService.getInstance();
         // adds an observer for the text recognizer
         mCameraService.addObserver(this);
         mCameraService.startPreview();
-
-        // take picture
-        final Button picButton = (Button)mInflatedView.findViewById(R.id.btn_take_picture);
-        picButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mCameraService.analyzePicture();
-            }
-        });
 
         // show results
         final Button resultButton = (Button)mInflatedView.findViewById(R.id.btn_show_results);
@@ -105,5 +100,12 @@ public class ReadFragment extends Fragment implements Observer {
             Toast.makeText(getActivity().getApplicationContext(), "Nothing found", Toast.LENGTH_LONG).show();
             mCameraService.startPreview();
         }
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        // take picture
+        mCameraService.analyzePicture();
+        return false;
     }
 }
