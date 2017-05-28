@@ -71,11 +71,13 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
     public void update(Observable o, Object arg) {
         // gets the detected texts
         ArrayList<String> texts = ((Bundle) arg).getStringArrayList("texts");
-        if ((texts != null) && (texts.size() > 0)) {
-            for (int i = 0; i < texts.size(); i++) {
-                if (texts.get(i).contains(searchTerm)) {
-                    Toast.makeText(getActivity().getApplicationContext(), "Term " + searchTerm + " found", Toast.LENGTH_SHORT).show();
-                    ((Vibrator) getActivity().getApplication().getSystemService(android.content.Context.VIBRATOR_SERVICE)).vibrate(800);
+        if (texts != null) {
+            if (texts.size() > 0) {
+                for (int i = 0; i < texts.size(); i++) {
+                    if (texts.get(i).contains(searchTerm)) {
+                        Toast.makeText(getActivity().getApplicationContext(), "Term " + searchTerm + " found", Toast.LENGTH_SHORT).show();
+                        ((Vibrator) getActivity().getApplication().getSystemService(android.content.Context.VIBRATOR_SERVICE)).vibrate(800);
+                    }
                 }
             }
         }
@@ -88,14 +90,16 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
             // open modal
             final EditText txt = new EditText(getActivity());
             new AlertDialog.Builder(getActivity())
-                    .setTitle("Search for word")
+                    .setMessage("Search for word")
                     .setView(txt)
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             // start searching
                             searchTerm = txt.getText().toString();
-                            mCameraService.analyseStream();
-                            Toast.makeText(getActivity().getApplicationContext(), "Searching for: " + searchTerm, Toast.LENGTH_SHORT).show();
+                            if (!searchTerm.equals("")) {
+                                mCameraService.analyseStream();
+                                Toast.makeText(getActivity().getApplicationContext(), "Searching for: " + searchTerm, Toast.LENGTH_SHORT).show();
+                            }
                         }
                     })
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

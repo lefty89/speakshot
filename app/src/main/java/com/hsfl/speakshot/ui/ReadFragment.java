@@ -88,8 +88,7 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        CameraService cameraService = ((MainActivity)getActivity()).mCameraService;
-        cameraService.deleteObserver(this);
+        mCameraService.deleteObserver(this);
     }
 
     @Override
@@ -97,13 +96,14 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
 
         // gets the detected texts
         ArrayList<String> texts = ((Bundle)arg).getStringArrayList("texts");
-        if ((texts != null) && (texts.size() > 0)) {
-            detectedTexts = texts;
-            // enable / disable result button
-            mInflatedView.findViewById(R.id.btn_show_results).setEnabled(true);
-        } else {
-            Toast.makeText(getActivity().getApplicationContext(), "Nothing found", Toast.LENGTH_LONG).show();
-            mCameraService.startPreview();
+        if (texts != null) {
+            if (texts.size() > 0) {
+                detectedTexts = texts;
+                // enable / disable result button
+                mInflatedView.findViewById(R.id.btn_show_results).setEnabled(true);
+            } else {
+                Toast.makeText(getActivity().getApplicationContext(), "Nothing found", Toast.LENGTH_SHORT).show();
+            }
         }
 
         // gets the captured image

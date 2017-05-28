@@ -1,5 +1,6 @@
 package com.hsfl.speakshot.service.camera;
 
+import android.graphics.ImageFormat;
 import com.hsfl.speakshot.service.camera.ocr.OcrHandler;
 
 import android.annotation.TargetApi;
@@ -116,7 +117,13 @@ public class CameraService extends Observable {
                     mOcrHandler.ocrSingleImage(data);
 
                     // restarts the background preview
-                    // startPreview();
+                    startPreview();
+
+                    // notifies the observer of the new image
+                    Bundle b = new Bundle();
+                    b.putByteArray("image", data);
+                    setChanged();
+                    notifyObservers(b);
                 }
             };
             mCamera.takePicture(shutterCallback, rawCallback, jpegCallback);
@@ -167,7 +174,6 @@ public class CameraService extends Observable {
                 mCameraInfo = new Camera.CameraInfo();
                 Camera.getCameraInfo(mFacing, mCameraInfo);
 
-
                 // get Camera parameters
                 Camera.Parameters params = mCamera.getParameters();
                 List<String> focusModes = params.getSupportedFocusModes();
@@ -189,6 +195,9 @@ public class CameraService extends Observable {
 
                 // updates the camera parameter
                 mCamera.setParameters(params);
+
+                // sets image format
+                params.setPreviewFormat(ImageFormat.NV21);
 
                 // gets the display orientation
                 int displayOrientation = getDisplayOrientation(context);

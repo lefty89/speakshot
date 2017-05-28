@@ -9,7 +9,6 @@ import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -25,18 +24,18 @@ public class MainActivity extends AppCompatActivity {
     /**
      * main app modes
      */
-    private final boolean MODE_SEARCH = false;
-    private final boolean MODE_READ = true;
+    private final boolean MODE_READ = false;
+    private final boolean MODE_SEARCH = true;
 
     /**
      * the app theme
      */
-    public static  int THEME = R.style.AppTheme;
+    private static  int THEME = R.style.AppTheme;
 
     /**
      * Service provider that handles the camera object
      */
-    public CameraService mCameraService;
+    private CameraService mCameraService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +49,10 @@ public class MainActivity extends AppCompatActivity {
         // request camera permission.
         int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
         if (rc == PackageManager.PERMISSION_GRANTED) {
-            final Context context = getApplicationContext();
             // gets the CameraService
             mCameraService = CameraService.getInstance();
             // initializes the audio service
-            AudioService.getInstance().init(context);
+            AudioService.getInstance().init(getApplicationContext());
         }
 
         // switch button to change the mode
@@ -64,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                 setAppMode(modeSwitch.isChecked());
             }
         });
-        setAppMode(MODE_SEARCH);
+        setAppMode(MODE_READ);
     }
 
     @Override
@@ -76,8 +74,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        mCameraService.releaseCamera();
         super.onPause();
+        // releases the camera
+        mCameraService.releaseCamera();
     }
 
     /**
@@ -90,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction ft = fragmentManager.beginTransaction();
 
         // gets the fragment
-        Fragment fragment = (b) ? new ReadFragment() : new SearchFragment();
+        Fragment fragment = (b) ? new SearchFragment() : new ReadFragment();
 
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack so the user can navigate back

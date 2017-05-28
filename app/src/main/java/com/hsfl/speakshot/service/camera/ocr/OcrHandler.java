@@ -8,16 +8,12 @@ import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.os.*;
 import android.util.Log;
-import android.widget.Toast;
-import com.google.android.gms.common.images.Size;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextRecognizer;
 import com.hsfl.speakshot.helper.Debouncer;
 import com.hsfl.speakshot.service.camera.ocr.processor.TextBlockProcessor;
 import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +37,7 @@ public class OcrHandler implements Camera.PreviewCallback {
     /**
      * Time in milliseconds to throw until analyzing the next image
      */
-    private final int mDebounceTime = 5000;
+    private final int mDebounceTime = 3000;
 
     /**
      * Map to convert between a byte array, received from the camera, and its associated byte
