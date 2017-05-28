@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
 import com.hsfl.speakshot.service.camera.CameraService;
@@ -63,6 +64,15 @@ public class ReadFragment extends Fragment implements Observer {
                 ft.addToBackStack(null);
                 // Commit the transaction
                 ft.commit();
+            }
+        });
+
+        // light toggle
+        final ToggleButton lightSwitch = (ToggleButton)mInflatedView.findViewById(R.id.btn_light_toggle);
+        lightSwitch.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                cameraService.toggleLight();
+                Toast.makeText(getActivity().getApplicationContext(), "LIGHT", Toast.LENGTH_LONG).show();
             }
         });
 

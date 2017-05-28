@@ -22,6 +22,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/btn_show_results" android:layout_weight="1"/>
+        <ToggleButton
+            android:text="Light Toggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_light_toggle" android:layout_weight="1"/>
     </LinearLayout>
 </FrameLayout>
 
