@@ -1,28 +1,28 @@
 package com.hsfl.speakshot.service.camera;
 
+import com.hsfl.speakshot.service.camera.ocr.OcrHandler;
+
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.os.*;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.WindowManager;
-import android.widget.Toast;
 import com.google.android.gms.common.images.Size;
 import android.view.SurfaceHolder;
-import com.hsfl.speakshot.service.camera.ocr.OcrHandler;
 
 import java.io.*;
-import java.nio.ByteBuffer;
 import java.util.*;
+
 
 public class CameraService extends Observable {
     private static final String TAG = CameraService.class.getSimpleName();
 
-    private Context mContext;
+    /**
+     * The CameraService singleton
+     */
+    private static CameraService instance = null;
 
     /**
      * the interface for the ocr
@@ -68,6 +68,17 @@ public class CameraService extends Observable {
     CameraService() {}
 
     /**
+     * Gets the CameraService instance
+     * @return
+     */
+    public static CameraService getInstance() {
+        if (instance == null) {
+            instance = new CameraService();
+        }
+        return instance;
+    }
+
+    /**
      * Sets the surface where the camera output shall drawn into
      * @param holder
      * @throws IOException
@@ -99,7 +110,7 @@ public class CameraService extends Observable {
                 public void onPictureTaken(byte[] data, Camera camera) {
 
                     // saves the image asynchronously to the external storage
-                    new AsyncImageSaver(mContext, mCameraInfo.orientation, mPathOnStorage, mImageName).execute(data);
+                    new AsyncImageSaver(mCameraInfo.orientation, mPathOnStorage, mImageName).execute(data);
 
                     // starts the ocr for this image
                     mOcrHandler.ocrSingleImage(data);
@@ -134,7 +145,7 @@ public class CameraService extends Observable {
     /**
      * Starts updating the preview surface
      */
-    public void initCamera() {
+    public void initCamera(Context context) {
 
         if (mCamera == null) {
 
@@ -146,7 +157,6 @@ public class CameraService extends Observable {
 
             // opens the selected camera
             if (safeCameraOpen(requestedCameraId)) {
-
                 SizePair sizePair = selectSizePair(mCamera, mRequestedPreviewWidth, mRequestedPreviewHeight);
                 if (sizePair == null) {
                     throw new RuntimeException("Could not find suitable preview size.");
@@ -156,6 +166,7 @@ public class CameraService extends Observable {
                 // loads info for the selected camera
                 mCameraInfo = new Camera.CameraInfo();
                 Camera.getCameraInfo(mFacing, mCameraInfo);
+
 
                 // get Camera parameters
                 Camera.Parameters params = mCamera.getParameters();
@@ -179,8 +190,12 @@ public class CameraService extends Observable {
                 // updates the camera parameter
                 mCamera.setParameters(params);
 
+                // gets the display orientation
+                int displayOrientation = getDisplayOrientation(context);
+                mCamera.setDisplayOrientation(displayOrientation);
+
                 // initializes the ocr engine
-                mOcrHandler = new OcrHandler(mContext, mCamera, mPreviewSize, getDisplayOrientation(), new Handler() {
+                mOcrHandler = new OcrHandler(context, mCamera, mPreviewSize, displayOrientation, new Handler() {
                     public void handleMessage(Message msg) {
                         if (msg.what == 1) {
                             setChanged();
@@ -220,7 +235,6 @@ public class CameraService extends Observable {
      */
     public void startPreview() {
         if (mCamera != null) {
-            mCamera.setDisplayOrientation(getDisplayOrientation());
             mCamera.startPreview();
         }
     }
@@ -247,16 +261,16 @@ public class CameraService extends Observable {
         mCamera.startPreview();
     }
 
+
     /**
      * Sets the display orientation (automatically adds the camera default rotation)
      */
-    private int getDisplayOrientation() {
+    private int getDisplayOrientation(Context context) {
         int ori = 0;
         if (mCamera != null) {
-            WindowManager winManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+            WindowManager winManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
             int rotation = winManager.getDefaultDisplay().getRotation();
-
-            ori = (rotation + mCameraInfo.orientation) % 360;
+            ori = (mCameraInfo.orientation - (rotation * 90)) % 360;
             if (ori < 0) {
                 ori = 360 + ori;
             }
@@ -528,39 +542,5 @@ public class CameraService extends Observable {
         }
 
         return true;
-    }
-
-    /**
-     * CameraBuilder
-     */
-    public static class Builder {
-        private CameraService mCameraService = new CameraService();
-
-        /**
-         * Creates a camera source builder with the supplied context and detector.  Camera preview
-         * images will be streamed to the associated detector upon starting the camera source.
-         */
-        public Builder(Context context) {
-            mCameraService.mContext = context;
-        }
-
-        /**
-         * Sets the camera to use (either {@link #CAMERA_FACING_BACK} or
-         * {@link #CAMERA_FACING_FRONT}). Default: back facing.
-         */
-        public Builder setFacing(int facing) {
-            if ((facing != android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK) && (facing != android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT)) {
-                throw new IllegalArgumentException("Invalid camera: " + facing);
-            }
-            mCameraService.mFacing = facing;
-            return this;
-        }
-
-        /**
-         * Creates an instance of the camera service.
-         */
-        public CameraService build() {
-            return mCameraService;
-        }
     }
 }

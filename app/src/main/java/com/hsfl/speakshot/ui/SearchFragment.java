@@ -27,7 +27,12 @@ public class SearchFragment extends Fragment implements Observer {
     private View mInflatedView;
 
     /**
-     * indicates searching
+     * Service provider that handles the camera object
+     */
+    private CameraService mCameraService;
+
+    /**
+     * The team to search for
      */
     private String searchTerm = "";
 
@@ -36,9 +41,9 @@ public class SearchFragment extends Fragment implements Observer {
         // Inflate the layout for this fragment
         mInflatedView = inflater.inflate(R.layout.search_fragment, container, false);
 
-        final CameraService cameraService = ((MainActivity)getActivity()).mCameraService;
+        mCameraService = CameraService.getInstance();
         // adds an observer for the text recognizer
-        cameraService.addObserver(this);
+        mCameraService.addObserver(this);
 
         // take picture
         final Button searchButton = (Button)mInflatedView.findViewById(R.id.btn_search);
@@ -56,7 +61,7 @@ public class SearchFragment extends Fragment implements Observer {
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     // start searching
                                     searchTerm = txt.getText().toString();
-                                    cameraService.analyseStream();
+                                    mCameraService.analyseStream();
                                     Toast.makeText(getActivity().getApplicationContext(), "Searching for: " + searchTerm, Toast.LENGTH_SHORT).show();
                                 }
                             })
@@ -68,7 +73,7 @@ public class SearchFragment extends Fragment implements Observer {
                 } else {
                     // stop searching
                     searchTerm = "";
-                    cameraService.analyseStream();
+                    mCameraService.analyseStream();
                     Toast.makeText(getActivity().getApplicationContext(), "Stop searching", Toast.LENGTH_SHORT).show();
                 }
 
@@ -82,8 +87,7 @@ public class SearchFragment extends Fragment implements Observer {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        CameraService cameraService = ((MainActivity)getActivity()).mCameraService;
-        cameraService.deleteObserver(this);
+        mCameraService.deleteObserver(this);
     }
 
     @Override

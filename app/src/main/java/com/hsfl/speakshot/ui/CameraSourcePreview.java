@@ -20,18 +20,25 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.*;
 import com.hsfl.speakshot.service.camera.CameraService;
-
 import java.io.IOException;
 
 public class CameraSourcePreview extends ViewGroup implements SurfaceHolder.Callback {
     private static final String TAG = CameraSourcePreview.class.getSimpleName();
 
-    private CameraService mCameraService;
+    /**
+     * Contains the surface where the camera preview is drawn into
+     */
     private SurfaceHolder mHolder;
+
+    /**
+     * Service provider that handles the camera object
+     */
+    private CameraService mCameraService;
 
     public CameraSourcePreview(Context context, AttributeSet attrs) {
         super(context, attrs);
         Log.d(TAG,"CameraSourcePreview");
+        mCameraService = CameraService.getInstance();
 
         SurfaceView mSurfaceView = new SurfaceView(context);
         addView(mSurfaceView);
@@ -95,14 +102,5 @@ public class CameraSourcePreview extends ViewGroup implements SurfaceHolder.Call
             // Call stopPreview() to stop updating the preview surface.
             mCameraService.releaseCamera();
         }
-    }
-
-    /**
-     * When this function returns, mCamera will be null.
-     */
-    public void setCamera(CameraService cameraService) {
-        mCameraService = cameraService;
-        mCameraService.initCamera();
-        requestLayout();
     }
 }

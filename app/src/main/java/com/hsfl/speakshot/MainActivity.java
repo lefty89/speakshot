@@ -1,5 +1,10 @@
 package com.hsfl.speakshot;
 
+import com.hsfl.speakshot.service.audio.AudioService;
+import com.hsfl.speakshot.service.camera.CameraService;
+import com.hsfl.speakshot.ui.ReadFragment;
+import com.hsfl.speakshot.ui.SearchFragment;
+
 import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -12,16 +17,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ToggleButton;
-import com.hsfl.speakshot.service.audio.AudioService;
-import com.hsfl.speakshot.service.camera.CameraService;
-import com.hsfl.speakshot.ui.CameraSourcePreview;
-import com.hsfl.speakshot.ui.ReadFragment;
-import com.hsfl.speakshot.ui.SearchFragment;
 
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Observable;
-import java.util.Observer;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -42,16 +38,6 @@ public class MainActivity extends AppCompatActivity {
      */
     public CameraService mCameraService;
 
-    /**
-     * Service provider that handles the ocr handlig
-     */
-    public AudioService mAudioService;
-
-    /**
-     * Target surface to draw the camera view into
-     */
-    private CameraSourcePreview mPreview;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,16 +47,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        // background camera view
-        mPreview = (CameraSourcePreview)findViewById(R.id.camera_view);
         // request camera permission.
         int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
         if (rc == PackageManager.PERMISSION_GRANTED) {
             final Context context = getApplicationContext();
-            // initializes the camera service
-            mCameraService = new CameraService.Builder(context).setFacing(android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK).build();
+            // gets the CameraService
+            mCameraService = CameraService.getInstance();
             // initializes the audio service
-            mAudioService = new AudioService.Builder(context).setSpeechRate(0).setPitch(0).setLocale(Locale.GERMAN).build();
+            AudioService.getInstance().init(context);
         }
 
         // switch button to change the mode
@@ -86,7 +70,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mPreview.setCamera(mCameraService);
+        // init the camera
+        mCameraService.initCamera(getApplicationContext());
     }
 
     @Override

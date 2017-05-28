@@ -3,6 +3,7 @@ package com.hsfl.speakshot.ui;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.graphics.Camera;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,11 @@ public class ReadFragment extends Fragment implements Observer {
     private View mInflatedView;
 
     /**
+     * Service provider that handles the camera object
+     */
+    private CameraService mCameraService;
+
+    /**
      * contains the returned ocr texts
      */
     private ArrayList<String> detectedTexts;
@@ -34,16 +40,16 @@ public class ReadFragment extends Fragment implements Observer {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mInflatedView = inflater.inflate(R.layout.read_fragment, container, false);
 
-        final CameraService cameraService = ((MainActivity)getActivity()).mCameraService;
+        mCameraService = CameraService.getInstance();
         // adds an observer for the text recognizer
-        cameraService.addObserver(this);
-        cameraService.startPreview();
+        mCameraService.addObserver(this);
+        mCameraService.startPreview();
 
         // take picture
         final Button picButton = (Button)mInflatedView.findViewById(R.id.btn_take_picture);
         picButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                cameraService.analyzePicture();
+                mCameraService.analyzePicture();
             }
         });
 
@@ -71,7 +77,7 @@ public class ReadFragment extends Fragment implements Observer {
         final ToggleButton lightSwitch = (ToggleButton)mInflatedView.findViewById(R.id.btn_light_toggle);
         lightSwitch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                cameraService.toggleLight();
+                mCameraService.toggleLight();
             }
         });
 
@@ -96,11 +102,7 @@ public class ReadFragment extends Fragment implements Observer {
             mInflatedView.findViewById(R.id.btn_show_results).setEnabled(true);
         } else {
             Toast.makeText(getActivity().getApplicationContext(), "Nothing found", Toast.LENGTH_LONG).show();
-            ((MainActivity)getActivity()).mCameraService.startPreview();
+            mCameraService.startPreview();
         }
-
-
-
-
     }
 }

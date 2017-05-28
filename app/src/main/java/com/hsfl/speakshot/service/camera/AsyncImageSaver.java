@@ -1,14 +1,12 @@
 package com.hsfl.speakshot.service.camera;
 
-import android.content.Context;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.os.Handler;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,24 +14,26 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * Saves the image
+ * Saves the image asynchronously
  */
 class AsyncImageSaver extends AsyncTask<byte[], Void, Void> {
-    private static final String TAG = CameraService.class.getSimpleName();
+    private static final String TAG = AsyncImageSaver.class.getSimpleName();
 
     /**
-     * the camera orientation on which amout the image is rotated
+     * File name and path of where to save the image
      */
     private String mImageName;
     private String mPathOnStorage;
-    private int mOrientation = 0;
-    private Context mContext;
 
-    AsyncImageSaver(Context context, int orientation, String path, String name) {
+    /**
+     * The camera orientation on which amount the image is rotated
+     */
+    private int mOrientation = 0;
+
+    AsyncImageSaver(int orientation, String path, String name) {
         mOrientation = orientation;
         mPathOnStorage = path;
         mImageName = name;
-        mContext = context;
     }
 
     @Override
@@ -74,7 +74,5 @@ class AsyncImageSaver extends AsyncTask<byte[], Void, Void> {
     }
 
     @Override
-    protected void onPostExecute(Void result) {
-        Toast.makeText(mContext, "Image saved on external storage", Toast.LENGTH_LONG).show();
-    }
+    protected void onPostExecute(Void result) {}
 }

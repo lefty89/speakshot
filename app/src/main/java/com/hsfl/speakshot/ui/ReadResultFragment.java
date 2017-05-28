@@ -24,6 +24,11 @@ public class ReadResultFragment extends Fragment {
     private View mInflatedView;
 
     /**
+     * Service provider that handles the camera object
+     */
+    private AudioService mAudioService;
+
+    /**
      * the paging counter
      */
     private int counter = 0;
@@ -41,7 +46,8 @@ public class ReadResultFragment extends Fragment {
         detectedTexts = this.getArguments().getStringArrayList("texts");
         updateTextView();
 
-        final AudioService audioService = ((MainActivity)getActivity()).mAudioService;
+        // gets the AudioService
+        mAudioService = AudioService.getInstance();
 
         // close view
         final Button closeButton = (Button)mInflatedView.findViewById(R.id.read_fragment_close);
@@ -80,7 +86,7 @@ public class ReadResultFragment extends Fragment {
         final Button playButton = (Button)mInflatedView.findViewById(R.id.read_fragment_play);
         playButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                audioService.speak(detectedTexts.get(counter));
+                mAudioService.speak(detectedTexts.get(counter));
             }
         });
 
