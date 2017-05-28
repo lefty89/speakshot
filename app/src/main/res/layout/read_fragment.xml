@@ -10,23 +10,28 @@
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" android:gravity="bottom">
+            android:layout_height="match_parent"
+            android:gravity="bottom">
         <Button
             android:text="Take picture"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/btn_take_picture" android:layout_weight="1"/>
+            android:id="@+id/btn_take_picture"
+            android:layout_weight="1"/>
         <Button
             android:text="Show Results"
             android:enabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/btn_show_results" android:layout_weight="1"/>
+            android:id="@+id/btn_show_results"
+            android:layout_weight="1"/>
         <ToggleButton
-            android:text="Light Toggle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/btn_light_toggle" android:layout_weight="1"/>
+            android:id="@+id/btn_light_toggle"
+            android:textOff="Light on"
+            android:textOn="Light off"
+            android:layout_weight="1"/>
     </LinearLayout>
 </FrameLayout>
 
