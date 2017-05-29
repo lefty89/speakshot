@@ -38,7 +38,6 @@ public class ReadResultFragment extends Fragment {
      */
     private ArrayList<String> detectedTexts;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mInflatedView = inflater.inflate(R.layout.read_result_fragment, container, false);
@@ -97,8 +96,9 @@ public class ReadResultFragment extends Fragment {
      * updates the text view
      */
     private void updateTextView() {
-        // text view
-        final TextView textOutput = (TextView)mInflatedView.findViewById(R.id.read_fragment_orc_output);
-        textOutput.setText(detectedTexts.get(counter));
+        final TextView resultText = (TextView)mInflatedView.findViewById(R.id.txt_sections_result);
+        resultText.setText(detectedTexts.get(counter));
+        final TextView headerText = (TextView)mInflatedView.findViewById(R.id.txt_sections_header);
+        headerText.setText(String.format("Section %1s of %2s", counter+1, detectedTexts.size()));
     }
 }

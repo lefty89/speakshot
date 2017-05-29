@@ -4,16 +4,27 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/darker_gray" android:weightSum="1">
+        android:background="@android:color/darker_gray"
+        android:weightSum="1">
 
     <TextView
-            android:id="@+id/read_fragment_orc_output"
-            android:text="Text"
-            android:layout_width="match_parent"
-            android:layout_height="451dp" android:padding="10dp"
-            android:paddingBottom="10dp" android:paddingEnd="10dp" android:paddingLeft="10dp"
-            android:paddingRight="10dp" android:paddingStart="10dp" android:paddingTop="10dp"
-            android:layout_weight="0.99"/>
+        android:text="Section 0/0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_sections_header"
+        android:padding="10dp"
+        android:layout_weight="0.01"
+        android:textStyle="bold"
+        android:background="@drawable/sections_header"/>
+
+    <TextView
+        android:id="@+id/txt_sections_result"
+        android:text="No sections found"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:layout_weight="0.99" />
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"

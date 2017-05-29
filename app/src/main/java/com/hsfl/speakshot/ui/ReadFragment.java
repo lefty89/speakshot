@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
 import com.hsfl.speakshot.service.camera.CameraService;
 
