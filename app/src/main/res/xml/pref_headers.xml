@@ -8,13 +8,13 @@
         android:title="@string/pref_header_general" />
 
     <header
-        android:fragment="com.hsfl.speakshot.SettingsActivity$NotificationPreferenceFragment"
+        android:fragment="com.hsfl.speakshot.SettingsActivity$CameraPreferenceFragment"
         android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="@string/pref_header_notifications" />
+        android:title="@string/pref_header_camera" />
 
     <header
-        android:fragment="com.hsfl.speakshot.SettingsActivity$DataSyncPreferenceFragment"
+        android:fragment="com.hsfl.speakshot.SettingsActivity$AppearancePreferenceFragment"
         android:icon="@drawable/ic_sync_black_24dp"
-        android:title="@string/pref_header_data_sync" />
+        android:title="@string/pref_header_appearance" />
 
 </preference-headers>
