@@ -84,18 +84,11 @@ public class MainActivity extends AppCompatActivity {
      * @param b either MODE_READ or MODE_SEARCH
      */
     private void setAppMode(boolean b) {
-
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
-
         // gets the fragment
         Fragment fragment = (b) ? new SearchFragment() : new ReadFragment();
-
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack so the user can navigate back
         ft.replace(R.id.fragment_container, fragment);
-        ft.addToBackStack(null);
-
         // Commit the transaction
         ft.commit();
     }

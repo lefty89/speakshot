@@ -64,11 +64,7 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
                 fragment.setArguments(bundle);
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction ft = fragmentManager.beginTransaction();
-                // Replace whatever is in the fragment_container view with this fragment,
-                // and add the transaction to the back stack so the user can navigate back
                 ft.replace(R.id.fragment_container, fragment);
-                ft.addToBackStack(null);
-                // Commit the transaction
                 ft.commit();
             }
         });
