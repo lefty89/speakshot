@@ -9,14 +9,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
 import com.hsfl.speakshot.service.camera.CameraService;
-import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -70,16 +67,17 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
     @Override
     public void update(Observable o, Object arg) {
         // gets the detected texts
-        ArrayList<String> texts = ((Bundle) arg).getStringArrayList("texts");
-        if (texts != null) {
-            if (texts.size() > 0) {
-                for (int i = 0; i < texts.size(); i++) {
-                    if (texts.get(i).contains(searchTerm)) {
-                        Toast.makeText(getActivity().getApplicationContext(), "Term " + searchTerm + " found", Toast.LENGTH_SHORT).show();
-                        ((Vibrator) getActivity().getApplication().getSystemService(android.content.Context.VIBRATOR_SERVICE)).vibrate(800);
-                    }
-                }
-            }
+        String text = ((Bundle)arg).getString("text");
+        if (text != null) {
+            Toast.makeText(getActivity().getApplicationContext(), "Term '" + searchTerm + "' found within " + "'" + text + "'", Toast.LENGTH_SHORT).show();
+            ((Vibrator) getActivity().getApplication().getSystemService(android.content.Context.VIBRATOR_SERVICE)).vibrate(800);
+            searchTerm = "";
+            mCameraService.analyseStream(searchTerm);
+        }
+        // toasts the snapshot path
+        String snapshot = ((Bundle)arg).getString("snapshot");
+        if (snapshot != null) {
+            Toast.makeText(getActivity().getApplicationContext(), "Snapshot saved to: " + snapshot, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -97,7 +95,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
                             // start searching
                             searchTerm = txt.getText().toString();
                             if (!searchTerm.equals("")) {
-                                mCameraService.analyseStream();
+                                mCameraService.analyseStream(searchTerm);
                                 Toast.makeText(getActivity().getApplicationContext(), "Searching for: " + searchTerm, Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -110,7 +108,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         } else {
             // stop searching
             searchTerm = "";
-            mCameraService.analyseStream();
+            mCameraService.analyseStream(searchTerm);
             Toast.makeText(getActivity().getApplicationContext(), "Stop searching", Toast.LENGTH_SHORT).show();
         }
 

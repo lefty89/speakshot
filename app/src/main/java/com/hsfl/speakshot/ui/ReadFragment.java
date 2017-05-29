@@ -35,11 +35,6 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
      */
     private ArrayList<String> detectedTexts;
 
-    /**
-     * the current image as raw bytes
-     */
-    private byte[] capturedImage;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mInflatedView = inflater.inflate(R.layout.read_fragment, container, false);
@@ -88,7 +83,6 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
 
     @Override
     public void update(Observable o, Object arg) {
-
         // gets the detected texts
         ArrayList<String> texts = ((Bundle)arg).getStringArrayList("texts");
         if (texts != null) {
@@ -100,11 +94,10 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
                 Toast.makeText(getActivity().getApplicationContext(), "Nothing found", Toast.LENGTH_SHORT).show();
             }
         }
-
-        // gets the captured image
-        byte[] image = ((Bundle)arg).getByteArray("image");
-        if (image != null) {
-            capturedImage = image;
+        // toasts the snapshot path
+        String snapshot = ((Bundle)arg).getString("snapshot");
+        if (snapshot != null) {
+            Toast.makeText(getActivity().getApplicationContext(), "Snapshot saved to: " + snapshot, Toast.LENGTH_SHORT).show();
         }
     }
 

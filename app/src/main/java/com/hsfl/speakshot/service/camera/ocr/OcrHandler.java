@@ -11,13 +11,12 @@ import android.util.Log;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextRecognizer;
-import com.hsfl.speakshot.helper.Debouncer;
-import com.hsfl.speakshot.service.camera.ocr.processor.TextBlockProcessor;
-import java.io.File;
+import com.hsfl.speakshot.service.camera.ocr.processor.RetrieveAllProcessor;
+import com.hsfl.speakshot.service.camera.ocr.processor.FindTermProcessor;
+
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class OcrHandler implements Camera.PreviewCallback {
     private static final String TAG = OcrHandler.class.getSimpleName();
@@ -64,6 +63,11 @@ public class OcrHandler implements Camera.PreviewCallback {
     private FrameProcessingRunnable mFrameProcessor;
 
     /**
+     * Tracks the time between two image receive events
+     */
+    private long mTimeTracker;
+
+    /**
      * constructor
      */
     public OcrHandler(final Context context, Camera camera, int rotation, Handler handler) {
@@ -77,7 +81,6 @@ public class OcrHandler implements Camera.PreviewCallback {
 
             // create the TextRecognizer
             mTextRecognizer = new TextRecognizer.Builder(context).build();
-            mTextRecognizer.setProcessor(new TextBlockProcessor(handler));
 
             // connecting the frame processor
             mFrameProcessor = new FrameProcessingRunnable(mTextRecognizer);
@@ -85,76 +88,42 @@ public class OcrHandler implements Camera.PreviewCallback {
     }
 
     /**
-     * Stops the camera and releases the resources of the camera and underlying detector.
-     */
-    public void release() {
-        synchronized (mCameraLock) {
-            stopOcrDetector();
-            mFrameProcessor.release();
-        }
-    }
-
-    /**
      * Analyzes a given image
-     * @param name
-     */
-    public void ocrSingleImage(String name) {
-        synchronized (mCameraLock) {
-            File file = new File(name);
-            if(file.exists() && file.canRead()) {
-
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-                Bitmap bmp = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-
-                Frame.Builder fb = new Frame.Builder().setBitmap(bmp);
-                // use detector class
-                mTextRecognizer.receiveFrame(fb.build());
-                // DONT use detector class
-                //SparseArray<TextBlock> blocks = mTextRecognizer.detect(fb.build());
-            }
-        }
-    }
-
-    /**
-     * Analyzes a given image
-     * @param name
+     * @param data
      */
     public void ocrSingleImage(byte[] data) {
         synchronized (mCameraLock) {
-            Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-            Frame.Builder fb = new Frame.Builder()
+            Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+            Frame frame = new Frame.Builder()
+                    .setBitmap(bitmap)
                     .setRotation((mRotation / 90))
-                    .setBitmap(bmp);
-            // use detector class
-            mTextRecognizer.receiveFrame(fb.build());
-            notifyAboutImage(data);
+                    .build();
+
+            // retrieve all
+            mTextRecognizer.setProcessor(new RetrieveAllProcessor(mHandler, data, mRotation, mCamera.getParameters().getPictureSize().width, mCamera.getParameters().getPictureSize().height));
+
+            // start detection
+            mTextRecognizer.receiveFrame(frame);
         }
     }
-
-    /**
-     * toggleOcrDetector
-     */
-    public void toggleOcrDetector() {
-        if (mProcessingThread == null) {
-            Log.d(TAG, "start ocr detector");
-            startOcrDetector();
-        } else {
-            Log.d(TAG, "stop ocr detector");
-            stopOcrDetector();
-        }
-    }
-
     /**
      * startOcrStream
+     * @param searchTerm
      */
-    private void startOcrDetector() {
+    public void startOcrDetector(String searchTerm) {
         synchronized (mCameraLock) {
+            // ocr start time
+            mTimeTracker = SystemClock.elapsedRealtime();
+
             // creates preview buffers
-            mCamera.addCallbackBuffer(createPreviewBuffer(
+            byte[] buffer = createPreviewBuffer(
                 mCamera.getParameters().getPreviewSize().width,
                 mCamera.getParameters().getPreviewSize().height
-            ));
+            );
+            mCamera.addCallbackBuffer(buffer);
+
+            // sets the search processor
+            mTextRecognizer.setProcessor(new FindTermProcessor(mHandler, buffer, mRotation, mCamera.getParameters().getPreviewSize().width, mCamera.getParameters().getPreviewSize().height, searchTerm));
 
             // start processor
             mProcessingThread = new Thread(mFrameProcessor);
@@ -173,7 +142,7 @@ public class OcrHandler implements Camera.PreviewCallback {
      * Call {@link #release()} instead to completely shut down this camera source and release the
      * resources of the underlying detector.
      */
-    private void stopOcrDetector() {
+    public void stopOcrDetector() {
         synchronized (mCameraLock) {
             mFrameProcessor.setActive(false);
             if (mProcessingThread != null) {
@@ -189,6 +158,16 @@ public class OcrHandler implements Camera.PreviewCallback {
             }
             // clear the buffer to prevent oom exceptions
             mBytesToByteBuffer.clear();
+        }
+    }
+
+    /**
+     * Stops the camera and releases the resources of the camera and underlying detector.
+     */
+    public void releaseOcrDetector() {
+        synchronized (mCameraLock) {
+            stopOcrDetector();
+            mFrameProcessor.release();
         }
     }
 
@@ -222,7 +201,7 @@ public class OcrHandler implements Camera.PreviewCallback {
     }
 
     /**
-     * returns the captured image back to the camera service
+     * Returns the captured image back to the camera service
      * @param image
      */
     private void notifyAboutImage(byte[] image) {
@@ -245,13 +224,15 @@ public class OcrHandler implements Camera.PreviewCallback {
      */
     @Override
     public void onPreviewFrame(final byte[] data, final Camera camera) {
-        final Debouncer debouncer = new Debouncer();
-        debouncer.debounce(Void.class, new Runnable() {
-            @Override public void run() {
-                mFrameProcessor.setNextFrame(data, camera);
-                notifyAboutImage(data);
+        if ((SystemClock.elapsedRealtime() - mTimeTracker) >= mDebounceTime) {
+            mTimeTracker = SystemClock.elapsedRealtime();
+            mFrameProcessor.setNextFrame(data, camera);
+        } else {
+            // clears the byte buffer
+            if (mBytesToByteBuffer.size() > 0) {
+                camera.addCallbackBuffer(mBytesToByteBuffer.get(data).array());
             }
-        }, mDebounceTime, TimeUnit.MILLISECONDS);
+        }
     }
 
     /**
@@ -320,6 +301,8 @@ public class OcrHandler implements Camera.PreviewCallback {
                 mPendingFrameId++;
                 mPendingFrameData = mBytesToByteBuffer.get(data);
 
+
+
                 // Notify the processor thread if it is waiting on the next frame (see below).
                 mLock.notifyAll();
             }
@@ -348,8 +331,7 @@ public class OcrHandler implements Camera.PreviewCallback {
                 synchronized (mLock) {
                     while (mActive && (mPendingFrameData == null)) {
                         try {
-                            // Wait for the next frame to be received from the camera, since we
-                            // don't have it yet.
+                            // Wait for the next frame to be received from the camera, since we don't have it yet.
                             mLock.wait();
                         } catch (InterruptedException e) {
                             Log.d(TAG, "Frame processing loop terminated.", e);
@@ -364,13 +346,13 @@ public class OcrHandler implements Camera.PreviewCallback {
                         // loop.
                         return;
                     }
+
                     outputFrame = new Frame.Builder()
                             .setImageData(mPendingFrameData, mCamera.getParameters().getPreviewSize().width, mCamera.getParameters().getPreviewSize().height, ImageFormat.NV21)
                             .setId(mPendingFrameId)
                             .setTimestampMillis(mPendingTimeMillis)
                             .setRotation((mRotation / 90))
                             .build();
-
                     // Hold onto the frame data locally, so that we can use this for detection
                     // below.  We need to clear mPendingFrameData to ensure that this buffer isn't
                     // recycled back to the camera before we are done using that data.
@@ -381,7 +363,6 @@ public class OcrHandler implements Camera.PreviewCallback {
                 // The code below needs to run outside of synchronization, because this will allow
                 // the camera to add pending frame(s) while we are running detection on the current
                 // frame.
-
                 try {
                     mDetector.receiveFrame(outputFrame);
                 } catch (Throwable t) {

@@ -1,22 +1,17 @@
 package com.hsfl.speakshot.service.camera;
 
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
+import android.graphics.*;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Saves the image asynchronously
  */
-class AsyncImageSaver extends AsyncTask<byte[], Void, Void> {
+public class AsyncImageSaver extends AsyncTask<byte[], Void, Void> {
     private static final String TAG = AsyncImageSaver.class.getSimpleName();
 
     /**
@@ -29,11 +24,30 @@ class AsyncImageSaver extends AsyncTask<byte[], Void, Void> {
      * The camera orientation on which amount the image is rotated
      */
     private int mOrientation = 0;
+    private int mWidth = 0;
+    private int mHeight = 0;
+    private int mFormat = 0;
 
-    AsyncImageSaver(int orientation, String path, String name) {
+    public AsyncImageSaver(int format, int orientation, int width, int height, String path, String name) {
+        mFormat = format;
         mOrientation = orientation;
+        mWidth = width;
+        mHeight = height;
         mPathOnStorage = path;
         mImageName = name;
+    }
+
+    /**
+     * Converts a NV21 image from the camera to a jpeg encoded bitmap
+     * @param data
+     * @return
+     */
+    private Bitmap decodeFromYuv(byte[] data) {
+        YuvImage yuvImage = new YuvImage(data, ImageFormat.NV21, mWidth, mHeight, null);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        yuvImage.compressToJpeg(new Rect(0, 0, mWidth, mHeight), 100, os);
+        byte[] jpegByteArray = os.toByteArray();
+        return BitmapFactory.decodeByteArray(jpegByteArray, 0, jpegByteArray.length);
     }
 
     @Override
@@ -48,7 +62,10 @@ class AsyncImageSaver extends AsyncTask<byte[], Void, Void> {
             File outFile = new File(dir, mImageName);
             outStream = new FileOutputStream(outFile);
             try {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(data[0], 0, data[0].length);
+                Bitmap bitmap = (mFormat == ImageFormat.NV21) ?
+                        decodeFromYuv(data[0]) :
+                        BitmapFactory.decodeByteArray(data[0], 0, data[0].length);
+
                 Matrix matrix = new Matrix();
                 matrix.setRotate(mOrientation);
 

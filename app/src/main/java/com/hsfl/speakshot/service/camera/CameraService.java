@@ -40,12 +40,6 @@ public class CameraService extends Observable {
     private Size mPreviewSize;
 
     /**
-     * image storage path
-     */
-    private static final String mImageName     = "img.jpg";
-    private static final String mPathOnStorage = "/camtest"; // "/data/data/com.hsfl.speakshot"
-
-    /**
      * the camera and info object
      */
     public Camera mCamera;
@@ -96,7 +90,7 @@ public class CameraService extends Observable {
     }
 
     /**
-     * Takes a picture
+     * Snaps a new image and analyze it immediately
      */
     public void analyzePicture() {
 
@@ -110,20 +104,11 @@ public class CameraService extends Observable {
             Camera.PictureCallback jpegCallback = new Camera.PictureCallback() {
                 public void onPictureTaken(byte[] data, Camera camera) {
 
-                    // saves the image asynchronously to the external storage
-                    new AsyncImageSaver(mCameraInfo.orientation, mPathOnStorage, mImageName).execute(data);
-
                     // starts the ocr for this image
                     mOcrHandler.ocrSingleImage(data);
 
                     // restarts the background preview
                     startPreview();
-
-                    // notifies the observer of the new image
-                    Bundle b = new Bundle();
-                    b.putByteArray("image", data);
-                    setChanged();
-                    notifyObservers(b);
                 }
             };
             mCamera.takePicture(shutterCallback, rawCallback, jpegCallback);
@@ -131,26 +116,20 @@ public class CameraService extends Observable {
     }
 
     /**
-     * Takes a picture
+     * Analyzes the images from the preview surface
      */
-    public void analyseImage() {
+    public void analyseStream(String searchTerm) {
         if (mOcrHandler != null) {
-            File sd = Environment.getExternalStorageDirectory();
-            mOcrHandler.ocrSingleImage((sd + mPathOnStorage + "/" + mImageName));
+            if (!searchTerm.isEmpty()) {
+                mOcrHandler.startOcrDetector(searchTerm);
+            } else {
+                mOcrHandler.stopOcrDetector();
+            }
         }
     }
 
     /**
-     * Takes a picture
-     */
-    public void analyseStream() {
-        if (mOcrHandler != null) {
-            mOcrHandler.toggleOcrDetector();
-        }
-    }
-
-    /**
-     * Starts updating the preview surface
+     * Setting up the camera and registers the ocr processor
      */
     public void initCamera(Context context) {
 
@@ -206,10 +185,8 @@ public class CameraService extends Observable {
                 // initializes the ocr engine
                 mOcrHandler = new OcrHandler(context, mCamera, displayOrientation, new Handler() {
                     public void handleMessage(Message msg) {
-                        if (msg.what == 1) {
-                            setChanged();
-                            notifyObservers(msg.getData());
-                        }
+                        setChanged();
+                        notifyObservers(msg.getData());
                         super.handleMessage(msg);
                     }
                 });
@@ -222,11 +199,14 @@ public class CameraService extends Observable {
     }
 
     /**
-     * Stops updating the preview surface
+     * Stops previewing and releases the camera object
      */
     public void releaseCamera() {
 
         if (mCamera != null) {
+            // releases the ocr detector
+            mOcrHandler.releaseOcrDetector();
+
             // Call stopPreview() to stop updating the preview surface.
             mCamera.stopPreview();
 
@@ -240,6 +220,15 @@ public class CameraService extends Observable {
     }
 
     /**
+     * Stops updating the preview surface
+     */
+    public void stopPreview() {
+        if (mCamera != null) {
+            mCamera.stopPreview();
+        }
+    }
+
+    /**
      * Starts updating the preview surface
      */
     public void startPreview() {
@@ -249,16 +238,7 @@ public class CameraService extends Observable {
     }
 
     /**
-     * Starts updating the preview surface
-     */
-    public void stopPreview() {
-        if (mCamera != null) {
-            mCamera.stopPreview();
-        }
-    }
-
-    /**
-     * Toggles the camera light
+     * Toggles the camera flashlight
      */
     public void setFlashLightEnabled(boolean b) {
         if (mCamera != null) {
@@ -266,25 +246,26 @@ public class CameraService extends Observable {
             String lightState = (b) ? Camera.Parameters.FLASH_MODE_TORCH : Camera.Parameters.FLASH_MODE_OFF;
             params.setFlashMode(lightState);
             mCamera.setParameters(params);
-            mCamera.startPreview();
         }
-
     }
 
     /**
-     * Toggles the camera light
+     * Checks whether the flashlight is currently enabled
      */
     public boolean isFlashLightEnabled() {
         boolean b = false;
         if (mCamera != null) {
             Camera.Parameters params = mCamera.getParameters();
-            b = (params.getFlashMode().equals(Camera.Parameters.FLASH_MODE_TORCH));
+            String fm = params.getFlashMode();
+            if (fm != null) {
+                b = (fm.equals(Camera.Parameters.FLASH_MODE_TORCH));
+            }
         }
         return b;
     }
 
     /**
-     * Sets the display orientation (automatically adds the camera default rotation)
+     * Gets the display orientation
      */
     private int getDisplayOrientation(Context context) {
         int ori = 0;
@@ -300,7 +281,7 @@ public class CameraService extends Observable {
     }
 
     /**
-     * safeCameraOpen
+     * Safely opens the camera object
      * @param id
      * @return
      */
@@ -320,7 +301,7 @@ public class CameraService extends Observable {
     }
 
     /**
-     * getIdForRequestedCamera
+     * Gets the id for the requested camera if existing
      * @param facing
      * @return
      */
