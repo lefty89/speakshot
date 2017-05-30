@@ -57,7 +57,6 @@ public class ReadResultFragment extends Fragment {
                 // Replace whatever is in the fragment_container view with this fragment,
                 // and add the transaction to the back stack so the user can navigate back
                 ft.replace(R.id.fragment_container, (new ReadFragment()));
-                ft.addToBackStack(null);
                 // Commit the transaction
                 ft.commit();
             }
