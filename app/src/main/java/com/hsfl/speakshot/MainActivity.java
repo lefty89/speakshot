@@ -9,6 +9,7 @@ import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ToggleButton;
+import android.widget.Button;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -63,6 +65,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         setAppMode(MODE_READ);
+
+        // button to show the settings activity
+        final Button settingsButton = (Button)findViewById(R.id.btn_settings);
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                showSettings();
+            }
+        });
     }
 
     @Override
@@ -91,5 +101,13 @@ public class MainActivity extends AppCompatActivity {
         ft.replace(R.id.fragment_container, fragment);
         // Commit the transaction
         ft.commit();
+    }
+
+    /**
+     * shows the settings activity
+     */
+    private void showSettings() {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 }

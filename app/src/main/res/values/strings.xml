@@ -1,3 +1,69 @@
 <resources>
     <string name="app_name">SpeakShot</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- general settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_audio_output_switch">Enable audio output</string>
+    <string name="pref_description_audio_output_switch">Allows the app to output audio
+        for text and instructions.
+    </string>
+
+    <string name="pref_title_vibration_switch">Enable vibration</string>
+    <string name="pref_description_vibration_switch">Allows the app to give tactile feedback.</string>
+
+    <!-- appearance settings -->
+    <string name="pref_header_appearance">Appearance</string>
+
+    <string name="pref_title_theme">Theme</string>
+    <string-array name="pref_theme_titles">
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+    <string-array name="pref_theme_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string name="pref_title_font_size">Font size</string>
+    <string-array name="pref_font_size_titles">
+        <item>Normal</item>
+        <item>Large</item>
+        <item>Extra Large</item>
+    </string-array>
+    <string-array name="pref_font_size_values">
+        <item>15</item>
+        <item>25</item>
+        <item>35</item>
+    </string-array>
+
+    <!-- camera settings -->
+    <string name="pref_header_camera">Camera</string>
+
+    <string name="pref_title_resolution">Resolution</string>
+    <string-array name="pref_resolution_titles">
+        <item>Normal</item>
+        <item>Higher</item>
+        <item>Highest</item>
+    </string-array>
+    <string-array name="pref_resolution_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string name="pref_title_frame_rate">Frame rate</string>
+    <string-array name="pref_frame_rate_titles">
+        <item>Low</item>
+        <item>Normal</item>
+        <item>High</item>
+    </string-array>
+    <string-array name="pref_frame_rate_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 </resources>
