@@ -198,25 +198,6 @@ public class OcrHandler implements Camera.PreviewCallback {
     }
 
     /**
-     * Returns the captured image back to the camera service
-     * @param image
-     */
-    private void notifyAboutImage(byte[] image) {
-
-        Bundle b = new Bundle();
-        b.putByteArray("image", image);
-
-        // create a message from the message handler to send it back to the main UI
-        Message msg = mHandler.obtainMessage();
-        //specify the type of message
-        msg.what = 1;
-        //attach the bundle to the message
-        msg.setData(b);
-        //send the message back to main UI thread
-        mHandler.sendMessage(msg);
-    }
-
-    /**
      * Called when the camera has a new preview frame.
      */
     @Override
