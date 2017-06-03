@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hsfl.speakshot.ui;
+package com.hsfl.speakshot.ui.surfaces;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -23,8 +23,8 @@ import com.hsfl.speakshot.service.camera.CameraService;
 
 import java.io.IOException;
 
-public class CameraSourcePreview extends ViewGroup implements SurfaceHolder.Callback {
-    private static final String TAG = CameraSourcePreview.class.getSimpleName();
+public class CameraPreviewSurface extends ViewGroup implements SurfaceHolder.Callback {
+    private static final String TAG = CameraPreviewSurface.class.getSimpleName();
 
     /**
      * Contains the surface where the camera preview is drawn into
@@ -36,9 +36,8 @@ public class CameraSourcePreview extends ViewGroup implements SurfaceHolder.Call
      */
     private CameraService mCameraService;
 
-    public CameraSourcePreview(Context context, AttributeSet attrs) {
+    public CameraPreviewSurface(Context context, AttributeSet attrs) {
         super(context, attrs);
-        Log.d(TAG,"CameraSourcePreview");
         mCameraService = CameraService.getInstance();
 
         SurfaceView mSurfaceView = new SurfaceView(context);
