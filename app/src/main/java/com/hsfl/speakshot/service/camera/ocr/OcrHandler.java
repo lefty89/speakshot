@@ -32,11 +32,6 @@ public class OcrHandler implements Camera.PreviewCallback {
     private int mRotation = 0;
 
     /**
-     * Time in milliseconds to throw until analyzing the next image
-     */
-    private final int mDebounceTime = 3000;
-
-    /**
      * Map to convert between a byte array, received from the camera, and its associated byte
      * buffer.  We use byte buffers internally because this is a more efficient way to call into
      * native code later (avoids a potential copy).
@@ -59,11 +54,6 @@ public class OcrHandler implements Camera.PreviewCallback {
      */
     private Thread mProcessingThread;
     private FrameProcessingRunnable mFrameProcessor;
-
-    /**
-     * Tracks the time between two image receive events
-     */
-    private long mTimeTracker;
 
     /**
      * constructor
@@ -109,9 +99,6 @@ public class OcrHandler implements Camera.PreviewCallback {
      */
     public void startOcrDetector(String searchTerm) {
         synchronized (mCameraLock) {
-            // ocr start time
-            mTimeTracker = SystemClock.elapsedRealtime();
-
             // creates preview buffers
             byte[] buffer = createPreviewBuffer(
                 mCamera.getParameters().getPreviewSize().width,
@@ -202,15 +189,7 @@ public class OcrHandler implements Camera.PreviewCallback {
      */
     @Override
     public void onPreviewFrame(final byte[] data, final Camera camera) {
-        if ((SystemClock.elapsedRealtime() - mTimeTracker) >= mDebounceTime) {
-            mTimeTracker = SystemClock.elapsedRealtime();
-            mFrameProcessor.setNextFrame(data, camera);
-        } else {
-            // clears the byte buffer
-            if (mBytesToByteBuffer.size() > 0) {
-                camera.addCallbackBuffer(mBytesToByteBuffer.get(data).array());
-            }
-        }
+        mFrameProcessor.setNextFrame(data, camera);
     }
 
     /**
