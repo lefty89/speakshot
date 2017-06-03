@@ -62,9 +62,7 @@ public class AsyncImageSaver extends AsyncTask<byte[], Void, Void> {
             File outFile = new File(dir, mImageName);
             outStream = new FileOutputStream(outFile);
             try {
-                Bitmap bitmap = (mFormat == ImageFormat.NV21) ?
-                        decodeFromYuv(data[0]) :
-                        BitmapFactory.decodeByteArray(data[0], 0, data[0].length);
+                Bitmap bitmap = (mFormat == ImageFormat.NV21) ? decodeFromYuv(data[0]) : BitmapFactory.decodeByteArray(data[0], 0, data[0].length);
 
                 Matrix matrix = new Matrix();
                 matrix.setRotate(mOrientation);

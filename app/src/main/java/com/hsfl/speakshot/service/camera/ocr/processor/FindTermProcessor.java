@@ -27,6 +27,7 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
 import com.hsfl.speakshot.service.camera.AsyncImageSaver;
+
 /**
  * A very simple Processor which gets detected TextBlocks
  */
@@ -52,20 +53,16 @@ public class FindTermProcessor implements Detector.Processor<TextBlock> {
      * the images size
      */
     private int mOrientation = 0;
-    private int mWidth = 0;
-    private int mHeight = 0;
 
     /**
      * Constructor
      * @param handler
      */
-    public FindTermProcessor(Handler handler, byte[] buffer, int orientation, int width, int height, String searchTerm) {
+    public FindTermProcessor(Handler handler, byte[] buffer, int orientation, String searchTerm) {
         mSearchTerm = searchTerm;
         mCameraBuffer = buffer;
         mHandler = handler;
         mOrientation = orientation;
-        mWidth = width;
-        mHeight = height;
     }
 
     /**
@@ -117,7 +114,9 @@ public class FindTermProcessor implements Detector.Processor<TextBlock> {
             String snapshot = "img-" + SystemClock.elapsedRealtime() + ".jpg";
             // saves the image asynchronously to the external storage
             Frame.Metadata md = detections.getFrameMetadata();
-            new AsyncImageSaver(ImageFormat.NV21, mOrientation, mWidth, mHeight, "/camtest", snapshot).execute(mCameraBuffer);
+            // BUG Metadata's getFormat() returns -1 every time
+            // BUG getWidth() and getHeight() results are switched
+            new AsyncImageSaver(ImageFormat.NV21, mOrientation, md.getHeight(), md.getWidth(), "/camtest", snapshot).execute(mCameraBuffer);
             // returns the textblock that contains the search term
             sendResponseBundle(s, ("/camtest/"+snapshot));
         }

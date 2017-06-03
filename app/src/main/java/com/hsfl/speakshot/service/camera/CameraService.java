@@ -95,23 +95,15 @@ public class CameraService extends Observable {
     public void analyzePicture() {
 
         if (mCamera != null) {
-            Camera.ShutterCallback shutterCallback = new Camera.ShutterCallback() {
-                public void onShutter() {}
-            };
-            Camera.PictureCallback rawCallback = new Camera.PictureCallback() {
-                public void onPictureTaken(byte[] data, Camera camera) {}
-            };
-            Camera.PictureCallback jpegCallback = new Camera.PictureCallback() {
-                public void onPictureTaken(byte[] data, Camera camera) {
-
+            Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
+                public void onPreviewFrame(byte[] data, Camera camera) {
                     // starts the ocr for this image
                     mOcrHandler.ocrSingleImage(data);
-
                     // restarts the background preview
                     startPreview();
                 }
             };
-            mCamera.takePicture(shutterCallback, rawCallback, jpegCallback);
+            mCamera.setOneShotPreviewCallback(previewCallback);
         }
     }
 

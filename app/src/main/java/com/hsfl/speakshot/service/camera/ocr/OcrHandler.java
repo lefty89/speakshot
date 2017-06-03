@@ -2,8 +2,6 @@ package com.hsfl.speakshot.service.camera.ocr;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.os.*;
@@ -93,14 +91,13 @@ public class OcrHandler implements Camera.PreviewCallback {
      */
     public void ocrSingleImage(byte[] data) {
         synchronized (mCameraLock) {
-            Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
             Frame frame = new Frame.Builder()
-                    .setBitmap(bitmap)
+                    .setImageData(ByteBuffer.wrap(data), mCamera.getParameters().getPreviewSize().width, mCamera.getParameters().getPreviewSize().height, mCamera.getParameters().getPreviewFormat())
                     .setRotation((mRotation / 90))
                     .build();
 
             // retrieve all
-            mTextRecognizer.setProcessor(new RetrieveAllProcessor(mHandler, data, mRotation, mCamera.getParameters().getPictureSize().width, mCamera.getParameters().getPictureSize().height));
+            mTextRecognizer.setProcessor(new RetrieveAllProcessor(mHandler, data, mRotation));
 
             // start detection
             mTextRecognizer.receiveFrame(frame);
@@ -123,7 +120,7 @@ public class OcrHandler implements Camera.PreviewCallback {
             mCamera.addCallbackBuffer(buffer);
 
             // sets the search processor
-            mTextRecognizer.setProcessor(new FindTermProcessor(mHandler, buffer, mRotation, mCamera.getParameters().getPreviewSize().width, mCamera.getParameters().getPreviewSize().height, searchTerm));
+            mTextRecognizer.setProcessor(new FindTermProcessor(mHandler, buffer, mRotation, searchTerm));
 
             // start processor
             mProcessingThread = new Thread(mFrameProcessor);
@@ -348,7 +345,7 @@ public class OcrHandler implements Camera.PreviewCallback {
                     }
 
                     outputFrame = new Frame.Builder()
-                            .setImageData(mPendingFrameData, mCamera.getParameters().getPreviewSize().width, mCamera.getParameters().getPreviewSize().height, ImageFormat.NV21)
+                            .setImageData(mPendingFrameData, mCamera.getParameters().getPreviewSize().width, mCamera.getParameters().getPreviewSize().height, mCamera.getParameters().getPreviewFormat())
                             .setId(mPendingFrameId)
                             .setTimestampMillis(mPendingTimeMillis)
                             .setRotation((mRotation / 90))

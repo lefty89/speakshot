@@ -49,19 +49,14 @@ public class RetrieveAllProcessor implements Detector.Processor<TextBlock> {
      * the images size
      */
     private int mOrientation = 0;
-    private int mWidth = 0;
-    private int mHeight = 0;
-
     /**
      * Constructor
      * @param handler
      */
-    public RetrieveAllProcessor(Handler handler, byte[] buffer, int orientation, int width, int height) {
+    public RetrieveAllProcessor(Handler handler, byte[] buffer, int orientation) {
         mCameraBuffer = buffer;
         mHandler = handler;
         mOrientation = orientation;
-        mWidth = width;
-        mHeight = height;
     }
 
     /**
@@ -104,7 +99,9 @@ public class RetrieveAllProcessor implements Detector.Processor<TextBlock> {
         String snapshot = "img-" + SystemClock.elapsedRealtime() + ".jpg";
         // saves the image asynchronously to the external storage
         Frame.Metadata md = detections.getFrameMetadata();
-        new AsyncImageSaver(ImageFormat.JPEG, mOrientation, mWidth, mHeight, "/camtest", snapshot).execute(mCameraBuffer);
+        // BUG Metadata's getFormat() returns -1 every time
+        // BUG getWidth() and getHeight() results are switched
+        new AsyncImageSaver(ImageFormat.NV21, mOrientation, md.getHeight(), md.getWidth(), "/camtest", snapshot).execute(mCameraBuffer);
 
         sendResponseBundle(texts, ("/camtest/"+snapshot));
     }
