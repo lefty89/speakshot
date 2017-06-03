@@ -35,6 +35,9 @@ public class CameraService extends Observable {
      */
     private OcrHandler mOcrHandler;
 
+    /**
+     * Camera Lock
+     */
     private Object mCameraLock = new Object();
 
     /**
@@ -42,12 +45,11 @@ public class CameraService extends Observable {
      */
     private final int mRequestedPreviewWidth   = 1920;
     private final int mRequestedPreviewHeight  = 1080;
-    private Size mPreviewSize;
 
     /**
      * the camera and info object
      */
-    public Camera mCamera;
+    private Camera mCamera;
     private Camera.CameraInfo mCameraInfo;
 
     /**
@@ -145,7 +147,6 @@ public class CameraService extends Observable {
                 if (sizePair == null) {
                     throw new RuntimeException("Could not find suitable preview size.");
                 }
-                mPreviewSize = sizePair.previewSize();
 
                 // loads info for the selected camera
                 mCameraInfo = new Camera.CameraInfo();
@@ -159,7 +160,7 @@ public class CameraService extends Observable {
                     params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
                 }
                 // sets the size
-                params.setPreviewSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
+                params.setPreviewSize(sizePair.previewSize().getWidth(), sizePair.previewSize().getHeight());
 
                 // sets autofocus
                 if (mFocusMode != null) {
@@ -387,10 +388,8 @@ public class CameraService extends Observable {
      */
     private static List<SizePair> generateValidPreviewSizeList(Camera camera) {
         Camera.Parameters parameters = camera.getParameters();
-        List<android.hardware.Camera.Size> supportedPreviewSizes =
-                parameters.getSupportedPreviewSizes();
-        List<android.hardware.Camera.Size> supportedPictureSizes =
-                parameters.getSupportedPictureSizes();
+        List<android.hardware.Camera.Size> supportedPreviewSizes = parameters.getSupportedPreviewSizes();
+        List<android.hardware.Camera.Size> supportedPictureSizes = parameters.getSupportedPictureSizes();
         List<SizePair> validPreviewSizes = new ArrayList<>();
         for (android.hardware.Camera.Size previewSize : supportedPreviewSizes) {
             float previewAspectRatio = (float) previewSize.width / (float) previewSize.height;
