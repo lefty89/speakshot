@@ -1,8 +1,6 @@
 package com.hsfl.speakshot.ui;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -12,7 +10,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import com.hsfl.speakshot.R;
-import com.hsfl.speakshot.service.View.ViewService;
+import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.camera.CameraService;
 
 import java.util.*;

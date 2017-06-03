@@ -1,15 +1,12 @@
 package com.hsfl.speakshot;
 
-import com.hsfl.speakshot.service.View.ViewService;
+import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.audio.AudioService;
 import com.hsfl.speakshot.service.camera.CameraService;
 import com.hsfl.speakshot.ui.ReadFragment;
 import com.hsfl.speakshot.ui.SearchFragment;
 
 import android.Manifest;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;

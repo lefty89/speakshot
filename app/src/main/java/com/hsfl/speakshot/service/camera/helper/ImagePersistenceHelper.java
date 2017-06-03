@@ -1,9 +1,8 @@
-package com.hsfl.speakshot.service.camera;
+package com.hsfl.speakshot.service.camera.helper;
 
 
 import android.graphics.*;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.util.Log;
 
 import java.io.*;
@@ -11,8 +10,8 @@ import java.io.*;
 /**
  * Saves the image asynchronously
  */
-public class AsyncImageSaver extends AsyncTask<byte[], Void, Void> {
-    private static final String TAG = AsyncImageSaver.class.getSimpleName();
+public class ImagePersistenceHelper extends AsyncTask<byte[], Void, Void> {
+    private static final String TAG = ImagePersistenceHelper.class.getSimpleName();
 
     /**
      * File name and path of where to save the image
@@ -27,7 +26,7 @@ public class AsyncImageSaver extends AsyncTask<byte[], Void, Void> {
     private int mHeight = 0;
     private int mFormat = 0;
 
-    public AsyncImageSaver(int format, int orientation, int width, int height, String name) {
+    public ImagePersistenceHelper(int format, int orientation, int width, int height, String name) {
         mFormat = format;
         mOrientation = orientation;
         mWidth = width;

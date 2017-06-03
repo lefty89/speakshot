@@ -1,4 +1,4 @@
-package com.hsfl.speakshot.service.View;
+package com.hsfl.speakshot.service.view;
 
 import android.app.*;
 import android.os.Bundle;

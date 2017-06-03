@@ -1,17 +1,14 @@
 package com.hsfl.speakshot.ui;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
-import com.hsfl.speakshot.service.View.ViewService;
+import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.audio.AudioService;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.hsfl.speakshot.service.audio;
+package com.hsfl.speakshot.service.audio.listener;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,7 +13,7 @@ public class SpeechListener implements RecognitionListener {
 
     private Context mContext;
 
-    SpeechListener(Context context) {
+    public SpeechListener(Context context) {
         mContext = context;
     }
 

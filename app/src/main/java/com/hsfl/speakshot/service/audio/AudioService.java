@@ -7,6 +7,7 @@ import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.speech.SpeechRecognizer;
+import com.hsfl.speakshot.service.audio.listener.SpeechListener;
 
 import java.util.Locale;
 

@@ -19,14 +19,13 @@ import android.graphics.ImageFormat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
 import android.util.Log;
 import android.util.SparseArray;
 
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
-import com.hsfl.speakshot.service.camera.AsyncImageSaver;
+import com.hsfl.speakshot.service.camera.helper.ImagePersistenceHelper;
 import com.hsfl.speakshot.service.camera.CameraService;
 
 import java.util.ArrayList;
@@ -134,7 +133,7 @@ public class FindTermProcessor implements Detector.Processor<TextBlock> {
             Frame.Metadata md = detections.getFrameMetadata();
             // BUG Metadata's getFormat() returns -1 every time
             // BUG getWidth() and getHeight() results are switched
-            new AsyncImageSaver(ImageFormat.NV21, mOrientation, md.getHeight(), md.getWidth(), snapshot).execute(mCameraBuffer);
+            new ImagePersistenceHelper(ImageFormat.NV21, mOrientation, md.getHeight(), md.getWidth(), snapshot).execute(mCameraBuffer);
             // returns the textblock that contains the search term
             sendResponseBundle(s, texts, snapshot);
         }

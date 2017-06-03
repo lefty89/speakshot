@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import com.hsfl.speakshot.R;
-import com.hsfl.speakshot.service.View.ViewService;
+import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.camera.CameraService;
 
 import java.util.ArrayList;
