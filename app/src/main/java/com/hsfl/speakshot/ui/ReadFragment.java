@@ -91,7 +91,7 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
         }
         // toasts the snapshot path
         String snapshot = ((Bundle)arg).getString("snapshot");
-        if (snapshot != null) {
+        if ((snapshot != null) && (!snapshot.equals(""))) {
             Toast.makeText(getActivity().getApplicationContext(), "Snapshot saved to: " + snapshot, Toast.LENGTH_SHORT).show();
         }
     }

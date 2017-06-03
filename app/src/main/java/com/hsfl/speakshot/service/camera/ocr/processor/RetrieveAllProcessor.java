@@ -104,17 +104,16 @@ public class RetrieveAllProcessor implements Detector.Processor<TextBlock> {
     @Override
     public void receiveDetections(Detector.Detections<TextBlock> detections) {
         ArrayList<String> texts = sparseToList(detections.getDetectedItems());
-
+        String snapshot = "";
         if (texts.size() > 0) {
-            String snapshot = CameraService.DATA_DIR + "/img-" + System.currentTimeMillis() + ".jpg";
+            snapshot = CameraService.DATA_DIR + "/img-" + System.currentTimeMillis() + ".jpg";
             // saves the image asynchronously to the external storage
             Frame.Metadata md = detections.getFrameMetadata();
             // BUG Metadata's getFormat() returns -1 every time
             // BUG getWidth() and getHeight() results are switched
             new AsyncImageSaver(ImageFormat.NV21, mOrientation, md.getHeight(), md.getWidth(), snapshot).execute(mCameraBuffer);
-
-            sendResponseBundle(texts, snapshot);
         }
+        sendResponseBundle(texts, snapshot);
     }
 
     /**
