@@ -18,7 +18,6 @@ public class AsyncImageSaver extends AsyncTask<byte[], Void, Void> {
      * File name and path of where to save the image
      */
     private String mImageName;
-    private String mPathOnStorage;
 
     /**
      * The camera orientation on which amount the image is rotated
@@ -28,12 +27,11 @@ public class AsyncImageSaver extends AsyncTask<byte[], Void, Void> {
     private int mHeight = 0;
     private int mFormat = 0;
 
-    public AsyncImageSaver(int format, int orientation, int width, int height, String path, String name) {
+    public AsyncImageSaver(int format, int orientation, int width, int height, String name) {
         mFormat = format;
         mOrientation = orientation;
         mWidth = width;
         mHeight = height;
-        mPathOnStorage = path;
         mImageName = name;
     }
 
@@ -53,13 +51,13 @@ public class AsyncImageSaver extends AsyncTask<byte[], Void, Void> {
     @Override
     protected Void doInBackground(byte[]... data) {
         FileOutputStream outStream = null;
-
         try {
-            File sdCard = Environment.getExternalStorageDirectory();
-            File dir = new File (sdCard.getAbsolutePath() + mPathOnStorage);
-            dir.mkdirs();
-
-            File outFile = new File(dir, mImageName);
+            File outFile = new File(mImageName);
+            // create folder if not existing
+            File dir = new File (outFile.getParent());
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
             outStream = new FileOutputStream(outFile);
             try {
                 Bitmap bitmap = (mFormat == ImageFormat.NV21) ? decodeFromYuv(data[0]) : BitmapFactory.decodeByteArray(data[0], 0, data[0].length);

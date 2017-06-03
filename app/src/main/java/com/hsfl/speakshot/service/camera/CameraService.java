@@ -21,6 +21,11 @@ public class CameraService extends Observable {
     private static final String TAG = CameraService.class.getSimpleName();
 
     /**
+     * The directory where to save the images
+     */
+    public static String DATA_DIR = "";
+
+    /**
      * The CameraService singleton
      */
     private static CameraService instance = null;
@@ -124,8 +129,9 @@ public class CameraService extends Observable {
      * Setting up the camera and registers the ocr processor
      */
     public void initCamera(Context context) {
-
         if (mCamera == null) {
+            // update the location where to save the images
+            CameraService.DATA_DIR = context.getApplicationInfo().dataDir;
 
             // checks whether a suitable camera exists
             int requestedCameraId = getIdForRequestedCamera(mFacing);
