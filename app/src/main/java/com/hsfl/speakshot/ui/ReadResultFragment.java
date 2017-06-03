@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
+import com.hsfl.speakshot.service.View.ViewService;
 import com.hsfl.speakshot.service.audio.AudioService;
 
 import java.util.ArrayList;
@@ -22,11 +23,6 @@ public class ReadResultFragment extends Fragment {
      * the inflated view
      */
     private View mInflatedView;
-
-    /**
-     * Service provider that handles the camera object
-     */
-    private AudioService mAudioService;
 
     /**
      * the paging counter
@@ -42,23 +38,14 @@ public class ReadResultFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mInflatedView = inflater.inflate(R.layout.read_result_fragment, container, false);
         // gets the detected texts
-        detectedTexts = this.getArguments().getStringArrayList("texts");
+        detectedTexts = getArguments().getStringArrayList("texts");
         updateTextView();
-
-        // gets the AudioService
-        mAudioService = AudioService.getInstance();
 
         // close view
         final Button closeButton = (Button)mInflatedView.findViewById(R.id.read_fragment_close);
         closeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction ft = fragmentManager.beginTransaction();
-                // Replace whatever is in the fragment_container view with this fragment,
-                // and add the transaction to the back stack so the user can navigate back
-                ft.replace(R.id.fragment_container, (new ReadFragment()));
-                // Commit the transaction
-                ft.commit();
+                ViewService.getInstance().back();
             }
         });
 
@@ -84,7 +71,7 @@ public class ReadResultFragment extends Fragment {
         final Button playButton = (Button)mInflatedView.findViewById(R.id.read_fragment_play);
         playButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mAudioService.speak(detectedTexts.get(counter));
+                AudioService.getInstance().speak(detectedTexts.get(counter));
             }
         });
 

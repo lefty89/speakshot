@@ -29,6 +29,8 @@ import com.google.android.gms.vision.text.TextBlock;
 import com.hsfl.speakshot.service.camera.AsyncImageSaver;
 import com.hsfl.speakshot.service.camera.CameraService;
 
+import java.util.ArrayList;
+
 /**
  * A very simple Processor which gets detected TextBlocks
  */
@@ -69,15 +71,11 @@ public class FindTermProcessor implements Detector.Processor<TextBlock> {
     /**
      * Searches for a given word within the textblocks
      */
-    private String findSearchTerm(Detector.Detections<TextBlock> detections) {
-
-        SparseArray<TextBlock> items = detections.getDetectedItems();
-        for (int i = 0; i < items.size(); ++i) {
-            TextBlock item = items.valueAt(i);
-            if (item != null && item.getValue() != null) {
-                if (item.getValue().toLowerCase().contains(mSearchTerm.toLowerCase())) {
-                    return item.getValue();
-                }
+    private String findSearchTerm(ArrayList<String> texts) {
+        for (int i = 0; i < texts.size(); ++i) {
+            String item = texts.get(i);
+            if (item.toLowerCase().contains(mSearchTerm.toLowerCase())) {
+                return item;
             }
         }
         return "";
@@ -87,17 +85,35 @@ public class FindTermProcessor implements Detector.Processor<TextBlock> {
      * Builds a response Bundle
      * @param s
      */
-    private void sendResponseBundle(String s, String snapshot) {
+    private void sendResponseBundle(String s, ArrayList<String> texts, String snapshot) {
         // packs the detector texts into a bundle
         Bundle b = new Bundle();
-        b.putString("text", s);
+        b.putString("term", s);
         b.putString("snapshot", snapshot);
+        b.putStringArrayList("texts", texts);
         // create a message from the message handler to send it back to the main UI
         Message msg = mHandler.obtainMessage();
         //attach the bundle to the message
         msg.setData(b);
         //send the message back to main UI thread
         mHandler.sendMessage(msg);
+    }
+
+    /**
+     * Gets an array list from the sparse array so that it can be packed into
+     * a Bundle
+     * @param items
+     * @return
+     */
+    private ArrayList<String> sparseToList(SparseArray<TextBlock> items) {
+        ArrayList<String> texts = new ArrayList<>();
+        for (int i = 0; i < items.size(); ++i) {
+            TextBlock item = items.valueAt(i);
+            if (item != null && item.getValue() != null) {
+                texts.add(item.getValue());
+            }
+        }
+        return texts;
     }
 
     /**
@@ -109,8 +125,9 @@ public class FindTermProcessor implements Detector.Processor<TextBlock> {
      */
     @Override
     public void receiveDetections(Detector.Detections<TextBlock> detections) {
+        ArrayList<String> texts = sparseToList(detections.getDetectedItems());
 
-        String s = findSearchTerm(detections);
+        String s = findSearchTerm(texts);
         if (!s.isEmpty()) {
             String snapshot = CameraService.DATA_DIR + "/img-" + System.currentTimeMillis() + ".jpg";
             // saves the image asynchronously to the external storage
@@ -119,7 +136,7 @@ public class FindTermProcessor implements Detector.Processor<TextBlock> {
             // BUG getWidth() and getHeight() results are switched
             new AsyncImageSaver(ImageFormat.NV21, mOrientation, md.getHeight(), md.getWidth(), snapshot).execute(mCameraBuffer);
             // returns the textblock that contains the search term
-            sendResponseBundle(s, snapshot);
+            sendResponseBundle(s, texts, snapshot);
         }
     }
 

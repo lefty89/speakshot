@@ -78,6 +78,23 @@ public class RetrieveAllProcessor implements Detector.Processor<TextBlock> {
     }
 
     /**
+     * Gets an array list from the sparse array so that it can be packed into
+     * a Bundle
+     * @param items
+     * @return
+     */
+    private ArrayList<String> sparseToList(SparseArray<TextBlock> items) {
+        ArrayList<String> texts = new ArrayList<>();
+        for (int i = 0; i < items.size(); ++i) {
+            TextBlock item = items.valueAt(i);
+            if (item != null && item.getValue() != null) {
+                texts.add(item.getValue());
+            }
+        }
+        return texts;
+    }
+
+    /**
      * Called by the detector to deliver detection results.
      * If your application called for it, this could be a place to check for
      * equivalent detections by tracking TextBlocks that are similar in location and content from
@@ -86,25 +103,18 @@ public class RetrieveAllProcessor implements Detector.Processor<TextBlock> {
      */
     @Override
     public void receiveDetections(Detector.Detections<TextBlock> detections) {
-        Log.d(TAG, "receiveDetections");
+        ArrayList<String> texts = sparseToList(detections.getDetectedItems());
 
-        // packs the detected texts into a bundle
-        ArrayList<String> texts = new ArrayList<>();
-        SparseArray<TextBlock> items = detections.getDetectedItems();
-        for (int i = 0; i < items.size(); ++i) {
-            TextBlock item = items.valueAt(i);
-            if (item != null && item.getValue() != null) {
-                texts.add(item.getValue());
-            }
+        if (texts.size() > 0) {
+            String snapshot = CameraService.DATA_DIR + "/img-" + System.currentTimeMillis() + ".jpg";
+            // saves the image asynchronously to the external storage
+            Frame.Metadata md = detections.getFrameMetadata();
+            // BUG Metadata's getFormat() returns -1 every time
+            // BUG getWidth() and getHeight() results are switched
+            new AsyncImageSaver(ImageFormat.NV21, mOrientation, md.getHeight(), md.getWidth(), snapshot).execute(mCameraBuffer);
+
+            sendResponseBundle(texts, snapshot);
         }
-        String snapshot = CameraService.DATA_DIR + "/img-" + System.currentTimeMillis() + ".jpg";
-        // saves the image asynchronously to the external storage
-        Frame.Metadata md = detections.getFrameMetadata();
-        // BUG Metadata's getFormat() returns -1 every time
-        // BUG getWidth() and getHeight() results are switched
-        new AsyncImageSaver(ImageFormat.NV21, mOrientation, md.getHeight(), md.getWidth(), snapshot).execute(mCameraBuffer);
-
-        sendResponseBundle(texts, snapshot);
     }
 
     /**

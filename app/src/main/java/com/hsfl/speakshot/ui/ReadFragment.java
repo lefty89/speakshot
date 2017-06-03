@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import com.hsfl.speakshot.R;
+import com.hsfl.speakshot.service.View.ViewService;
 import com.hsfl.speakshot.service.camera.CameraService;
 
 import java.util.*;
@@ -51,15 +52,9 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
         final Button resultButton = (Button)mInflatedView.findViewById(R.id.btn_show_results);
         resultButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                // create fragment and add arguments
-                ReadResultFragment fragment = new ReadResultFragment();
                 Bundle bundle = new Bundle();
                 bundle.putStringArrayList("texts", detectedTexts);
-                fragment.setArguments(bundle);
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction ft = fragmentManager.beginTransaction();
-                ft.replace(R.id.fragment_container, fragment);
-                ft.commit();
+                ViewService.getInstance().toS(new ReadResultFragment(), bundle);
             }
         });
 

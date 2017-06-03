@@ -1,5 +1,6 @@
 package com.hsfl.speakshot;
 
+import com.hsfl.speakshot.service.View.ViewService;
 import com.hsfl.speakshot.service.audio.AudioService;
 import com.hsfl.speakshot.service.camera.CameraService;
 import com.hsfl.speakshot.ui.ReadFragment;
@@ -39,6 +40,11 @@ public class MainActivity extends AppCompatActivity {
      */
     private CameraService mCameraService;
 
+    /**
+     * Service provider that handles the views
+     */
+    private ViewService mViewService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +53,10 @@ public class MainActivity extends AppCompatActivity {
         setTheme(THEME);
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        // initializes the ViewService
+        mViewService = ViewService.getInstance();
+        mViewService.init(getFragmentManager());
 
         // request camera permission.
         int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
@@ -61,10 +71,10 @@ public class MainActivity extends AppCompatActivity {
         final ToggleButton modeSwitch = (ToggleButton)findViewById(R.id.btn_mode_select);
         modeSwitch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                setAppMode(modeSwitch.isChecked());
+                mViewService.to(((modeSwitch.isChecked()) ? new SearchFragment() : new ReadFragment()), null);
             }
         });
-        setAppMode(MODE_READ);
+        mViewService.to(new ReadFragment(), null);
 
         // button to show the settings activity
         final Button settingsButton = (Button)findViewById(R.id.btn_settings);
@@ -87,20 +97,6 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         // releases the camera
         mCameraService.releaseCamera();
-    }
-
-    /**
-     * switches the app between read and search mode
-     * @param b either MODE_READ or MODE_SEARCH
-     */
-    private void setAppMode(boolean b) {
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        // gets the fragment
-        Fragment fragment = (b) ? new SearchFragment() : new ReadFragment();
-        ft.replace(R.id.fragment_container, fragment);
-        // Commit the transaction
-        ft.commit();
     }
 
     /**

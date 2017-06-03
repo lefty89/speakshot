@@ -9,11 +9,15 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import com.hsfl.speakshot.R;
+import com.hsfl.speakshot.service.View.ViewService;
 import com.hsfl.speakshot.service.camera.CameraService;
+
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -35,6 +39,11 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
      */
     private String searchTerm = "";
 
+    /**
+     * contains the returned ocr texts
+     */
+    private ArrayList<String> detectedTexts;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -45,6 +54,16 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         mCameraService = CameraService.getInstance();
         // adds an observer for the text recognizer
         mCameraService.addObserver(this);
+
+        // show result view
+        final Button sendToReadButton = (Button)mInflatedView.findViewById(R.id.btn_send_to_read);
+        sendToReadButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList("texts", detectedTexts);
+                ViewService.getInstance().toS(new ReadResultFragment(), bundle);
+            }
+        });
 
         // light toggle
         final ToggleButton lightSwitch = (ToggleButton)mInflatedView.findViewById(R.id.btn_light_toggle);
@@ -66,15 +85,23 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
 
     @Override
     public void update(Observable o, Object arg) {
-        // gets the detected texts
-        String text = ((Bundle)arg).getString("text");
-        if (text != null) {
-            Toast.makeText(getActivity().getApplicationContext(), "Term '" + searchTerm + "' found within " + "'" + text + "'", Toast.LENGTH_SHORT).show();
+        // gets the search term
+        String term = ((Bundle)arg).getString("term");
+        if (term != null) {
+            Toast.makeText(getActivity().getApplicationContext(), "Term '" + searchTerm + "' found within " + "'" + term + "'", Toast.LENGTH_SHORT).show();
             ((Vibrator) getActivity().getApplication().getSystemService(android.content.Context.VIBRATOR_SERVICE)).vibrate(800);
+            // reset analysing
             searchTerm = "";
-            mCameraService.analyseStream(searchTerm);
+            mCameraService.analyseStream("");
         }
-        // toasts the snapshot path
+        // gets the detected texts
+        ArrayList<String> texts = ((Bundle)arg).getStringArrayList("texts");
+        if (texts != null) {
+            detectedTexts = texts;
+            // show button
+            mInflatedView.findViewById(R.id.btn_send_to_read).setEnabled(true);
+        }
+        // gets the snapshot path
         String snapshot = ((Bundle)arg).getString("snapshot");
         if (snapshot != null) {
             Toast.makeText(getActivity().getApplicationContext(), "Snapshot saved to: " + snapshot, Toast.LENGTH_SHORT).show();
@@ -108,7 +135,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         } else {
             // stop searching
             searchTerm = "";
-            mCameraService.analyseStream(searchTerm);
+            mCameraService.analyseStream("");
             Toast.makeText(getActivity().getApplicationContext(), "Stop searching", Toast.LENGTH_SHORT).show();
         }
 

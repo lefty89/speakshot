@@ -14,6 +14,13 @@
         android:textOff="Light on"
         android:textOn="Light off"
         android:layout_weight="1" />
+    <Button
+        android:text="To read mode"
+        android:enabled="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_send_to_read"
+        android:layout_weight="1"/>
 </LinearLayout>
 
 
