@@ -2,6 +2,7 @@ package com.hsfl.speakshot.service.dictionary;
 
 import android.content.Context;
 import com.hsfl.speakshot.service.dictionary.lib.GoogleTextService;
+import com.hsfl.speakshot.service.dictionary.lib.hunspell.HunspellService;
 
 import java.util.*;
 
@@ -17,6 +18,7 @@ public class DictionaryService extends Observable {
      * The different spell checker tools to use
      */
     public static final int LIB_GOOGLE_TEXT_SERVICE = 0;
+    public static final int LIB_HUNSPELL_DICT = 1;
 
     /**
      * The DictionaryService singleton
@@ -51,6 +53,7 @@ public class DictionaryService extends Observable {
     public void init(int lib, Context context) {
         switch (lib) {
             case LIB_GOOGLE_TEXT_SERVICE: mLib = new GoogleTextService(this, context); break;
+            case LIB_HUNSPELL_DICT: mLib = new HunspellService(this, context); break;
             default: {
                 throw new IllegalArgumentException("Library was not found");
             }

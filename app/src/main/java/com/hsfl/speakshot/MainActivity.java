@@ -1,5 +1,7 @@
 package com.hsfl.speakshot;
 
+import android.util.Log;
+import com.hsfl.speakshot.cpp.Hunspell;
 import com.hsfl.speakshot.service.dictionary.DictionaryService;
 import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.audio.AudioService;
@@ -84,6 +86,9 @@ public class MainActivity extends AppCompatActivity {
                 showSettings();
             }
         });
+
+        Hunspell h =new Hunspell();
+        Log.d(TAG, h.test());
     }
 
     @Override
