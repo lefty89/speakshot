@@ -23,7 +23,7 @@ public class CameraService extends Observable {
     /**
      * The directory where to save the images
      */
-    public static String DATA_DIR = "";
+    public static final String DATA_DIR = Environment.getExternalStorageDirectory() + "/SpeakShot/images";
 
     /**
      * The CameraService singleton
@@ -132,9 +132,6 @@ public class CameraService extends Observable {
      */
     public void initCamera(Context context) {
         if (mCamera == null) {
-            // update the location where to save the images
-            CameraService.DATA_DIR = context.getApplicationInfo().dataDir;
-
             // checks whether a suitable camera exists
             int requestedCameraId = getIdForRequestedCamera(mFacing);
             if (requestedCameraId == -1) {
