@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ToggleButton;
 import android.widget.Button;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -67,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         setAppMode(MODE_READ);
 
         // button to show the settings activity
-        final Button settingsButton = (Button)findViewById(R.id.btn_settings);
+        final FloatingActionButton settingsButton = (FloatingActionButton)findViewById(R.id.btn_settings);
         settingsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 showSettings();

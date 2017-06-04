@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:id="@+id/layout">
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.hsfl.speakshot.MainActivity">
 
     <com.hsfl.speakshot.ui.CameraSourcePreview
         android:id="@+id/camera_view"
@@ -20,11 +20,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="top|right">
-        <Button
-            android:text="Settings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btn_settings" />
         <ToggleButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -33,4 +28,12 @@
             android:textOn="Read Mode" />
     </LinearLayout>
 
-</FrameLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btn_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_margin="26dp"
+        app:srcCompat="@android:drawable/ic_menu_preferences" />
+
+</android.support.design.widget.CoordinatorLayout>
