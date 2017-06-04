@@ -1,5 +1,6 @@
 package com.hsfl.speakshot;
 
+import com.hsfl.speakshot.service.dictionary.DictionaryService;
 import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.audio.AudioService;
 import com.hsfl.speakshot.service.camera.CameraService;
@@ -22,12 +23,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     /**
-     * main app modes
-     */
-    private final boolean MODE_READ = false;
-    private final boolean MODE_SEARCH = true;
-
-    /**
      * the app theme
      */
     private static  int THEME = R.style.AppTheme;
@@ -36,6 +31,11 @@ public class MainActivity extends AppCompatActivity {
      * Service provider that handles the camera object
      */
     private CameraService mCameraService;
+
+    /**
+     * Service provider that handles the dictionary
+     */
+    private DictionaryService mDictionaryService;
 
     /**
      * Service provider that handles the views
@@ -54,6 +54,10 @@ public class MainActivity extends AppCompatActivity {
         // initializes the ViewService
         mViewService = ViewService.getInstance();
         mViewService.init(getFragmentManager());
+
+        // initializes the DictionaryService
+        mDictionaryService = DictionaryService.getInstance();
+        mDictionaryService.init(DictionaryService.LIB_GOOGLE_TEXT_SERVICE, getApplicationContext());
 
         // request camera permission.
         int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
