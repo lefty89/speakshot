@@ -189,7 +189,9 @@ public class OcrHandler implements Camera.PreviewCallback {
      */
     @Override
     public void onPreviewFrame(final byte[] data, final Camera camera) {
-        mFrameProcessor.setNextFrame(data, camera);
+        synchronized (mCameraLock) {
+            mFrameProcessor.setNextFrame(data, camera);
+        }
     }
 
     /**
