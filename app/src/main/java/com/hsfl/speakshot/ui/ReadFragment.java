@@ -3,6 +3,7 @@ package com.hsfl.speakshot.ui;
 import android.app.Fragment;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -61,6 +62,7 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
                 ViewService.getInstance().toS(new ReadResultFragment(), bundle);
             }
         });
+        resultButton.setEnabled(false);
 
         // light toggle
         final FloatingActionButton lightSwitch = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_light_toggle);
@@ -68,15 +70,15 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
             public void onClick(View v) {
             mCameraService.setFlashLightEnabled(!mCameraService.isFlashLightEnabled());
             if (mCameraService.isFlashLightEnabled())
-                lightSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_flash_on_black_24dp));
+                lightSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_flash_on_black_24dp, getActivity().getTheme()));
             else
-                lightSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_flash_off_black_24dp));
+                lightSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_flash_off_black_24dp, getActivity().getTheme()));
             }
         });
         if (mCameraService.isFlashLightEnabled())
-            lightSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_flash_on_black_24dp));
+            lightSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_flash_on_black_24dp, getActivity().getTheme()));
         else
-            lightSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_flash_off_black_24dp));
+            lightSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_flash_off_black_24dp, getActivity().getTheme()));
 
         return mInflatedView;
     }

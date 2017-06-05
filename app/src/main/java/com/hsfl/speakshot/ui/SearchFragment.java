@@ -6,14 +6,13 @@ import android.content.DialogInterface;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 import com.hsfl.speakshot.R;
 import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.camera.CameraService;
@@ -59,7 +58,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         mCameraService.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
 
         // show result view
-        final Button sendToReadButton = (Button)mInflatedView.findViewById(R.id.btn_send_to_read);
+        final FloatingActionButton sendToReadButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_send_to_read);
         sendToReadButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
@@ -67,6 +66,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
                 ViewService.getInstance().toS(new ReadResultFragment(), bundle);
             }
         });
+        sendToReadButton.setEnabled(false);
 
         // light toggle
         final FloatingActionButton lightSwitch = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_light_toggle);
@@ -74,15 +74,15 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
             public void onClick(View v) {
             mCameraService.setFlashLightEnabled(!mCameraService.isFlashLightEnabled());
             if (mCameraService.isFlashLightEnabled())
-                lightSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_flash_on_black_24dp));
+                lightSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_flash_off_black_24dp, getActivity().getTheme()));
             else
-                lightSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_flash_off_black_24dp));
+                lightSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_flash_off_black_24dp, getActivity().getTheme()));
             }
         });
         if (mCameraService.isFlashLightEnabled())
-            lightSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_flash_on_black_24dp));
+            lightSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_flash_on_black_24dp, getActivity().getTheme()));
         else
-            lightSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_flash_off_black_24dp));
+            lightSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_flash_off_black_24dp, getActivity().getTheme()));
 
         return mInflatedView;
     }

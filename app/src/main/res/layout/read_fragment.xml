@@ -18,32 +18,29 @@
         android:layout_height="match_parent"
         android:gravity="bottom|center_horizontal">
         <FrameLayout
-            android:layout_width="@dimen/fab_frame_size"
-            android:layout_height="@dimen/fab_frame_size"
-            android:layout_centerHorizontal="true">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/btn_show_results"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="@dimen/fab_frame_size"
+                android:layout_height="@dimen/fab_frame_size"
                 android:layout_gravity="bottom|start"
-                android:layout_margin="@dimen/fab_margin"
-                android:enabled="false"
                 app:srcCompat="@drawable/ic_volume_up_black_24dp"
-                android:tint="@color/colorDarkThemePrimary"/>
+                style="@style/ThemeDark" />
         </FrameLayout>
         <FrameLayout
-            android:layout_width="@dimen/fab_frame_size"
-            android:layout_height="@dimen/fab_frame_size"
-            android:layout_centerHorizontal="true">
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/btn_light_toggle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="@dimen/fab_frame_size"
+                android:layout_height="@dimen/fab_frame_size"
                 android:layout_gravity="bottom|start"
                 android:layout_margin="@dimen/fab_margin"
                 android:enabled="false"
                 app:srcCompat="@drawable/ic_flash_on_black_24dp"
-                android:tint="@color/colorDarkThemePrimary"/>
+                style="@style/ThemeDark" />
         </FrameLayout>
     </LinearLayout>
 

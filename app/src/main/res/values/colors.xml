@@ -11,5 +11,6 @@
     <!-- dark theme -->
     <color name="colorDarkThemePrimary">#ffffff</color>
     <color name="colorDarkThemeText">#ffffff</color>
-    <color name="colorDarkThemeBackgroundTint">#000077</color>
+    <color name="colorDarkThemeBackgroundTintLighter">#8585e9</color>
+    <color name="colorDarkThemeBackgroundTint">#14149b</color>
 </resources>

@@ -4,15 +4,15 @@
     <style name="ThemeLight" parent="Theme.AppCompat.NoActionBar">
         <!-- light theme -->
         <item name="colorAccent">@color/colorLightThemePrimary</item>
-        <item name="android:textColor">@color/colorLightThemeText</item>
-        <item name="android:backgroundTint">@color/colorLightThemeBackgroundTint</item>
+        <item name="android:textColor">@color/colorDarkThemeText</item>
+        <item name="backgroundTint">@color/colorLightThemeBackgroundTint</item>
     </style>
 
     <!-- dark theme -->
     <style name="ThemeDark" parent="Theme.AppCompat.NoActionBar">
         <item name="colorAccent">@color/colorDarkThemePrimary</item>
         <item name="android:textColor">@color/colorDarkThemeText</item>
-        <item name="android:backgroundTint">@color/colorDarkThemeBackgroundTint</item>
+        <item name="backgroundTint">@color/colorDarkThemeBackgroundTint</item>
     </style>
 
 </resources>

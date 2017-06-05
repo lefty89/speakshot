@@ -6,6 +6,7 @@
     <dimen name="fab_margin">2dp</dimen>
     <dimen name="fab_main_margin">10dp</dimen>
     <dimen name="fab_frame_size">100dp</dimen>
+    <dimen name="fab_frame_size_half">75dp</dimen>
     <!-- mode icon size -->
     <dimen name="mode_icon_size">150dp</dimen>
     <!-- textview -->

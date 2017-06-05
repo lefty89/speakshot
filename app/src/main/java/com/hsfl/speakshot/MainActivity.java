@@ -1,5 +1,7 @@
 package com.hsfl.speakshot;
 
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AppCompatDelegate;
 import com.hsfl.speakshot.service.dictionary.DictionaryService;
 import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.audio.AudioService;
@@ -8,13 +10,8 @@ import com.hsfl.speakshot.ui.ReadFragment;
 import com.hsfl.speakshot.ui.SearchFragment;
 
 import android.Manifest;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.preference.Preference;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,9 +21,6 @@ import android.view.WindowManager;
 import android.support.design.widget.FloatingActionButton;
 import android.preference.PreferenceManager;
 import android.content.SharedPreferences;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -93,14 +87,16 @@ public class MainActivity extends AppCompatActivity {
         final FloatingActionButton modeSwitch = (FloatingActionButton)findViewById(R.id.btn_mode_select);
         modeSwitch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //  mViewService.to(((modeSwitch.isChecked()) ? new SearchFragment() : new ReadFragment()), null);
                 CurrentMode = CurrentMode == MODE_SEARCH ? MODE_READ : MODE_SEARCH;
-                setAppMode(CurrentMode);
                 // swtich background color
-                if (CurrentMode == MODE_SEARCH)
-                    modeSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_volume_up_black_24dp));
-                else
-                    modeSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_search_black_24dp));
+                if (CurrentMode == MODE_SEARCH) {
+                    modeSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_volume_up_black_24dp, getTheme()));
+                    mViewService.to(new SearchFragment(), null);
+                }
+                else {
+                    modeSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_search_black_24dp, getTheme()));
+                    mViewService.to(new ReadFragment(), null);
+                }
             }
         });
         mViewService.to(new ReadFragment(), null);
@@ -134,5 +130,10 @@ public class MainActivity extends AppCompatActivity {
     private void showSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
+    }
+
+    static {
+        // compatibility for vector drawing on lower android versions
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
 }
