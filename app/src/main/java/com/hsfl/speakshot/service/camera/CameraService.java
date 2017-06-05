@@ -1,6 +1,8 @@
 package com.hsfl.speakshot.service.camera;
 
 import android.graphics.ImageFormat;
+import android.media.MediaActionSound;
+import com.hsfl.speakshot.service.camera.helper.MediaSoundHelper;
 import com.hsfl.speakshot.service.camera.ocr.OcrHandler;
 
 import android.annotation.TargetApi;
@@ -21,7 +23,7 @@ public class CameraService extends Observable {
     private static final String TAG = CameraService.class.getSimpleName();
 
     /**
-     * The directory where to save the images
+     * The directory where the captured images are saved
      */
     public static final String DATA_DIR = Environment.getExternalStorageDirectory() + "/SpeakShot/images";
 
@@ -31,9 +33,14 @@ public class CameraService extends Observable {
     private static CameraService instance = null;
 
     /**
-     * the interface for the ocr
+     * Contains the OCR functionality
      */
     private OcrHandler mOcrHandler;
+
+    /**
+     * Wrapper that provides sound samples for camera related actions
+     */
+    private MediaSoundHelper mMediaSoundHelper;
 
     /**
      * Camera Lock
@@ -65,7 +72,7 @@ public class CameraService extends Observable {
     private String mFocusMode = Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE;
 
     /**
-     * Empty constructor
+     * Empty Constructor
      */
     CameraService() {}
 
@@ -111,6 +118,7 @@ public class CameraService extends Observable {
                 }
             };
             mCamera.setOneShotPreviewCallback(previewCallback);
+            mMediaSoundHelper.play(MediaActionSound.SHUTTER_CLICK);
         }
     }
 
@@ -121,8 +129,10 @@ public class CameraService extends Observable {
         if (mOcrHandler != null) {
             if (!searchTerm.isEmpty()) {
                 mOcrHandler.startOcrDetector(searchTerm);
+                mMediaSoundHelper.play(MediaActionSound.START_VIDEO_RECORDING);
             } else {
                 mOcrHandler.stopOcrDetector();
+                mMediaSoundHelper.play(MediaActionSound.STOP_VIDEO_RECORDING);
             }
         }
     }
@@ -187,6 +197,9 @@ public class CameraService extends Observable {
                     }
                 });
                 mCamera.setPreviewCallbackWithBuffer(mOcrHandler);
+
+                // init the sound player
+                mMediaSoundHelper = new MediaSoundHelper();
             }
             else {
                 throw new RuntimeException("Could not open camera.");
@@ -205,6 +218,9 @@ public class CameraService extends Observable {
 
             // Call stopPreview() to stop updating the preview surface.
             mCamera.stopPreview();
+
+            // clears resources for the sound player
+            mMediaSoundHelper.release();
 
             // Important: Call release() to release the camera for use by other
             // applications. Applications should release the camera immediately
@@ -234,7 +250,7 @@ public class CameraService extends Observable {
     }
 
     /**
-     * Toggles the camera flashlight
+     * Sets the camera flashlight
      */
     public void setFlashLightEnabled(boolean b) {
         if (mCamera != null) {
