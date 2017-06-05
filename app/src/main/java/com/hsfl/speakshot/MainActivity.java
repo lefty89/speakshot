@@ -77,9 +77,9 @@ public class MainActivity extends AppCompatActivity {
                 setAppMode(CurrentMode);
                 // swtich background color
                 if (CurrentMode == MODE_SEARCH)
-                    modeSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_search_black_24dp));
-                else
                     modeSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_volume_up_black_24dp));
+                else
+                    modeSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_search_black_24dp));
             }
         });
         setAppMode(MODE_READ);

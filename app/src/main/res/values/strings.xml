@@ -66,4 +66,7 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+
+    <!-- reead results -->
+    <string name="read_results_no_text_blocks_found">No text blocks found</string>
 </resources>

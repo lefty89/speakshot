@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- mode icon -->
+    <color name="colorModeIcon">#a3c6ff</color>
+
     <!-- light theme -->
     <color name="colorLightThemePrimary">#0000ff</color>
     <color name="colorLightThemeText">#000000</color>
