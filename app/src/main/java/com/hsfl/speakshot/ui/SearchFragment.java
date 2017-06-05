@@ -120,34 +120,32 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            if (searchTerm.equals("")) {
-                // open modal
-                final EditText txt = new EditText(getActivity());
-                new AlertDialog.Builder(getActivity())
-                        .setMessage("Search for word")
-                        .setView(txt)
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                // start searching
-                                searchTerm = txt.getText().toString();
-                                if (!searchTerm.equals("")) {
-                                    mCameraService.analyseStream(searchTerm);
-                                    Toast.makeText(getActivity().getApplicationContext(), "Searching for: " + searchTerm, Toast.LENGTH_SHORT).show();
-                                }
+        if (searchTerm.equals("")) {
+            // open modal
+            final EditText txt = new EditText(getActivity());
+            new AlertDialog.Builder(getActivity())
+                    .setMessage("Search for word")
+                    .setView(txt)
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            // start searching
+                            searchTerm = txt.getText().toString();
+                            if (!searchTerm.equals("")) {
+                                mCameraService.analyseStream(searchTerm);
+                                Toast.makeText(getActivity().getApplicationContext(), "Searching for: " + searchTerm, Toast.LENGTH_SHORT).show();
                             }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                            }
-                        })
-                        .show();
-            } else {
-                // stop searching
-                searchTerm = "";
-                mCameraService.analyseStream("");
-                Toast.makeText(getActivity().getApplicationContext(), "Stop searching", Toast.LENGTH_SHORT).show();
-            }
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                        }
+                    })
+                    .show();
+        } else {
+            // stop searching
+            searchTerm = "";
+            mCameraService.analyseStream("");
+            Toast.makeText(getActivity().getApplicationContext(), "Stop searching", Toast.LENGTH_SHORT).show();
         }
         return false;
     }
