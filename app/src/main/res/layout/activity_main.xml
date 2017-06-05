@@ -15,29 +15,40 @@
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="top|right">
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/btn_settings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|end"
-            android:layout_margin="@dimen/fab_main_margin"
-            app:fabSize="auto"
-            app:srcCompat="@drawable/ic_settings_black_24dp"
-            android:tint="@color/colorDarkThemePrimary"/>
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/btn_mode_select"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|end"
-            android:layout_margin="@dimen/fab_main_margin"
-            app:fabSize="auto"
-            app:srcCompat="@drawable/ic_volume_up_black_24dp"
-            android:tint="@color/colorDarkThemePrimary"/>
+        <FrameLayout
+            android:layout_width="@dimen/fab_frame_size"
+            android:layout_height="@dimen/fab_frame_size"
+            android:layout_centerHorizontal="true">
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/btn_settings"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="top|end"
+                android:layout_margin="@dimen/fab_main_margin"
+                app:fabSize="auto"
+                app:srcCompat="@drawable/ic_settings_black_24dp"
+                android:tint="@color/colorDarkThemePrimary"/>
+        </FrameLayout>
+        <FrameLayout
+            android:layout_width="@dimen/fab_frame_size"
+            android:layout_height="@dimen/fab_frame_size"
+            android:layout_centerHorizontal="true">
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/btn_mode_select"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="top|end"
+                android:layout_margin="@dimen/fab_main_margin"
+                app:fabSize="auto"
+                app:srcCompat="@drawable/ic_volume_up_black_24dp"
+                android:tint="@color/colorDarkThemePrimary"/>
+        </FrameLayout>
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

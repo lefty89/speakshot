@@ -12,14 +12,19 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.preference.Preference;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ToggleButton;
 import android.support.design.widget.FloatingActionButton;
+import android.preference.PreferenceManager;
+import android.content.SharedPreferences;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -35,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * the app theme
      */
-    private static  int THEME = R.style.ThemeDark;
+    private static int Theme = R.style.ThemeDark;
 
     /**
      * Service provider that handles the camera object
@@ -46,8 +51,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Log.d(TAG, "audio enabled: " + preferences.getBoolean("audio_output_switch", true));
+        Log.d(TAG, "vibration enabled: " + preferences.getBoolean("vibration_switch", true));
+
         // sets theme and app settings
-        setTheme(THEME);
+        setTheme(Theme);
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -120,4 +129,5 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
+
 }

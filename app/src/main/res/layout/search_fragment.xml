@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:gravity="bottom"
-    android:background="@android:color/transparent" >
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.hsfl.speakshot.MainActivity">
 
-    <ToggleButton
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/btn_light_toggle"
-        android:textOff="Light on"
-        android:textOn="Light off"
-        android:layout_weight="1" />
-</LinearLayout>
+    <FrameLayout
+        android:layout_width="@dimen/fab_frame_size"
+        android:layout_height="@dimen/fab_frame_size"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="bottom|center_horizontal">
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/btn_light_toggle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_margin="@dimen/fab_margin"
+            android:enabled="false"
+            app:fabSize="auto"
+            app:srcCompat="@drawable/ic_flash_on_black_24dp"
+            android:tint="@color/colorDarkThemePrimary"/>
+    </FrameLayout>
+
+</android.support.design.widget.CoordinatorLayout>
 
 
 

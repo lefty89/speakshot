@@ -5,4 +5,5 @@
     <!-- floating action button -->
     <dimen name="fab_margin">2dp</dimen>
     <dimen name="fab_main_margin">10dp</dimen>
+    <dimen name="fab_frame_size">100dp</dimen>
 </resources>
