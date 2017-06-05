@@ -25,7 +25,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/btn_mode_select"
             android:textOff="Search Mode"
-            android:textOn="Read Mode" />
+            android:textOn="Read Mode"
+            android:drawableTint="@color/colorDarkThemePrimary"/>
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
@@ -33,7 +34,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
-        android:layout_margin="26dp"
-        app:srcCompat="@android:drawable/ic_menu_preferences" />
+        android:layout_margin="@dimen/fab_margin"
+        app:fabSize="auto"
+        app:srcCompat="@drawable/ic_settings_black_24dp"
+        android:tint="@color/colorDarkThemePrimary"/>
 
 </android.support.design.widget.CoordinatorLayout>

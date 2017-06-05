@@ -11,14 +11,13 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ToggleButton;
-import android.widget.Button;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 
 
@@ -34,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * the app theme
      */
-    private static  int THEME = R.style.AppTheme;
+    private static  int THEME = R.style.ThemeDark;
 
     /**
      * Service provider that handles the camera object
@@ -64,6 +63,11 @@ public class MainActivity extends AppCompatActivity {
         modeSwitch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 setAppMode(modeSwitch.isChecked());
+                // swtich background color
+                if (modeSwitch.isChecked())
+                    modeSwitch.setButtonDrawable(R.drawable.ic_search_black_24dp);
+                else
+                    modeSwitch.setButtonDrawable(R.drawable.ic_volume_up_black_24dp);
             }
         });
         setAppMode(MODE_READ);

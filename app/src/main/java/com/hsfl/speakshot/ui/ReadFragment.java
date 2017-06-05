@@ -13,6 +13,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 import com.hsfl.speakshot.R;
 import com.hsfl.speakshot.service.camera.CameraService;
+import android.support.design.widget.FloatingActionButton;
 
 import java.util.*;
 
@@ -48,7 +49,7 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
         mCameraService.startPreview();
 
         // show results
-        final Button resultButton = (Button)mInflatedView.findViewById(R.id.btn_show_results);
+        final FloatingActionButton resultButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_show_results);
         resultButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // create fragment and add arguments

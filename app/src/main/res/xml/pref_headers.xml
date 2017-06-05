@@ -2,19 +2,13 @@
 
     <!-- These settings headers are only used on tablets. -->
 
-    <header
-        android:fragment="com.hsfl.speakshot.SettingsActivity$GeneralPreferenceFragment"
-        android:icon="@drawable/ic_info_black_24dp"
+    <header android:fragment="com.hsfl.speakshot.SettingsActivity$GeneralPreferenceFragment"
         android:title="@string/pref_header_general" />
 
-    <header
-        android:fragment="com.hsfl.speakshot.SettingsActivity$CameraPreferenceFragment"
-        android:icon="@drawable/ic_notifications_black_24dp"
+    <header android:fragment="com.hsfl.speakshot.SettingsActivity$CameraPreferenceFragment"
         android:title="@string/pref_header_camera" />
 
-    <header
-        android:fragment="com.hsfl.speakshot.SettingsActivity$AppearancePreferenceFragment"
-        android:icon="@drawable/ic_sync_black_24dp"
+    <header android:fragment="com.hsfl.speakshot.SettingsActivity$AppearancePreferenceFragment"
         android:title="@string/pref_header_appearance" />
 
 </preference-headers>

@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.hsfl.speakshot.MainActivity">
+
+    <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -7,46 +14,71 @@
         android:background="@android:color/darker_gray"
         android:weightSum="1">
 
-    <TextView
-        android:text="Section 0/0"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/txt_sections_header"
-        android:padding="10dp"
-        android:layout_weight="0.01"
-        android:textStyle="bold"
-        android:background="@drawable/sections_header"/>
+        <TextView
+            android:text="Section 0/0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_sections_header"
+            android:padding="10dp"
+            android:layout_weight="0.01"
+            android:textStyle="bold"
+            android:background="@drawable/sections_header"/>
+        <TextView
+            android:id="@+id/txt_sections_result"
+            android:text="No sections found"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_weight="0.99" />
 
-    <TextView
-        android:id="@+id/txt_sections_result"
-        android:text="No sections found"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:layout_weight="0.99" />
+    </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <Button
-            android:text="Prev"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_gravity="bottom|center_horizontal">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/read_fragment_prev"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:id="@+id/read_fragment_prev" android:layout_weight="1"/>
-        <Button
-            android:text="Play"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="@dimen/fab_margin"
+            app:fabSize="auto"
+            app:srcCompat="@drawable/ic_skip_previous_black_24dp"
+            android:tint="@color/colorDarkThemePrimary"/>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/read_fragment_play"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:id="@+id/read_fragment_play" android:layout_weight="1"/>
-        <Button
-            android:text="Next"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="@dimen/fab_margin"
+            app:fabSize="auto"
+            app:srcCompat="@drawable/ic_play_arrow_black_24dp"
+            android:tint="@color/colorDarkThemePrimary"/>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/read_fragment_next"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:id="@+id/read_fragment_next" android:layout_weight="1"/>
-        <Button
-            android:text="X"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="@dimen/fab_margin"
+            app:fabSize="auto"
+            app:srcCompat="@drawable/ic_skip_next_black_24dp"
+            android:tint="@color/colorDarkThemePrimary"/>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/read_fragment_close"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:id="@+id/read_fragment_close" android:layout_weight="1"/>
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="@dimen/fab_margin"
+            app:fabSize="auto"
+            app:srcCompat="@drawable/ic_close_black_24dp"
+            android:tint="@color/colorDarkThemePrimary"/>
+
     </LinearLayout>
-</LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>
 
 
 
