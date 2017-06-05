@@ -21,6 +21,7 @@ import com.hsfl.speakshot.service.camera.CameraService;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import android.support.design.widget.FloatingActionButton;
 
 public class SearchFragment extends Fragment implements Observer, View.OnTouchListener {
     private static final String TAG = SearchFragment.class.getSimpleName();
@@ -68,13 +69,20 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         });
 
         // light toggle
-        final ToggleButton lightSwitch = (ToggleButton)mInflatedView.findViewById(R.id.btn_light_toggle);
-        lightSwitch.setChecked(mCameraService.isFlashLightEnabled());
+        final FloatingActionButton lightSwitch = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_light_toggle);
         lightSwitch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mCameraService.setFlashLightEnabled(lightSwitch.isChecked());
+            mCameraService.setFlashLightEnabled(!mCameraService.isFlashLightEnabled());
+            if (mCameraService.isFlashLightEnabled())
+                lightSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_flash_on_black_24dp));
+            else
+                lightSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_flash_off_black_24dp));
             }
         });
+        if (mCameraService.isFlashLightEnabled())
+            lightSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_flash_on_black_24dp));
+        else
+            lightSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_flash_off_black_24dp));
 
         return mInflatedView;
     }

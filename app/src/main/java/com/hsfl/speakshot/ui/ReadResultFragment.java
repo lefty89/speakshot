@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.hsfl.speakshot.R;
 import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.audio.AudioService;
+import android.support.design.widget.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -39,7 +40,7 @@ public class ReadResultFragment extends Fragment {
         updateTextView();
 
         // close view
-        final Button closeButton = (Button)mInflatedView.findViewById(R.id.read_fragment_close);
+        final FloatingActionButton closeButton = (FloatingActionButton)mInflatedView.findViewById(R.id.read_fragment_close);
         closeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 ViewService.getInstance().back();
@@ -47,7 +48,7 @@ public class ReadResultFragment extends Fragment {
         });
 
         // close view
-        final Button nextButton = (Button)mInflatedView.findViewById(R.id.read_fragment_next);
+        final FloatingActionButton nextButton = (FloatingActionButton)mInflatedView.findViewById(R.id.read_fragment_next);
         nextButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 counter = (counter+1) % detectedTexts.size();
@@ -56,7 +57,7 @@ public class ReadResultFragment extends Fragment {
         });
 
         // close view
-        final Button prevButton = (Button)mInflatedView.findViewById(R.id.read_fragment_prev);
+        final FloatingActionButton prevButton = (FloatingActionButton)mInflatedView.findViewById(R.id.read_fragment_prev);
         prevButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 counter = (counter-1 < 0) ? detectedTexts.size()-1 : counter-1;
@@ -65,7 +66,7 @@ public class ReadResultFragment extends Fragment {
         });
 
         // play view
-        final Button playButton = (Button)mInflatedView.findViewById(R.id.read_fragment_play);
+        final FloatingActionButton playButton = (FloatingActionButton)mInflatedView.findViewById(R.id.read_fragment_play);
         playButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 AudioService.getInstance().speak(detectedTexts.get(counter));

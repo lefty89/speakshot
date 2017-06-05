@@ -2,4 +2,14 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <!-- floating action button -->
+    <dimen name="fab_margin">2dp</dimen>
+    <dimen name="fab_main_margin">10dp</dimen>
+    <dimen name="fab_frame_size">100dp</dimen>
+    <!-- mode icon size -->
+    <dimen name="mode_icon_size">150dp</dimen>
+    <!-- textview -->
+    <dimen name="textview_padding">15dp</dimen>
+    <dimen name="textview_text_size">15dp</dimen>
+    <dimen name="textview_header_text_size">35dp</dimen>
 </resources>

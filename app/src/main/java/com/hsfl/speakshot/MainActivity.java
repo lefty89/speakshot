@@ -8,24 +8,41 @@ import com.hsfl.speakshot.ui.ReadFragment;
 import com.hsfl.speakshot.ui.SearchFragment;
 
 import android.Manifest;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.preference.Preference;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ToggleButton;
-import android.widget.Button;
+import android.support.design.widget.FloatingActionButton;
+import android.preference.PreferenceManager;
+import android.content.SharedPreferences;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     /**
+     * main app modes
+     */
+    private final int MODE_SEARCH = 0;
+    private final int MODE_READ = 1;
+    private int CurrentMode = 1;
+
+    /**
      * the app theme
      */
-    private static  int THEME = R.style.AppTheme;
+    private static int Theme = R.style.ThemeDark;
 
     /**
      * Service provider that handles the camera object
@@ -46,8 +63,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Log.d(TAG, "audio enabled: " + preferences.getBoolean("audio_output_switch", true));
+        Log.d(TAG, "vibration enabled: " + preferences.getBoolean("vibration_switch", true));
+
         // sets theme and app settings
-        setTheme(THEME);
+        setTheme(Theme);
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -69,16 +90,23 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // switch button to change the mode
-        final ToggleButton modeSwitch = (ToggleButton)findViewById(R.id.btn_mode_select);
+        final FloatingActionButton modeSwitch = (FloatingActionButton)findViewById(R.id.btn_mode_select);
         modeSwitch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mViewService.to(((modeSwitch.isChecked()) ? new SearchFragment() : new ReadFragment()), null);
+                //  mViewService.to(((modeSwitch.isChecked()) ? new SearchFragment() : new ReadFragment()), null);
+                CurrentMode = CurrentMode == MODE_SEARCH ? MODE_READ : MODE_SEARCH;
+                setAppMode(CurrentMode);
+                // swtich background color
+                if (CurrentMode == MODE_SEARCH)
+                    modeSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_volume_up_black_24dp));
+                else
+                    modeSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_search_black_24dp));
             }
         });
         mViewService.to(new ReadFragment(), null);
 
         // button to show the settings activity
-        final Button settingsButton = (Button)findViewById(R.id.btn_settings);
+        final FloatingActionButton settingsButton = (FloatingActionButton)findViewById(R.id.btn_settings);
         settingsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 showSettings();

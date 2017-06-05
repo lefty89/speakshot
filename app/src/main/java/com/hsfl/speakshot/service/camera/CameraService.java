@@ -56,6 +56,8 @@ public class CameraService extends Observable {
      */
     private final int mRequestedPreviewWidth   = 1920;
     private final int mRequestedPreviewHeight  = 1080;
+    private Size mPreviewSize;
+    private List<SizePair> validPreviewSizes;
 
     /**
      * the camera and info object
@@ -434,10 +436,12 @@ public class CameraService extends Observable {
      * set to a size that is the same aspect ratio as the preview size we choose.  Otherwise, the
      * preview images may be distorted on some devices.
      */
-    private static List<SizePair> generateValidPreviewSizeList(Camera camera) {
+    public static List<SizePair> generateValidPreviewSizeList(Camera camera) {
         Camera.Parameters parameters = camera.getParameters();
-        List<android.hardware.Camera.Size> supportedPreviewSizes = parameters.getSupportedPreviewSizes();
-        List<android.hardware.Camera.Size> supportedPictureSizes = parameters.getSupportedPictureSizes();
+        List<android.hardware.Camera.Size> supportedPreviewSizes =
+                parameters.getSupportedPreviewSizes();
+        List<android.hardware.Camera.Size> supportedPictureSizes =
+                parameters.getSupportedPictureSizes();
         List<SizePair> validPreviewSizes = new ArrayList<>();
         for (android.hardware.Camera.Size previewSize : supportedPreviewSizes) {
             float previewAspectRatio = (float) previewSize.width / (float) previewSize.height;
@@ -449,6 +453,8 @@ public class CameraService extends Observable {
                 float pictureAspectRatio = (float) pictureSize.width / (float) pictureSize.height;
                 if (Math.abs(previewAspectRatio - pictureAspectRatio) < ASPECT_RATIO_TOLERANCE) {
                     validPreviewSizes.add(new SizePair(previewSize, pictureSize));
+                    Log.d(TAG, "Camera PreviewSize: " + pictureSize.width + " x " + pictureSize.height);
+                    Log.d(TAG, "Camera PictureSize: " + pictureSize.width + " x " + pictureSize.height);
                     break;
                 }
             }

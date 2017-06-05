@@ -7,12 +7,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 import com.hsfl.speakshot.R;
 import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.camera.CameraService;
+import android.support.design.widget.FloatingActionButton;
 
 import java.util.*;
 
@@ -54,7 +53,7 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
         mCameraService.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
 
         // show results
-        final Button resultButton = (Button)mInflatedView.findViewById(R.id.btn_show_results);
+        final FloatingActionButton resultButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_show_results);
         resultButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
@@ -64,13 +63,20 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
         });
 
         // light toggle
-        final ToggleButton lightSwitch = (ToggleButton)mInflatedView.findViewById(R.id.btn_light_toggle);
-        lightSwitch.setChecked(mCameraService.isFlashLightEnabled());
+        final FloatingActionButton lightSwitch = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_light_toggle);
         lightSwitch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mCameraService.setFlashLightEnabled(lightSwitch.isChecked());
+            mCameraService.setFlashLightEnabled(!mCameraService.isFlashLightEnabled());
+            if (mCameraService.isFlashLightEnabled())
+                lightSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_flash_on_black_24dp));
+            else
+                lightSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_flash_off_black_24dp));
             }
         });
+        if (mCameraService.isFlashLightEnabled())
+            lightSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_flash_on_black_24dp));
+        else
+            lightSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_flash_off_black_24dp));
 
         return mInflatedView;
     }
