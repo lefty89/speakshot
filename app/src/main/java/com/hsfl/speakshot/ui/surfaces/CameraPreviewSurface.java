@@ -71,6 +71,12 @@ public class CameraPreviewSurface extends ViewGroup implements SurfaceHolder.Cal
             final int height = b - t;
 
             child.layout(0, 0, width, height);
+
+            if (mCameraService != null) {
+                // inform the camera service that the dimensions of the underling surface
+                // has changed
+                mCameraService.onSurfaceDimensionChanged(width, height);
+            }
         }
     }
 

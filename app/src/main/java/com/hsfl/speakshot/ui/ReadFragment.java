@@ -1,6 +1,7 @@
 package com.hsfl.speakshot.ui;
 
 import android.app.Fragment;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -16,8 +17,13 @@ import com.hsfl.speakshot.service.camera.CameraService;
 import java.util.*;
 
 
-public class ReadFragment extends Fragment implements Observer, View.OnTouchListener {
+public class ReadFragment extends Fragment implements Observer, View.OnTouchListener, View.OnLongClickListener {
     private static final String TAG = ReadFragment.class.getSimpleName();
+
+    /**
+     * Flag that helps to chose whether its a long or short tab
+     */
+    private boolean mIsLongTab = false;
 
     /**
      * the inflated view
@@ -40,11 +46,12 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
 
         // add touch listener
         mInflatedView.setOnTouchListener(this);
+        mInflatedView.setOnLongClickListener(this);
 
         mCameraService = CameraService.getInstance();
         // adds an observer for the text recognizer
         mCameraService.addObserver(this);
-        mCameraService.startPreview();
+        mCameraService.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
 
         // show results
         final Button resultButton = (Button)mInflatedView.findViewById(R.id.btn_show_results);
@@ -96,8 +103,24 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        // take picture
-        mCameraService.analyzePicture();
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            mIsLongTab = true;
+        }
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            if (mIsLongTab) {
+                mCameraService.focus(event.getX(), event.getY());
+            }
+            mIsLongTab = false;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        if (mIsLongTab) {
+            mCameraService.analyzePicture();
+        }
+        mIsLongTab = false;
         return false;
     }
 }

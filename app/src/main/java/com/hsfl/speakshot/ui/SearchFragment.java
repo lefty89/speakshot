@@ -3,6 +3,7 @@ package com.hsfl.speakshot.ui;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.LayoutInflater;
@@ -54,6 +55,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         mCameraService = CameraService.getInstance();
         // adds an observer for the text recognizer
         mCameraService.addObserver(this);
+        mCameraService.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
 
         // show result view
         final Button sendToReadButton = (Button)mInflatedView.findViewById(R.id.btn_send_to_read);
@@ -110,36 +112,35 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-
-        if (searchTerm.equals("")) {
-            // open modal
-            final EditText txt = new EditText(getActivity());
-            new AlertDialog.Builder(getActivity())
-                    .setMessage("Search for word")
-                    .setView(txt)
-                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            // start searching
-                            searchTerm = txt.getText().toString();
-                            if (!searchTerm.equals("")) {
-                                mCameraService.analyseStream(searchTerm);
-                                Toast.makeText(getActivity().getApplicationContext(), "Searching for: " + searchTerm, Toast.LENGTH_SHORT).show();
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            if (searchTerm.equals("")) {
+                // open modal
+                final EditText txt = new EditText(getActivity());
+                new AlertDialog.Builder(getActivity())
+                        .setMessage("Search for word")
+                        .setView(txt)
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                // start searching
+                                searchTerm = txt.getText().toString();
+                                if (!searchTerm.equals("")) {
+                                    mCameraService.analyseStream(searchTerm);
+                                    Toast.makeText(getActivity().getApplicationContext(), "Searching for: " + searchTerm, Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                        }
-                    })
-                    .show();
-        } else {
-            // stop searching
-            searchTerm = "";
-            mCameraService.analyseStream("");
-            Toast.makeText(getActivity().getApplicationContext(), "Stop searching", Toast.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                            }
+                        })
+                        .show();
+            } else {
+                // stop searching
+                searchTerm = "";
+                mCameraService.analyseStream("");
+                Toast.makeText(getActivity().getApplicationContext(), "Stop searching", Toast.LENGTH_SHORT).show();
+            }
         }
-
-
         return false;
     }
 }

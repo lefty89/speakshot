@@ -2,14 +2,13 @@ package com.hsfl.speakshot.service.camera;
 
 import android.graphics.ImageFormat;
 import android.media.MediaActionSound;
+import com.hsfl.speakshot.service.camera.helper.ManualFocusHelper;
 import com.hsfl.speakshot.service.camera.helper.MediaSoundHelper;
 import com.hsfl.speakshot.service.camera.ocr.OcrHandler;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.hardware.Camera;
 import android.os.*;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.WindowManager;
 import com.google.android.gms.common.images.Size;
@@ -43,6 +42,11 @@ public class CameraService extends Observable {
     private MediaSoundHelper mMediaSoundHelper;
 
     /**
+     * Contains the helper for focusing
+     */
+    private ManualFocusHelper mManualFocusHelper;
+
+    /**
      * Camera Lock
      */
     private Object mCameraLock = new Object();
@@ -69,7 +73,6 @@ public class CameraService extends Observable {
      * Camera facing, chooses the back camera as default
      */
     private int mFacing = android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
-    private String mFocusMode = Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE;
 
     /**
      * Empty Constructor
@@ -93,13 +96,14 @@ public class CameraService extends Observable {
      * @throws IOException
      */
     public void setPreviewDisplay(SurfaceHolder holder) throws IOException {
-        try {
-            if (mCamera != null) {
-                mCamera.setPreviewDisplay(holder);
-
+        synchronized (mCameraLock) {
+            try {
+                if (mCamera != null) {
+                    mCamera.setPreviewDisplay(holder);
+                }
+            } catch (IOException exception) {
+                Log.e(TAG, "IOException caused by setPreviewDisplay()", exception);
             }
-        } catch (IOException exception) {
-            Log.e(TAG, "IOException caused by setPreviewDisplay()", exception);
         }
     }
 
@@ -107,18 +111,19 @@ public class CameraService extends Observable {
      * Snaps a new image and analyze it immediately
      */
     public void analyzePicture() {
-
-        if (mCamera != null) {
-            Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
-                public void onPreviewFrame(byte[] data, Camera camera) {
-                    // starts the ocr for this image
-                    mOcrHandler.ocrSingleImage(data);
-                    // restarts the background preview
-                    startPreview();
-                }
-            };
-            mCamera.setOneShotPreviewCallback(previewCallback);
-            mMediaSoundHelper.play(MediaActionSound.SHUTTER_CLICK);
+        synchronized (mCameraLock) {
+            if (mCamera != null) {
+                Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
+                    public void onPreviewFrame(byte[] data, Camera camera) {
+                        // starts the ocr for this image
+                        mOcrHandler.ocrSingleImage(data);
+                        // restarts the background preview
+                        startPreview();
+                    }
+                };
+                mCamera.setOneShotPreviewCallback(previewCallback);
+                mMediaSoundHelper.play(MediaActionSound.SHUTTER_CLICK);
+            }
         }
     }
 
@@ -126,13 +131,15 @@ public class CameraService extends Observable {
      * Analyzes the images from the preview surface
      */
     public void analyseStream(String searchTerm) {
-        if (mOcrHandler != null) {
-            if (!searchTerm.isEmpty()) {
-                mOcrHandler.startOcrDetector(searchTerm);
-                mMediaSoundHelper.play(MediaActionSound.START_VIDEO_RECORDING);
-            } else {
-                mOcrHandler.stopOcrDetector();
-                mMediaSoundHelper.play(MediaActionSound.STOP_VIDEO_RECORDING);
+        synchronized (mCameraLock) {
+            if (mCamera != null) {
+                if (!searchTerm.isEmpty()) {
+                    mOcrHandler.startOcrDetector(searchTerm);
+                    mMediaSoundHelper.play(MediaActionSound.START_VIDEO_RECORDING);
+                } else {
+                    mOcrHandler.stopOcrDetector();
+                    mMediaSoundHelper.play(MediaActionSound.STOP_VIDEO_RECORDING);
+                }
             }
         }
     }
@@ -161,22 +168,9 @@ public class CameraService extends Observable {
 
                 // get Camera parameters
                 Camera.Parameters params = mCamera.getParameters();
-                List<String> focusModes = params.getSupportedFocusModes();
-                if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-                    // set the focus mode
-                    params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-                }
+
                 // sets the size
                 params.setPreviewSize(sizePair.previewSize().getWidth(), sizePair.previewSize().getHeight());
-
-                // sets autofocus
-                if (mFocusMode != null) {
-                    if (params.getSupportedFocusModes().contains(mFocusMode)) {
-                        params.setFocusMode(mFocusMode);
-                    } else {
-                        Log.i(TAG, "Camera focus mode: " + mFocusMode + " is not supported on this device.");
-                    }
-                }
 
                 // updates the camera parameter
                 mCamera.setParameters(params);
@@ -232,11 +226,52 @@ public class CameraService extends Observable {
     }
 
     /**
+     * Sets the focus mode
+     * @param foc
+     */
+    public void setFocusMode(String foc) {
+        if (mCamera != null) {
+            // get Camera parameters
+            Camera.Parameters params = mCamera.getParameters();
+            // sets the focus mode
+            if (params.getSupportedFocusModes().contains(foc)) {
+                params.setFocusMode(foc);
+                if (foc == Camera.Parameters.FOCUS_MODE_AUTO) {
+                    mManualFocusHelper = new ManualFocusHelper(mCamera);
+                }
+                mCamera.setParameters(params);
+            }
+        }
+    }
+
+    /**
      * Stops updating the preview surface
      */
     public void stopPreview() {
         if (mCamera != null) {
             mCamera.stopPreview();
+        }
+    }
+
+    /**
+     * Starts updating the preview surface
+     */
+    public void focus(float x, float y) {
+        synchronized (mCameraLock) {
+            if (mManualFocusHelper != null) {
+                mManualFocusHelper.focus(x, y);
+            }
+        }
+    }
+
+    /**
+     * Informs the focus helper that the surface dimensions has changed
+     * @param width
+     * @param height
+     */
+    public void onSurfaceDimensionChanged(int width, int height) {
+        if (mManualFocusHelper != null) {
+            mManualFocusHelper.setPreviewSize(width, height);
         }
     }
 
@@ -431,128 +466,5 @@ public class CameraService extends Observable {
         }
 
         return validPreviewSizes;
-    }
-
-    /**
-     * Callback interface used to notify on completion of camera auto focus.
-     */
-    public interface AutoFocusCallback {
-        /**
-         * Called when the camera auto focus completes.  If the camera
-         * does not support auto-focus and autoFocus is called,
-         * onAutoFocus will be called immediately with a fake value of
-         * <code>success</code> set to <code>true</code>.
-         * <p/>
-         * The auto-focus routine does not lock auto-exposure and auto-white
-         * balance after it completes.
-         *
-         * @param success true if focus was successful, false if otherwise
-         */
-        void onAutoFocus(boolean success);
-    }
-
-    /**
-     * Callback interface used to notify on auto focus start and stop.
-     * <p/>
-     * <p>This is only supported in continuous autofocus modes -- {@link
-     * Camera.Parameters#FOCUS_MODE_CONTINUOUS_VIDEO} and {@link
-     * Camera.Parameters#FOCUS_MODE_CONTINUOUS_PICTURE}. Applications can show
-     * autofocus animation based on this.</p>
-     */
-    public interface AutoFocusMoveCallback {
-        /**
-         * Called when the camera auto focus starts or stops.
-         *
-         * @param start true if focus starts to move, false if focus stops to move
-         */
-        void onAutoFocusMoving(boolean start);
-    }
-
-    /**
-     * Wraps the camera1 auto focus callback so that the deprecated API isn't exposed.
-     */
-    private class CameraAutoFocusCallback implements Camera.AutoFocusCallback {
-        private AutoFocusCallback mDelegate;
-
-        @Override
-        public void onAutoFocus(boolean success, Camera camera) {
-            if (mDelegate != null) {
-                mDelegate.onAutoFocus(success);
-            }
-        }
-    }
-
-    /**
-     * Wraps the camera1 auto focus move callback so that the deprecated API isn't exposed.
-     */
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    private class CameraAutoFocusMoveCallback implements Camera.AutoFocusMoveCallback {
-        private AutoFocusMoveCallback mDelegate;
-
-        @Override
-        public void onAutoFocusMoving(boolean start, Camera camera) {
-            if (mDelegate != null) {
-                mDelegate.onAutoFocusMoving(start);
-            }
-        }
-    }
-
-    /**
-     * Starts camera auto-focus and registers a callback function to run when
-     * the camera is focused.  This method is only valid when preview is active
-     * (between {@link #start()} or {@link #start(SurfaceHolder)} and before {@link #stop()}
-     * or {@link #release()}).
-     * <p/>
-     * <p>Callers should check
-     * {@link #getFocusMode()} to determine if
-     * this method should be called. If the camera does not support auto-focus,
-     * it is a no-op and {@link AutoFocusCallback#onAutoFocus(boolean)}
-     * callback will be called immediately.
-     * <p/>
-     * <p>If the current flash mode is not
-     * {@link Camera.Parameters#FLASH_MODE_OFF}, flash may be
-     * fired during auto-focus, depending on the driver and camera hardware.<p>
-     *
-     * @param cb the callback to run
-     * @see #cancelAutoFocus()
-     */
-    public void autoFocus(@Nullable AutoFocusCallback cb) {
-        synchronized (mCameraLock) {
-            if (mCamera != null) {
-                CameraAutoFocusCallback autoFocusCallback = null;
-                if (cb != null) {
-                    autoFocusCallback = new CameraAutoFocusCallback();
-                    autoFocusCallback.mDelegate = cb;
-                }
-                mCamera.autoFocus(autoFocusCallback);
-            }
-        }
-    }
-
-    /**
-     * Sets camera auto-focus move callback.
-     *
-     * @param cb the callback to run
-     * @return {@code true} if the operation is supported (i.e. from Jelly Bean), {@code false}
-     * otherwise
-     */
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public boolean setAutoFocusMoveCallback(@Nullable AutoFocusMoveCallback cb) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            return false;
-        }
-
-        synchronized (mCameraLock) {
-            if (mCamera != null) {
-                CameraAutoFocusMoveCallback autoFocusMoveCallback = null;
-                if (cb != null) {
-                    autoFocusMoveCallback = new CameraAutoFocusMoveCallback();
-                    autoFocusMoveCallback.mDelegate = cb;
-                }
-                mCamera.setAutoFocusMoveCallback(autoFocusMoveCallback);
-            }
-        }
-
-        return true;
     }
 }
