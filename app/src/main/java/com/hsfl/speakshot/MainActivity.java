@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ToggleButton;
@@ -27,8 +28,9 @@ public class MainActivity extends AppCompatActivity {
     /**
      * main app modes
      */
-    private final boolean MODE_READ = false;
-    private final boolean MODE_SEARCH = true;
+    private final int MODE_SEARCH = 0;
+    private final int MODE_READ = 1;
+    private int CurrentMode = 1;
 
     /**
      * the app theme
@@ -59,15 +61,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // switch button to change the mode
-        final ToggleButton modeSwitch = (ToggleButton)findViewById(R.id.btn_mode_select);
+        final FloatingActionButton modeSwitch = (FloatingActionButton)findViewById(R.id.btn_mode_select);
         modeSwitch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                setAppMode(modeSwitch.isChecked());
+                CurrentMode = CurrentMode == MODE_SEARCH ? MODE_READ : MODE_SEARCH;
+                setAppMode(CurrentMode);
                 // swtich background color
-                if (modeSwitch.isChecked())
-                    modeSwitch.setButtonDrawable(R.drawable.ic_search_black_24dp);
+                if (CurrentMode == MODE_SEARCH)
+                    modeSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_search_black_24dp));
                 else
-                    modeSwitch.setButtonDrawable(R.drawable.ic_volume_up_black_24dp);
+                    modeSwitch.setImageDrawable(getResources().getDrawable(R.drawable.ic_volume_up_black_24dp));
             }
         });
         setAppMode(MODE_READ);
@@ -97,13 +100,14 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * switches the app between read and search mode
-     * @param b either MODE_READ or MODE_SEARCH
+     * @param mode either MODE_READ or MODE_SEARCH
      */
-    private void setAppMode(boolean b) {
+    private void setAppMode(int mode) {
+        Log.d(TAG, "switch mode to " + (mode == MODE_READ ? "MODE_READ" : "MODE_SEARCH"));
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         // gets the fragment
-        Fragment fragment = (b) ? new SearchFragment() : new ReadFragment();
+        Fragment fragment = mode == MODE_SEARCH ? new SearchFragment() : new ReadFragment();
         ft.replace(R.id.fragment_container, fragment);
         // Commit the transaction
         ft.commit();

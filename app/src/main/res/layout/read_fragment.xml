@@ -10,26 +10,28 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="bottom">
-        <ToggleButton
-            android:layout_width="match_parent"
+        android:gravity="bottom|center_horizontal">
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/btn_show_results"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="@dimen/fab_margin"
+            android:enabled="false"
+            app:fabSize="auto"
+            app:srcCompat="@drawable/ic_volume_up_black_24dp"
+            android:tint="@color/colorDarkThemePrimary"/>
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/btn_light_toggle"
-            android:textOff="Light on"
-            android:textOn="Light off"
-            android:layout_weight="1"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="@dimen/fab_margin"
+            android:enabled="false"
+            app:fabSize="auto"
+            app:srcCompat="@drawable/ic_flash_on_black_24dp"
+            android:tint="@color/colorDarkThemePrimary"/>
     </LinearLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/btn_show_results"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|start"
-        android:layout_margin="@dimen/fab_margin"
-        android:enabled="false"
-        app:fabSize="auto"
-        app:srcCompat="@drawable/ic_volume_up_black_24dp"
-        android:tint="@color/colorDarkThemePrimary"/>
 
 </android.support.design.widget.CoordinatorLayout>
 
