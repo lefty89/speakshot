@@ -5,10 +5,4 @@
     <header android:fragment="com.hsfl.speakshot.SettingsActivity$GeneralPreferenceFragment"
         android:title="@string/pref_header_general" />
 
-    <header android:fragment="com.hsfl.speakshot.SettingsActivity$CameraPreferenceFragment"
-        android:title="@string/pref_header_camera" />
-
-    <header android:fragment="com.hsfl.speakshot.SettingsActivity$AppearancePreferenceFragment"
-        android:title="@string/pref_header_appearance" />
-
 </preference-headers>
