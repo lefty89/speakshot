@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * the app theme
      */
-    private static int Theme = R.style.ThemeDarkSearchMode;
+    private static int Theme = R.style.ThemeDarkReadMode;
 
     /**
      * Service provider that handles the camera object
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "vibration enabled: " + preferences.getBoolean("vibration_switch", true));
 
         // sets theme and app settings
-        setTheme(Theme);
+        loadSettings();
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -160,6 +160,24 @@ public class MainActivity extends AppCompatActivity {
 
         FloatingActionButton btn_mode_select = (FloatingActionButton)findViewById(R.id.btn_mode_select);
         btn_mode_select.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * reads the settings from the shared preference object and sets up the app accordingly
+     */
+    private void loadSettings()
+    {
+        // set theme
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String themeId = preferences.getString("theme", "");
+        if (themeId.equals("light")) {
+            setTheme(R.style.ThemeLightReadMode);
+            Log.d(TAG, "switch to light theme " + themeId);
+        }
+        else /*if (themeId.equals("dark"))*/ {
+            setTheme(R.style.ThemeDarkReadMode);
+            Log.d(TAG, "switch to dark theme " + themeId);
+        }
     }
 
     static {

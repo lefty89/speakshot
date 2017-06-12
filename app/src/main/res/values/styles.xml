@@ -3,11 +3,11 @@
     <!-- Base application theme. -->
     <style name="ThemeLightReadMode" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorAccent">@color/lightBlue</item>
-        <item name="android:tint">@color/black</item>
+        <item name="android:tint">@color/darkBlue</item>
     </style>
     <style name="ThemeLightSearchMode" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorAccent">@color/lightPurple</item>
-        <item name="android:tint">@color/black</item>
+        <item name="android:tint">@color/darkPurple</item>
     </style>
 
     <style name="ThemeDarkReadMode" parent="Theme.AppCompat.NoActionBar">
