@@ -6,19 +6,29 @@
     android:layout_height="match_parent"
     tools:context="com.hsfl.speakshot.MainActivity">
 
+    <FrameLayout
+        android:layout_width="@dimen/fab_frame_size"
+        android:layout_height="@dimen/fab_frame_size"
+        android:layout_weight="1"
+        android:layout_gravity="top|end">
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/read_fragment_close"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/fab_main_margin"
+            app:srcCompat="@drawable/ic_close_black_24dp" />
+    </FrameLayout>
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorDarkThemeBackgroundTintLighter"
         android:layout_gravity="bottom|left">
-
         <!-- text -->
         <TextView
             android:id="@+id/txt_sections_result"
             android:text="@string/read_results_no_text_blocks_found"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="fill_parent"
             android:textSize="@dimen/textview_text_size"
             android:padding="@dimen/textview_padding"
             android:layout_weight="0.99"
@@ -49,9 +59,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="bottom|start"
-                    android:layout_margin="@dimen/fab_margin"
-                    app:srcCompat="@drawable/ic_skip_previous_black_24dp"
-                    style="@style/ThemeDark" />
+                    android:layout_margin="@dimen/fab_main_margin"
+                    app:srcCompat="@drawable/ic_skip_previous_black_24dp" />
             </FrameLayout>
             <FrameLayout
                 android:layout_width="@dimen/fab_frame_size"
@@ -62,9 +71,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="bottom|start"
-                    android:layout_margin="@dimen/fab_margin"
-                    app:srcCompat="@drawable/ic_play_arrow_black_24dp"
-                    style="@style/ThemeDark" />
+                    android:layout_margin="@dimen/fab_main_margin"
+                    app:srcCompat="@drawable/ic_play_arrow_black_24dp" />
             </FrameLayout>
             <FrameLayout
                 android:layout_width="@dimen/fab_frame_size"
@@ -75,22 +83,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="bottom|start"
-                    android:layout_margin="@dimen/fab_margin"
-                    app:srcCompat="@drawable/ic_skip_next_black_24dp"
-                    style="@style/ThemeDark" />
-            </FrameLayout>
-            <FrameLayout
-                android:layout_width="@dimen/fab_frame_size"
-                android:layout_height="@dimen/fab_frame_size"
-                android:layout_weight="1">
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/read_fragment_close"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="bottom|start"
-                    android:layout_margin="@dimen/fab_margin"
-                    app:srcCompat="@drawable/ic_close_black_24dp"
-                    style="@style/ThemeDark" />
+                    android:layout_margin="@dimen/fab_main_margin"
+                    app:srcCompat="@drawable/ic_skip_next_black_24dp" />
             </FrameLayout>
         </LinearLayout>
 

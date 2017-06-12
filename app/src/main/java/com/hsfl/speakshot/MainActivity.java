@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * the app theme
      */
-    private static int Theme = R.style.ThemeDark;
+    private static int Theme = R.style.ThemeDarkSearchMode;
 
     /**
      * Service provider that handles the camera object
@@ -124,12 +124,42 @@ public class MainActivity extends AppCompatActivity {
         mCameraService.releaseCamera();
     }
 
+    @Override
+    public void onBackPressed() {
+        showButtonsSettingsModeSwitch();
+        ViewService.getInstance().back();
+    }
+
     /**
      * shows the settings activity
      */
     private void showSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
+    }
+
+    /**
+     * hides the buttons for settings and mode switch
+     */
+    public void hideButtonsSettingsModeSwitch()
+    {
+        FloatingActionButton btn_settings = (FloatingActionButton)findViewById(R.id.btn_settings);
+        btn_settings.setVisibility(View.GONE);
+
+        FloatingActionButton btn_mode_select = (FloatingActionButton)findViewById(R.id.btn_mode_select);
+        btn_mode_select.setVisibility(View.GONE);
+    }
+
+    /**
+     * show the buttons for settings and mode switch
+     */
+    public void showButtonsSettingsModeSwitch()
+    {
+        FloatingActionButton btn_settings = (FloatingActionButton)findViewById(R.id.btn_settings);
+        btn_settings.setVisibility(View.VISIBLE);
+
+        FloatingActionButton btn_mode_select = (FloatingActionButton)findViewById(R.id.btn_mode_select);
+        btn_mode_select.setVisibility(View.VISIBLE);
     }
 
     static {

@@ -2,15 +2,10 @@
 <resources>
     <!-- mode icon -->
     <color name="colorModeIcon">#a3c6ff</color>
-
-    <!-- light theme -->
-    <color name="colorLightThemePrimary">#0000ff</color>
-    <color name="colorLightThemeText">#000000</color>
-    <color name="colorLightThemeBackgroundTint">#dddddd</color>
-
-    <!-- dark theme -->
-    <color name="colorDarkThemePrimary">#ffffff</color>
-    <color name="colorDarkThemeText">#ffffff</color>
-    <color name="colorDarkThemeBackgroundTintLighter">#8585e9</color>
-    <color name="colorDarkThemeBackgroundTint">#14149b</color>
+    <color name="darkBlue">#000077</color>
+    <color name="lightBlue">#9999ff</color>
+    <color name="darkPurple">#770077</color>
+    <color name="lightPurple">#ff99ff</color>
+    <color name="black">#000000</color>
+    <color name="white">#ffffff</color>
 </resources>
