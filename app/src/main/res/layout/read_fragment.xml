@@ -18,24 +18,24 @@
         android:layout_height="match_parent"
         android:gravity="bottom|center_horizontal">
         <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_width="@dimen/fab_frame_size"
+            android:layout_height="@dimen/fab_frame_size">
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/btn_show_results"
-                android:layout_width="@dimen/fab_frame_size"
-                android:layout_height="@dimen/fab_frame_size"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="bottom|start"
                 app:srcCompat="@drawable/ic_volume_up_black_24dp"
                 style="@style/ThemeDark" />
         </FrameLayout>
-        <FrameLayout
 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+        <FrameLayout
+            android:layout_width="@dimen/fab_frame_size"
+            android:layout_height="@dimen/fab_frame_size">
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/btn_light_toggle"
-                android:layout_width="@dimen/fab_frame_size"
-                android:layout_height="@dimen/fab_frame_size"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="bottom|start"
                 android:layout_margin="@dimen/fab_margin"
                 android:enabled="false"
