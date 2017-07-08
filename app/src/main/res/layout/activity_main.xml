@@ -20,32 +20,30 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="top|right">
+        android:gravity="top|end">
         <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/fab_frame_size"
+            android:layout_height="@dimen/fab_frame_size"
             android:layout_centerHorizontal="true">
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/btn_settings"
-                android:layout_width="@dimen/fab_frame_size"
-                android:layout_height="@dimen/fab_frame_size"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="top|end"
                 android:layout_margin="@dimen/fab_main_margin"
-                app:srcCompat="@drawable/ic_settings_black_24dp"
-                style="@style/ThemeDark" />
+                app:srcCompat="@drawable/ic_settings_black_24dp" />
         </FrameLayout>
         <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/fab_frame_size"
+            android:layout_height="@dimen/fab_frame_size"
             android:layout_centerHorizontal="true">
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/btn_mode_select"
-                android:layout_width="@dimen/fab_frame_size"
-                android:layout_height="@dimen/fab_frame_size"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="top|end"
                 android:layout_margin="@dimen/fab_main_margin"
-                app:srcCompat="@drawable/ic_search_black_24dp"
-                style="@style/ThemeDark" />
+                app:srcCompat="@drawable/ic_search_black_24dp" />
         </FrameLayout>
     </LinearLayout>
 

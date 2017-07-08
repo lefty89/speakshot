@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
 import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.audio.AudioService;
@@ -42,11 +44,13 @@ public class ReadResultFragment extends Fragment {
         final FloatingActionButton closeButton = (FloatingActionButton)mInflatedView.findViewById(R.id.read_fragment_close);
         closeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                // make buttons for settings and mode switch invisible
+                ((MainActivity)getActivity()).showButtonsSettingsModeSwitch();
                 ViewService.getInstance().back();
             }
         });
 
-        // close view
+        // next text block
         final FloatingActionButton nextButton = (FloatingActionButton)mInflatedView.findViewById(R.id.read_fragment_next);
         nextButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -55,7 +59,7 @@ public class ReadResultFragment extends Fragment {
             }
         });
 
-        // close view
+        // previous text block
         final FloatingActionButton prevButton = (FloatingActionButton)mInflatedView.findViewById(R.id.read_fragment_prev);
         prevButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -64,7 +68,7 @@ public class ReadResultFragment extends Fragment {
             }
         });
 
-        // play view
+        // play current text block
         final FloatingActionButton playButton = (FloatingActionButton)mInflatedView.findViewById(R.id.read_fragment_play);
         playButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

@@ -1,18 +1,22 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="ThemeLight" parent="Theme.AppCompat.NoActionBar">
-        <!-- light theme -->
-        <item name="colorAccent">@color/colorLightThemePrimary</item>
-        <item name="android:textColor">@color/colorDarkThemeText</item>
-        <item name="backgroundTint">@color/colorLightThemeBackgroundTint</item>
+    <style name="ThemeLightReadMode" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorAccent">@color/lightBlue</item>
+        <item name="android:tint">@color/darkBlue</item>
+    </style>
+    <style name="ThemeLightSearchMode" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorAccent">@color/lightPurple</item>
+        <item name="android:tint">@color/darkPurple</item>
     </style>
 
-    <!-- dark theme -->
-    <style name="ThemeDark" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorAccent">@color/colorDarkThemePrimary</item>
-        <item name="android:textColor">@color/colorDarkThemeText</item>
-        <item name="backgroundTint">@color/colorDarkThemeBackgroundTint</item>
+    <style name="ThemeDarkReadMode" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorAccent">@color/darkBlue</item>
+        <item name="android:tint">@color/lightBlue</item>
+    </style>
+    <style name="ThemeDarkSearchMode" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorAccent">@color/darkPurple</item>
+        <item name="android:tint">@color/lightPurple</item>
     </style>
 
 </resources>

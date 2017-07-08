@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
 import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.camera.CameraService;
@@ -64,6 +66,8 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
                 Bundle bundle = new Bundle();
                 bundle.putStringArrayList("texts", detectedTexts);
                 ViewService.getInstance().toS(new ReadResultFragment(), bundle);
+                // make buttons for settings and mode switch invisible
+                ((MainActivity)getActivity()).hideButtonsSettingsModeSwitch();
             }
         });
         sendToReadButton.setEnabled(false);

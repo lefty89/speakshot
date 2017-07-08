@@ -24,8 +24,8 @@
         <item>Dark</item>
     </string-array>
     <string-array name="pref_theme_values">
-        <item>0</item>
-        <item>1</item>
+        <item>light</item>
+        <item>dark</item>
     </string-array>
 
     <string name="pref_title_font_size">Font size</string>
