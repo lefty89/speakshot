@@ -1,5 +1,6 @@
 package com.hsfl.speakshot;
 
+import android.app.Dialog;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatDelegate;
 import com.hsfl.speakshot.service.dictionary.DictionaryService;
@@ -21,6 +22,7 @@ import android.view.WindowManager;
 import android.support.design.widget.FloatingActionButton;
 import android.preference.PreferenceManager;
 import android.content.SharedPreferences;
+import com.hsfl.speakshot.ui.surfaces.CameraPreviewSurface;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -53,6 +55,11 @@ public class MainActivity extends AppCompatActivity {
      */
     private ViewService mViewService;
 
+    /**
+     * The camera background surface
+     */
+    private CameraPreviewSurface mPreview;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
         setTheme(Theme);
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        // gets the background surface
+        mPreview = (CameraPreviewSurface)findViewById(R.id.camera_view);
 
         // initializes the ViewService
         mViewService = ViewService.getInstance();
@@ -112,16 +122,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        Log.d(TAG, "onResume");
+        // init the preview view and attaches the camera
+        mPreview.update();
         super.onResume();
-        // init the camera
-        mCameraService.initCamera(getApplicationContext());
     }
 
     @Override
     protected void onPause() {
+        Log.d(TAG, "onPause");
+        // stops the preview and releases all resources
+        mPreview.pause();
         super.onPause();
-        // releases the camera
-        mCameraService.releaseCamera();
     }
 
     /**

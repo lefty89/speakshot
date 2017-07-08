@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.WindowManager;
 import com.google.android.gms.common.images.Size;
 import android.view.SurfaceHolder;
+import com.hsfl.speakshot.ui.surfaces.CameraPreviewSurface;
 
 import java.io.*;
 import java.util.*;
@@ -56,25 +57,23 @@ public class CameraService extends Observable {
      */
     private final int mRequestedPreviewWidth   = 1920;
     private final int mRequestedPreviewHeight  = 1080;
-    private Size mPreviewSize;
-    private List<SizePair> validPreviewSizes;
 
     /**
      * the camera and info object
      */
-    private Camera mCamera;
+    public Camera mCamera;
     private Camera.CameraInfo mCameraInfo;
+
+    /**
+     * Contains the requested focus mode
+     */
+    private String FOCUS_MODE;
 
     /**
      * If the absolute difference between a preview size aspect ratio and a picture size aspect
      * ratio is less than this tolerance, they are considered to be the same aspect ratio.
      */
     private static final float ASPECT_RATIO_TOLERANCE = 0.01f;
-
-    /**
-     * Camera facing, chooses the back camera as default
-     */
-    private int mFacing = android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
 
     /**
      * Empty Constructor
@@ -93,23 +92,6 @@ public class CameraService extends Observable {
     }
 
     /**
-     * Sets the surface where the camera output shall drawn into
-     * @param holder
-     * @throws IOException
-     */
-    public void setPreviewDisplay(SurfaceHolder holder) throws IOException {
-        synchronized (mCameraLock) {
-            try {
-                if (mCamera != null) {
-                    mCamera.setPreviewDisplay(holder);
-                }
-            } catch (IOException exception) {
-                Log.e(TAG, "IOException caused by setPreviewDisplay()", exception);
-            }
-        }
-    }
-
-    /**
      * Snaps a new image and analyze it immediately
      */
     public void analyzePicture() {
@@ -120,7 +102,7 @@ public class CameraService extends Observable {
                         // starts the ocr for this image
                         mOcrHandler.ocrSingleImage(data);
                         // restarts the background preview
-                        startPreview();
+                        mCamera.startPreview();
                     }
                 };
                 mCamera.setOneShotPreviewCallback(previewCallback);
@@ -149,40 +131,43 @@ public class CameraService extends Observable {
     /**
      * Setting up the camera and registers the ocr processor
      */
-    public void initCamera(Context context) {
+    public void init(Context context) {
         if (mCamera == null) {
             // checks whether a suitable camera exists
-            int requestedCameraId = getIdForRequestedCamera(mFacing);
+            int requestedCameraId = getIdForRequestedCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
             if (requestedCameraId == -1) {
                 throw new RuntimeException("Could not find requested camera.");
             }
 
             // opens the selected camera
             if (safeCameraOpen(requestedCameraId)) {
-                SizePair sizePair = selectSizePair(mCamera, mRequestedPreviewWidth, mRequestedPreviewHeight);
-                if (sizePair == null) {
-                    throw new RuntimeException("Could not find suitable preview size.");
-                }
-
                 // loads info for the selected camera
                 mCameraInfo = new Camera.CameraInfo();
-                Camera.getCameraInfo(mFacing, mCameraInfo);
+                Camera.getCameraInfo(Camera.CameraInfo.CAMERA_FACING_BACK, mCameraInfo);
 
                 // get Camera parameters
                 Camera.Parameters params = mCamera.getParameters();
 
-                // sets the size
-                params.setPreviewSize(sizePair.previewSize().getWidth(), sizePair.previewSize().getHeight());
+                // sets image format
+                params.setPreviewFormat(ImageFormat.NV21);
+
+                // updates the orientation
+                int displayOrientation = getDisplayOrientation(context);
+                mCamera.setDisplayOrientation(displayOrientation);
+
+                // sets the focus mode
+                if (params.getSupportedFocusModes().contains(FOCUS_MODE)) {
+                    params.setFocusMode(FOCUS_MODE);
+                    if (FOCUS_MODE == Camera.Parameters.FOCUS_MODE_AUTO) {
+                        mManualFocusHelper = new ManualFocusHelper(mCamera);
+                    }
+                }
 
                 // updates the camera parameter
                 mCamera.setParameters(params);
 
-                // sets image format
-                params.setPreviewFormat(ImageFormat.NV21);
-
-                // gets the display orientation
-                int displayOrientation = getDisplayOrientation(context);
-                mCamera.setDisplayOrientation(displayOrientation);
+                // init the sound player
+                mMediaSoundHelper = new MediaSoundHelper();
 
                 // initializes the ocr engine
                 mOcrHandler = new OcrHandler(context, mCamera, displayOrientation, new Handler() {
@@ -193,9 +178,6 @@ public class CameraService extends Observable {
                     }
                 });
                 mCamera.setPreviewCallbackWithBuffer(mOcrHandler);
-
-                // init the sound player
-                mMediaSoundHelper = new MediaSoundHelper();
             }
             else {
                 throw new RuntimeException("Could not open camera.");
@@ -206,14 +188,13 @@ public class CameraService extends Observable {
     /**
      * Stops previewing and releases the camera object
      */
-    public void releaseCamera() {
-
+    public void release() {
         if (mCamera != null) {
+            // Call stopPreview() to stop updating the preview surface.
+            stopPreview();
+
             // releases the ocr detector
             mOcrHandler.releaseOcrDetector();
-
-            // Call stopPreview() to stop updating the preview surface.
-            mCamera.stopPreview();
 
             // clears resources for the sound player
             mMediaSoundHelper.release();
@@ -232,27 +213,7 @@ public class CameraService extends Observable {
      * @param foc
      */
     public void setFocusMode(String foc) {
-        if (mCamera != null) {
-            // get Camera parameters
-            Camera.Parameters params = mCamera.getParameters();
-            // sets the focus mode
-            if (params.getSupportedFocusModes().contains(foc)) {
-                params.setFocusMode(foc);
-                if (foc == Camera.Parameters.FOCUS_MODE_AUTO) {
-                    mManualFocusHelper = new ManualFocusHelper(mCamera);
-                }
-                mCamera.setParameters(params);
-            }
-        }
-    }
-
-    /**
-     * Stops updating the preview surface
-     */
-    public void stopPreview() {
-        if (mCamera != null) {
-            mCamera.stopPreview();
-        }
+        FOCUS_MODE = foc;
     }
 
     /**
@@ -267,22 +228,53 @@ public class CameraService extends Observable {
     }
 
     /**
-     * Informs the focus helper that the surface dimensions has changed
-     * @param width
-     * @param height
+     * Starts updating the preview surface
      */
-    public void onSurfaceDimensionChanged(int width, int height) {
-        if (mManualFocusHelper != null) {
-            mManualFocusHelper.setPreviewSize(width, height);
+    public void startPreview(int width, int height, SurfaceHolder holder) {
+        synchronized (mCameraLock) {
+            try {
+                if (mCamera != null) {
+                    // sets the preview display
+                    mCamera.setPreviewDisplay(holder);
+
+                    SizePair sizePair = selectSizePair(mCamera, mRequestedPreviewWidth, mRequestedPreviewHeight);
+                    if (sizePair == null) {
+                        throw new RuntimeException("Could not find suitable preview size.");
+                    }
+                    // get Camera parameters
+                    Camera.Parameters params = mCamera.getParameters();
+
+                    // sets the size
+                    params.setPreviewSize(sizePair.previewSize().getWidth(), sizePair.previewSize().getHeight());
+
+                    // updates the camera parameter
+                    mCamera.setParameters(params);
+
+                    // updates the focus helper with the new with and height
+                    if (mManualFocusHelper != null) {
+                        mManualFocusHelper.setPreviewSize(width, height);
+                    }
+                    mCamera.startPreview();
+                }
+            } catch (IOException exception) {
+                Log.e(TAG, "IOException caused by setPreviewDisplay()", exception);
+            }
         }
     }
 
     /**
-     * Starts updating the preview surface
+     * Stops updating the preview surface
      */
-    public void startPreview() {
-        if (mCamera != null) {
-            mCamera.startPreview();
+    public void stopPreview() {
+        synchronized (mCameraLock) {
+            try {
+                if (mCamera != null) {
+                    mCamera.stopPreview();
+                    mCamera.setPreviewDisplay(null);
+                }
+            } catch (IOException exception) {
+                Log.e(TAG, "IOException caused by setPreviewDisplay()", exception);
+            }
         }
     }
 
@@ -318,13 +310,10 @@ public class CameraService extends Observable {
      */
     private int getDisplayOrientation(Context context) {
         int ori = 0;
-        if (mCamera != null) {
+        if (mCameraInfo != null) {
             WindowManager winManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
             int rotation = winManager.getDefaultDisplay().getRotation();
-            ori = (mCameraInfo.orientation - (rotation * 90)) % 360;
-            if (ori < 0) {
-                ori = 360 + ori;
-            }
+            ori = (mCameraInfo.orientation - (rotation * 90) +360) % 360;
         }
         return ori;
     }
@@ -338,7 +327,7 @@ public class CameraService extends Observable {
         boolean qOpened = false;
 
         try {
-            releaseCamera();
+            release();
             mCamera = Camera.open(id);
             qOpened = (mCamera != null);
         } catch (Exception e) {
@@ -363,41 +352,6 @@ public class CameraService extends Observable {
             }
         }
         return -1;
-    }
-
-    /**
-     * Selects the most suitable preview and picture size, given the desired width and height.
-     * <p/>
-     * Even though we may only need the preview size, it's necessary to find both the preview
-     * size and the picture size of the camera together, because these need to have the same aspect
-     * ratio.  On some hardware, if you would only set the preview size, you will get a distorted
-     * image.
-     *
-     * @param camera        the camera to select a preview size from
-     * @param desiredWidth  the desired width of the camera preview frames
-     * @param desiredHeight the desired height of the camera preview frames
-     * @return the selected preview and picture size pair
-     */
-    private static SizePair selectSizePair(Camera camera, int desiredWidth, int desiredHeight) {
-        List<SizePair> validPreviewSizes = generateValidPreviewSizeList(camera);
-
-        // The method for selecting the best size is to minimize the sum of the differences between
-        // the desired values and the actual values for width and height.  This is certainly not the
-        // only way to select the best size, but it provides a decent tradeoff between using the
-        // closest aspect ratio vs. using the closest pixel area.
-        SizePair selectedPair = null;
-        int minDiff = Integer.MAX_VALUE;
-        for (SizePair sizePair : validPreviewSizes) {
-            Size size = sizePair.previewSize();
-            int diff = Math.abs(size.getWidth() - desiredWidth) +
-                    Math.abs(size.getHeight() - desiredHeight);
-            if (diff < minDiff) {
-                selectedPair = sizePair;
-                minDiff = diff;
-            }
-        }
-
-        return selectedPair;
     }
 
     /**
@@ -436,7 +390,7 @@ public class CameraService extends Observable {
      * set to a size that is the same aspect ratio as the preview size we choose.  Otherwise, the
      * preview images may be distorted on some devices.
      */
-    public static List<SizePair> generateValidPreviewSizeList(Camera camera) {
+    private static List<SizePair> generateValidPreviewSizeList(Camera camera) {
         Camera.Parameters parameters = camera.getParameters();
         List<android.hardware.Camera.Size> supportedPreviewSizes =
                 parameters.getSupportedPreviewSizes();
@@ -472,5 +426,40 @@ public class CameraService extends Observable {
         }
 
         return validPreviewSizes;
+    }
+
+    /**
+     * Selects the most suitable preview and picture size, given the desired width and height.
+     * <p/>
+     * Even though we may only need the preview size, it's necessary to find both the preview
+     * size and the picture size of the camera together, because these need to have the same aspect
+     * ratio.  On some hardware, if you would only set the preview size, you will get a distorted
+     * image.
+     *
+     * @param camera        the camera to select a preview size from
+     * @param desiredWidth  the desired width of the camera preview frames
+     * @param desiredHeight the desired height of the camera preview frames
+     * @return the selected preview and picture size pair
+     */
+    private static SizePair selectSizePair(Camera camera, int desiredWidth, int desiredHeight) {
+        List<SizePair> validPreviewSizes = generateValidPreviewSizeList(camera);
+
+        // The method for selecting the best size is to minimize the sum of the differences between
+        // the desired values and the actual values for width and height.  This is certainly not the
+        // only way to select the best size, but it provides a decent tradeoff between using the
+        // closest aspect ratio vs. using the closest pixel area.
+        SizePair selectedPair = null;
+        int minDiff = Integer.MAX_VALUE;
+        for (SizePair sizePair : validPreviewSizes) {
+            Size size = sizePair.previewSize();
+            int diff = Math.abs(size.getWidth() - desiredWidth) +
+                    Math.abs(size.getHeight() - desiredHeight);
+            if (diff < minDiff) {
+                selectedPair = sizePair;
+                minDiff = diff;
+            }
+        }
+
+        return selectedPair;
     }
 }
