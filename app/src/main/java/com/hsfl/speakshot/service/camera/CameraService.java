@@ -23,11 +23,6 @@ public class CameraService extends Observable {
     private static final String TAG = CameraService.class.getSimpleName();
 
     /**
-     * The directory where the captured images are saved
-     */
-    public static final String DATA_DIR = Environment.getExternalStorageDirectory() + "/SpeakShot/images";
-
-    /**
      * The CameraService singleton
      */
     private static CameraService instance = null;

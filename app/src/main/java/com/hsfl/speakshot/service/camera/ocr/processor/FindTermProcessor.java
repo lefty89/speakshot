@@ -25,8 +25,8 @@ import android.util.SparseArray;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
+import com.hsfl.speakshot.Constants;
 import com.hsfl.speakshot.service.camera.helper.ImagePersistenceHelper;
-import com.hsfl.speakshot.service.camera.CameraService;
 
 import java.util.ArrayList;
 
@@ -128,7 +128,7 @@ public class FindTermProcessor implements Detector.Processor<TextBlock> {
 
         String s = findSearchTerm(texts);
         if (!s.isEmpty()) {
-            String snapshot = CameraService.DATA_DIR + "/img-" + System.currentTimeMillis() + ".jpg";
+            String snapshot = Constants.IMAGE_PATH + "/img-" + System.currentTimeMillis() + ".jpg";
             // saves the image asynchronously to the external storage
             Frame.Metadata md = detections.getFrameMetadata();
             // BUG Metadata's getFormat() returns -1 every time
