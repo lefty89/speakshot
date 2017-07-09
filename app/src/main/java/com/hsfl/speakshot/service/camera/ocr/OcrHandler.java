@@ -2,7 +2,7 @@ package com.hsfl.speakshot.service.camera.ocr;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.ImageFormat;
+import android.graphics.*;
 import android.hardware.Camera;
 import android.os.*;
 import android.util.Log;
@@ -93,6 +93,7 @@ public class OcrHandler implements Camera.PreviewCallback {
             mTextRecognizer.receiveFrame(frame);
         }
     }
+
     /**
      * startOcrStream
      * @param searchTerm
@@ -189,9 +190,7 @@ public class OcrHandler implements Camera.PreviewCallback {
      */
     @Override
     public void onPreviewFrame(final byte[] data, final Camera camera) {
-        synchronized (mCameraLock) {
-            mFrameProcessor.setNextFrame(data, camera);
-        }
+        mFrameProcessor.setNextFrame(data, camera);
     }
 
     /**

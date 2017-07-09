@@ -110,6 +110,8 @@ public class RetrieveAllProcessor implements Detector.Processor<TextBlock> {
             Frame.Metadata md = detections.getFrameMetadata();
             // BUG Metadata's getFormat() returns -1 every time
             // BUG getWidth() and getHeight() results are switched
+
+            //switch width and heigth and rotationb
             new ImagePersistenceHelper(ImageFormat.NV21, mOrientation, md.getHeight(), md.getWidth(), snapshot).execute(mCameraBuffer);
         }
         sendResponseBundle(texts, snapshot);

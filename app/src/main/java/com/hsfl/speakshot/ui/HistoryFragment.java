@@ -11,16 +11,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.hsfl.speakshot.Constants;
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
+import com.hsfl.speakshot.service.camera.CameraService;
 import com.hsfl.speakshot.service.view.ViewService;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Observable;
+import java.util.Observer;
 
-public class HistoryFragment extends Fragment {
+public class HistoryFragment extends Fragment implements Observer {
     private static final String TAG = HistoryFragment.class.getSimpleName();
 
     /**
@@ -38,9 +42,19 @@ public class HistoryFragment extends Fragment {
      */
     private ArrayList<File> mImages = new ArrayList<>();
 
+    /**
+     * Service provider that handles the camera object
+     */
+    private CameraService mCameraService;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mInflatedView = inflater.inflate(R.layout.history_fragment, container, false);
+
+        // gets the camera service
+        mCameraService = CameraService.getInstance();
+        // adds an observer for the text recognizer
+        mCameraService.addObserver(this);
 
         // close button
         final FloatingActionButton closeButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_history_close);
@@ -67,7 +81,8 @@ public class HistoryFragment extends Fragment {
         final FloatingActionButton analyzeButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_history_analyze);
         analyzeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
+                // analyzes the given file
+                mCameraService.analyzePicture(mImages.get(mCurrentPosition));
             }
         });
 
@@ -87,6 +102,12 @@ public class HistoryFragment extends Fragment {
         return mInflatedView;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mCameraService.deleteObserver(this);
+    }
+
     /**
      * Initialises the gallery
      */
@@ -94,7 +115,6 @@ public class HistoryFragment extends Fragment {
         File imgDir = new File(Constants.IMAGE_PATH);
         for (File f : imgDir.listFiles()) {
             if (f.isFile()) {
-                String name = f.getName();
                 mImages.add(f);
             }
         }
@@ -121,6 +141,25 @@ public class HistoryFragment extends Fragment {
             TextView imageModText = (TextView)mInflatedView.findViewById(R.id.txt_history_header_mod);
             imageModText.setText(String.format(Locale.getDefault(),"%tc", f.lastModified()));
 
+        }
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+
+        // gets the detected texts
+        ArrayList<String> texts = ((Bundle)arg).getStringArrayList("texts");
+        if (texts != null) {
+            if (texts.size() > 0) {
+
+                // opens the result view with the detected texts
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList(ReadResultFragment.TEXTS, texts);
+                ViewService.getInstance().toS(new ReadResultFragment(), bundle);
+
+            } else {
+                Toast.makeText(getActivity().getBaseContext(), "Nothing found", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

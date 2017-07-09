@@ -19,6 +19,12 @@ public class ReadResultFragment extends Fragment {
     private static final String TAG = ReadResultFragment.class.getSimpleName();
 
     /**
+     * Identifiers to read out of the bundle that is given
+     * to this fragment
+     */
+    public static final String TEXTS = "texts";
+
+    /**
      * the inflated view
      */
     private View mInflatedView;
@@ -37,7 +43,7 @@ public class ReadResultFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mInflatedView = inflater.inflate(R.layout.read_result_fragment, container, false);
         // gets the detected texts
-        detectedTexts = getArguments().getStringArrayList("texts");
+        detectedTexts = getArguments().getStringArrayList(ReadResultFragment.TEXTS);
         updateTextView();
 
         // close view

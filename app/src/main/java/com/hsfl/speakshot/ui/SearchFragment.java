@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -64,7 +63,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         sendToReadButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putStringArrayList("texts", detectedTexts);
+                bundle.putStringArrayList(ReadResultFragment.TEXTS, detectedTexts);
                 ViewService.getInstance().toS(new ReadResultFragment(), bundle);
                 // make buttons for settings and mode switch invisible
                 ((MainActivity)getActivity()).hideButtonsSettingsModeSwitch();

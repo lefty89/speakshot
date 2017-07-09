@@ -61,7 +61,7 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
         resultButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putStringArrayList("texts", detectedTexts);
+                bundle.putStringArrayList(ReadResultFragment.TEXTS, detectedTexts);
                 ViewService.getInstance().toS(new ReadResultFragment(), bundle);
                 // make buttons for settings and mode switch invisible
                 ((MainActivity)getActivity()).hideButtonsSettingsModeSwitch();
