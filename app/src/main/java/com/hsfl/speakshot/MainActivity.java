@@ -31,9 +31,9 @@ public class MainActivity extends AppCompatActivity {
     /**
      * main app modes
      */
-    private final int MODE_SEARCH = 0;
-    private final int MODE_READ = 1;
-    private int CurrentMode = 1;
+    private final boolean MODE_SEARCH  = false;
+    private final boolean MODE_READ    = true;
+    private boolean       mCurrentMode = MODE_READ;
 
     /**
      * the app theme
@@ -97,16 +97,13 @@ public class MainActivity extends AppCompatActivity {
         final FloatingActionButton modeSwitch = (FloatingActionButton)findViewById(R.id.btn_mode_select);
         modeSwitch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                CurrentMode = CurrentMode == MODE_SEARCH ? MODE_READ : MODE_SEARCH;
-                // swtich background color
-                if (CurrentMode == MODE_SEARCH) {
-                    modeSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_volume_up_black_24dp, getTheme()));
+                if (mCurrentMode) {
                     mViewService.to(new SearchFragment(), null);
-                }
-                else {
-                    modeSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_search_black_24dp, getTheme()));
+                } else {
                     mViewService.to(new ReadFragment(), null);
                 }
+                modeSwitch.setSelected(mCurrentMode);
+                mCurrentMode = !mCurrentMode;
             }
         });
         mViewService.to(new ReadFragment(), null);

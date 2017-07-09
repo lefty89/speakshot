@@ -11,19 +11,17 @@
         android:layout_height="@dimen/mode_icon_size"
         android:layout_gravity="top|start"
         app:srcCompat="@drawable/ic_volume_up_black_24dp" />
-
     <FrameLayout
             android:layout_width="@dimen/fab_frame_size"
             android:layout_height="@dimen/fab_frame_size"
             android:layout_gravity="bottom|center">
         <android.support.design.widget.FloatingActionButton
-                android:id="@+id/btn_history"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/fab_main_margin"
-                app:srcCompat="@drawable/ic_flash_on_black_24dp" />
+            android:id="@+id/btn_history"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/fab_main_margin"
+            app:srcCompat="@drawable/ic_folder_black_24dp" />
     </FrameLayout>
-
     <FrameLayout
         android:layout_width="@dimen/fab_frame_size"
         android:layout_height="@dimen/fab_frame_size"
@@ -33,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/fab_main_margin"
-            app:srcCompat="@drawable/ic_volume_up_black_24dp" />
+            app:srcCompat="@drawable/buttons_read_result" />
     </FrameLayout>
     <FrameLayout
         android:layout_width="@dimen/fab_frame_size"
@@ -45,14 +43,7 @@
             android:layout_height="match_parent"
             android:layout_margin="@dimen/fab_main_margin"
             android:enabled="false"
-            app:srcCompat="@drawable/ic_flash_on_black_24dp" />
+            app:srcCompat="@drawable/buttons_switch_light" />
     </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>
-
-
-
-
-
-
-

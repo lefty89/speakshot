@@ -10,12 +10,10 @@
         android:id="@+id/camera_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -43,7 +41,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="top|end"
                 android:layout_margin="@dimen/fab_main_margin"
-                app:srcCompat="@drawable/ic_search_black_24dp" />
+                app:srcCompat="@drawable/buttons_switch_mode" />
         </FrameLayout>
     </LinearLayout>
 

@@ -74,17 +74,10 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
         lightSwitch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             mCameraService.setFlashLightEnabled(!mCameraService.isFlashLightEnabled());
-            if (mCameraService.isFlashLightEnabled())
-                lightSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_flash_on_black_24dp, getActivity().getTheme()));
-            else
-                lightSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_flash_off_black_24dp, getActivity().getTheme()));
+            lightSwitch.setSelected(mCameraService.isFlashLightEnabled());
             }
         });
-        if (mCameraService.isFlashLightEnabled())
-            lightSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), ((mCameraService.isFlashLightEnabled()) ? R.drawable.ic_flash_on_black_24dp : R.drawable.ic_flash_off_black_24dp), getActivity().getTheme()));
-        else
-            lightSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_flash_off_black_24dp, getActivity().getTheme()));
-
+        lightSwitch.setSelected(mCameraService.isFlashLightEnabled());
 
         // show history view
         final FloatingActionButton historyButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_history);
