@@ -67,11 +67,6 @@ public class CameraService extends Observable {
     private Camera.CameraInfo mCameraInfo;
 
     /**
-     * Contains the requested focus mode
-     */
-    private String FOCUS_MODE;
-
-    /**
      * If the absolute difference between a preview size aspect ratio and a picture size aspect
      * ratio is less than this tolerance, they are considered to be the same aspect ratio.
      */
@@ -199,16 +194,11 @@ public class CameraService extends Observable {
                 mCameraOrientation = getDisplayOrientation(context);
                 mCamera.setDisplayOrientation(mCameraOrientation);
 
-                // sets the focus mode
-                if (params.getSupportedFocusModes().contains(FOCUS_MODE)) {
-                    params.setFocusMode(FOCUS_MODE);
-                    if (FOCUS_MODE == Camera.Parameters.FOCUS_MODE_AUTO) {
-                        mManualFocusHelper = new ManualFocusHelper(mCamera);
-                    }
-                }
-
                 // updates the camera parameter
                 mCamera.setParameters(params);
+
+                // initial focus mode
+                setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
 
                 // init the sound player
                 mMediaSoundHelper = new MediaSoundHelper();
@@ -256,7 +246,19 @@ public class CameraService extends Observable {
      * @param foc
      */
     public void setFocusMode(String foc) {
-        FOCUS_MODE = foc;
+        if (mCamera != null) {
+            // get Camera parameters
+            Camera.Parameters params = mCamera.getParameters();
+            // sets the focus mode
+            if (params.getSupportedFocusModes().contains(foc)) {
+                params.setFocusMode(foc);
+                if (foc == Camera.Parameters.FOCUS_MODE_AUTO) {
+                    mManualFocusHelper = new ManualFocusHelper(mCamera);
+                }
+            }
+            // updates the camera parameter
+            mCamera.setParameters(params);
+        }
     }
 
     /**
