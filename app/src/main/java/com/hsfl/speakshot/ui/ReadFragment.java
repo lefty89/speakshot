@@ -3,8 +3,6 @@ package com.hsfl.speakshot.ui;
 import android.app.Fragment;
 import android.hardware.Camera;
 import android.os.Bundle;
-import android.support.v4.content.res.ResourcesCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -47,6 +45,9 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mInflatedView = inflater.inflate(R.layout.read_fragment, container, false);
+
+        // make buttons for settings and mode switch invisible
+        ((MainActivity)getActivity()).showButtonsSettingsModeSwitch();
 
         // add touch listener
         mInflatedView.setOnTouchListener(this);

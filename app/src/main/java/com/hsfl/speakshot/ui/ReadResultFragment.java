@@ -42,6 +42,10 @@ public class ReadResultFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mInflatedView = inflater.inflate(R.layout.read_result_fragment, container, false);
+
+        // make buttons for settings and mode switch invisible
+        ((MainActivity)getActivity()).hideButtonsSettingsModeSwitch();
+
         // gets the detected texts
         detectedTexts = getArguments().getStringArrayList(ReadResultFragment.TEXTS);
         updateTextView();
@@ -50,8 +54,6 @@ public class ReadResultFragment extends Fragment {
         final FloatingActionButton closeButton = (FloatingActionButton)mInflatedView.findViewById(R.id.read_fragment_close);
         closeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                // make buttons for settings and mode switch invisible
-                ((MainActivity)getActivity()).showButtonsSettingsModeSwitch();
                 ViewService.getInstance().back();
             }
         });

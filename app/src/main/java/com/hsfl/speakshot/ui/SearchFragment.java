@@ -49,8 +49,11 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         mInflatedView = inflater.inflate(R.layout.search_fragment, container, false);
+
+        // make buttons for settings and mode switch invisible
+        ((MainActivity)getActivity()).showButtonsSettingsModeSwitch();
+
         // add touch listener
         mInflatedView.setOnTouchListener(this);
 
@@ -66,8 +69,6 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
                 Bundle bundle = new Bundle();
                 bundle.putStringArrayList(ReadResultFragment.TEXTS, detectedTexts);
                 ViewService.getInstance().toS(new ReadResultFragment(), bundle);
-                // make buttons for settings and mode switch invisible
-                ((MainActivity)getActivity()).hideButtonsSettingsModeSwitch();
             }
         });
         sendToReadButton.setEnabled(false);

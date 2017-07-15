@@ -52,6 +52,9 @@ public class HistoryFragment extends Fragment implements Observer {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mInflatedView = inflater.inflate(R.layout.history_fragment, container, false);
 
+        // make buttons for settings and mode switch invisible
+        ((MainActivity)getActivity()).hideButtonsSettingsModeSwitch();
+
         // gets the camera service
         mCameraService = CameraService.getInstance();
         // adds an observer for the text recognizer
@@ -61,7 +64,6 @@ public class HistoryFragment extends Fragment implements Observer {
         final FloatingActionButton closeButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_history_close);
         closeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ((MainActivity)getActivity()).showButtonsSettingsModeSwitch();
                 ViewService.getInstance().back();
             }
         });
