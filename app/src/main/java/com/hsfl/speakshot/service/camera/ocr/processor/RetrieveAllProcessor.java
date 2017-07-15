@@ -15,14 +15,9 @@
  */
 package com.hsfl.speakshot.service.camera.ocr.processor;
 
-import android.graphics.ImageFormat;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.util.SparseArray;
-import com.google.android.gms.vision.Detector;
-import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
 import com.hsfl.speakshot.Constants;
 import com.hsfl.speakshot.service.camera.helper.ImagePersistenceHelper;
@@ -32,32 +27,13 @@ import java.util.ArrayList;
 /**
  * A very simple Processor which gets detected TextBlocks
  */
-public class RetrieveAllProcessor implements Detector.Processor<TextBlock> {
+public class RetrieveAllProcessor extends BaseProcessor {
     private static final String TAG = RetrieveAllProcessor.class.getSimpleName();
 
     /**
-     * Callback handler
-     */
-    private Handler mHandler;
-
-    /**
-     * The camera buffer
-     */
-    private byte[] mCameraBuffer;
-
-    /**
-     * the images size
-     */
-    private int mOrientation = 0;
-    /**
      * Constructor
-     * @param handler
      */
-    public RetrieveAllProcessor(Handler handler, byte[] buffer, int orientation) {
-        mCameraBuffer = buffer;
-        mHandler = handler;
-        mOrientation = orientation;
-    }
+    public RetrieveAllProcessor() {}
 
     /**
      * Builds a response Bundle
@@ -76,52 +52,15 @@ public class RetrieveAllProcessor implements Detector.Processor<TextBlock> {
         mHandler.sendMessage(msg);
     }
 
-    /**
-     * Gets an array list from the sparse array so that it can be packed into
-     * a Bundle
-     * @param items
-     * @return
-     */
-    private ArrayList<String> sparseToList(SparseArray<TextBlock> items) {
-        ArrayList<String> texts = new ArrayList<>();
-        for (int i = 0; i < items.size(); ++i) {
-            TextBlock item = items.valueAt(i);
-            if (item != null && item.getValue() != null) {
-                texts.add(item.getValue());
-            }
-        }
-        return texts;
-    }
-
-    /**
-     * Called by the detector to deliver detection results.
-     * If your application called for it, this could be a place to check for
-     * equivalent detections by tracking TextBlocks that are similar in location and content from
-     * previous frames, or reduce noise by eliminating TextBlocks that have not persisted through
-     * multiple detections.
-     */
     @Override
-    public void receiveDetections(Detector.Detections<TextBlock> detections) {
-        ArrayList<String> texts = sparseToList(detections.getDetectedItems());
+    public void receiveDetections(SparseArray<TextBlock> detections, byte[] image) {
+        ArrayList<String> texts = sparseToList(detections);
         String snapshot = "";
-        if (texts.size() > 0) {
+        if ((texts.size() > 0) && (mImagePersisting)) {
             snapshot = Constants.IMAGE_PATH + "/img-" + System.currentTimeMillis() + ".jpg";
             // saves the image asynchronously to the external storage
-            Frame.Metadata md = detections.getFrameMetadata();
-            // BUG Metadata's getFormat() returns -1 every time
-            // BUG getWidth() and getHeight() results are switched
-
-            //switch width and heigth and rotationb
-            new ImagePersistenceHelper(ImageFormat.NV21, mOrientation, md.getHeight(), md.getWidth(), snapshot).execute(mCameraBuffer);
+            new ImagePersistenceHelper(mImageFormat, mImageRotation, mImageWidth, mImageHeight, snapshot).execute(image);
         }
         sendResponseBundle(texts, snapshot);
-    }
-
-    /**
-     * Frees the resources associated with this detection processor.
-     */
-    @Override
-    public void release() {
-        Log.d(TAG, "release");
     }
 }

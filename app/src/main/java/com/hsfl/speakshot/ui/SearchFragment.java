@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
+import com.hsfl.speakshot.service.camera.ocr.processor.FindTermProcessor;
 import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.camera.CameraService;
 
@@ -99,7 +100,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
             ((Vibrator) getActivity().getApplication().getSystemService(android.content.Context.VIBRATOR_SERVICE)).vibrate(800);
             // reset analysing
             searchTerm = "";
-            mCameraService.analyseStream("");
+            mCameraService.stopAnalyseStream();
         }
         // gets the detected texts
         ArrayList<String> texts = ((Bundle)arg).getStringArrayList("texts");
@@ -125,10 +126,14 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
                     .setView(txt)
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            // start searching
                             searchTerm = txt.getText().toString();
                             if (!searchTerm.equals("")) {
-                                mCameraService.analyseStream(searchTerm);
+                                // creates a processor that searches for a given term and saves
+                                // the image on success
+                                FindTermProcessor processor = new FindTermProcessor(searchTerm);
+                                processor.setImagePersisting(true);
+                                // start analyzer
+                                mCameraService.startAnalyseStream(searchTerm, processor);
                                 Toast.makeText(getActivity().getApplicationContext(), "Searching for: " + searchTerm, Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -141,7 +146,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         } else {
             // stop searching
             searchTerm = "";
-            mCameraService.analyseStream("");
+            mCameraService.stopAnalyseStream();
             Toast.makeText(getActivity().getApplicationContext(), "Stop searching", Toast.LENGTH_SHORT).show();
         }
         return false;

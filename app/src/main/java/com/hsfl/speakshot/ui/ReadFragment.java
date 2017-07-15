@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
+import com.hsfl.speakshot.service.camera.ocr.processor.RetrieveAllProcessor;
 import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.camera.CameraService;
 import android.support.design.widget.FloatingActionButton;
@@ -134,7 +135,11 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
     @Override
     public boolean onLongClick(View v) {
         if (mIsLongTab) {
-            mCameraService.analyzePicture();
+
+            RetrieveAllProcessor processor = new RetrieveAllProcessor();
+            processor.setImagePersisting(true);
+            // creates a processor that returns all texts found, also save the image here
+            mCameraService.analyzePicture(processor);
         }
         mIsLongTab = false;
         return false;

@@ -16,6 +16,7 @@ import com.hsfl.speakshot.Constants;
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
 import com.hsfl.speakshot.service.camera.CameraService;
+import com.hsfl.speakshot.service.camera.ocr.processor.RetrieveAllProcessor;
 import com.hsfl.speakshot.service.view.ViewService;
 
 import java.io.File;
@@ -81,8 +82,8 @@ public class HistoryFragment extends Fragment implements Observer {
         final FloatingActionButton analyzeButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_history_analyze);
         analyzeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                // analyzes the given file
-                mCameraService.analyzePicture(mImages.get(mCurrentPosition));
+                // analyzes the given file using the processor to read all
+                mCameraService.analyzePicture(mImages.get(mCurrentPosition), new RetrieveAllProcessor());
             }
         });
 

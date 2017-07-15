@@ -1,10 +1,7 @@
 package com.hsfl.speakshot.service.camera.helper;
 
-
 import android.graphics.*;
 import android.os.AsyncTask;
-import android.util.Log;
-
 import java.io.*;
 
 /**
@@ -26,6 +23,14 @@ public class ImagePersistenceHelper extends AsyncTask<byte[], Void, Void> {
     private int mHeight = 0;
     private int mFormat = 0;
 
+    /**
+     * Constructor
+     * @param format
+     * @param orientation
+     * @param width
+     * @param height
+     * @param name
+     */
     public ImagePersistenceHelper(int format, int orientation, int width, int height, String name) {
         mFormat = format;
         mOrientation = orientation;
@@ -59,13 +64,19 @@ public class ImagePersistenceHelper extends AsyncTask<byte[], Void, Void> {
             }
             outStream = new FileOutputStream(outFile);
             try {
-                Bitmap bitmap = (mFormat == ImageFormat.NV21) ? decodeFromYuv(data[0]) : BitmapFactory.decodeByteArray(data[0], 0, data[0].length);
+                Bitmap bitmap = (mFormat == ImageFormat.NV21) ?
+                    // image is in a raw format - convert to bitmap data
+                    decodeFromYuv(data[0]) :
+                    // image is in a compressed format
+                    BitmapFactory.decodeByteArray(data[0], 0, data[0].length);
 
+                // rotate if required
                 Matrix matrix = new Matrix();
                 matrix.setRotate(mOrientation);
 
+                // save image into storage
                 Bitmap rotatedBmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
-                rotatedBmp.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+                rotatedBmp.compress(Bitmap.CompressFormat.PNG, 100, outStream);
 
                 outStream.flush();
                 outStream.close();
@@ -73,9 +84,7 @@ public class ImagePersistenceHelper extends AsyncTask<byte[], Void, Void> {
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-            Log.d(TAG, "onPictureTaken - wrote bytes: " + data.length + " to " + outFile.getAbsolutePath());
 
-            //refreshGallery(outFile);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

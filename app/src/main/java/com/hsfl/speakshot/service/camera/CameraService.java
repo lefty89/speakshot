@@ -3,7 +3,6 @@ package com.hsfl.speakshot.service.camera;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
-import android.graphics.Matrix;
 import android.media.MediaActionSound;
 import com.hsfl.speakshot.service.camera.helper.ManualFocusHelper;
 import com.hsfl.speakshot.service.camera.helper.MediaSoundHelper;
@@ -16,6 +15,7 @@ import android.util.Log;
 import android.view.WindowManager;
 import com.google.android.gms.common.images.Size;
 import android.view.SurfaceHolder;
+import com.hsfl.speakshot.service.camera.ocr.processor.BaseProcessor;
 
 import java.io.*;
 import java.util.*;
@@ -50,6 +50,11 @@ public class CameraService extends Observable {
     private Object mCameraLock = new Object();
 
     /**
+     * The camera orientation
+     */
+    private int mCameraOrientation = 0;
+
+    /**
      * the target camera dimensions
      */
     private final int mRequestedPreviewWidth   = 1920;
@@ -60,11 +65,6 @@ public class CameraService extends Observable {
      */
     public Camera mCamera;
     private Camera.CameraInfo mCameraInfo;
-
-    /**
-     * The camera orientation
-     */
-    private int mDisplayOrientation = 0;
 
     /**
      * Contains the requested focus mode
@@ -96,13 +96,21 @@ public class CameraService extends Observable {
     /**
      * Snaps a new image and analyze it immediately
      */
-    public void analyzePicture() {
+    public void analyzePicture(final BaseProcessor processor) {
         synchronized (mCameraLock) {
             if (mCamera != null) {
                 Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
                     public void onPreviewFrame(byte[] data, Camera camera) {
+                        int width  = camera.getParameters().getPreviewSize().width;
+                        int height = camera.getParameters().getPreviewSize().height;
+                        int format = camera.getParameters().getPreviewFormat();
+
+                        // sets the dimensions in case the image shall be saved (defined outside)
+                        processor.setImageFormat(width, height, 0, format);
+                        // sets the processor
+                        mOcrHandler.setProcessor(processor);
                         // starts the ocr for this image
-                        mOcrHandler.ocrSingleImage(data);
+                        mOcrHandler.ocrRawImage(data, format, width, height, mCameraOrientation);
                         // restarts the background preview
                         mCamera.startPreview();
                     }
@@ -114,94 +122,53 @@ public class CameraService extends Observable {
     }
 
     /**
-     * Gets a bitmap out of a given file and analyze it
+     * Creates a bitmap out of a given file and analyze it
      */
-    public void analyzePicture(File file) {
+    public void analyzePicture(File file, BaseProcessor processor) {
 
         final List<String> acceptedExts = Arrays.asList("jpg","jpeg","png");
         final String fileExt = file.getName().substring(file.getName().lastIndexOf(".")+1).toLowerCase();
 
         if ((acceptedExts.contains(fileExt)) && (file.exists())) {
-
             // gets a drawable to draw into the image view
             Bitmap b = BitmapFactory.decodeFile(file.getAbsolutePath());
+            // sets the dimensions in case the image shall be saved (defined outside)
+            processor.setImageFormat(b.getWidth(), b.getHeight(), 0, ImageFormat.JPEG);
 
-            // rotate the image to the same orientation that the camera has
-            Matrix matrix = new Matrix();
-            matrix.postRotate(-mDisplayOrientation);
-            Bitmap bmp = Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), matrix, true);
-
-            // gets all the pixel from the bitmap and put them into an int array
-            int[] argb = new int[bmp.getWidth() * bmp.getHeight()];
-            bmp.getPixels(argb, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
-
-            // convert every pixel from rgb to yuv format
-            byte[] data = new byte[bmp.getWidth()*bmp.getHeight()*3/2];
-            encodeYUV420SP(data, argb, bmp.getWidth(), bmp.getHeight());
-
-            mOcrHandler.ocrSingleImage(data);
+            mOcrHandler.setProcessor(processor);
+            mOcrHandler.ocrBitmapImage(b);
         }
     }
 
     /**
-     * Encodes a given bitmap into NV21 format
-     *
-     * @param yuv420sp
-     * @param argb
-     * @param width
-     * @param height
-     *
-     * @see https://stackoverflow.com/questions/5960247/convert-bitmap-array-to-yuv-ycbcr-nv21
+     * Starts analyzing the images from the preview surface
      */
-    private void encodeYUV420SP(byte[] yuv420sp, int[] argb, int width, int height) {
-        final int frameSize = width * height;
-
-        int yIndex = 0;
-        int uvIndex = frameSize;
-
-        int a, R, G, B, Y, U, V;
-        int index = 0;
-        for (int j = 0; j < height; j++) {
-            for (int i = 0; i < width; i++) {
-
-                a = (argb[index] & 0xff000000) >> 24; // a is not used obviously
-                R = (argb[index] & 0xff0000) >> 16;
-                G = (argb[index] & 0xff00) >> 8;
-                B = (argb[index] & 0xff) >> 0;
-
-                // well known RGB to YUV algorithm
-                Y = ( (  66 * R + 129 * G +  25 * B + 128) >> 8) +  16;
-                U = ( ( -38 * R -  74 * G + 112 * B + 128) >> 8) + 128;
-                V = ( ( 112 * R -  94 * G -  18 * B + 128) >> 8) + 128;
-
-                // NV21 has a plane of Y and interleaved planes of VU each sampled by a factor of 2
-                //    meaning for every 4 Y pixels there are 1 V and 1 U.  Note the sampling is every other
-                //    pixel AND every other scanline.
-                yuv420sp[yIndex++] = (byte) ((Y < 0) ? 0 : ((Y > 255) ? 255 : Y));
-                if (j % 2 == 0 && index % 2 == 0) {
-                    yuv420sp[uvIndex++] = (byte)((V<0) ? 0 : ((V > 255) ? 255 : V));
-                    yuv420sp[uvIndex++] = (byte)((U<0) ? 0 : ((U > 255) ? 255 : U));
-                }
-
-                index ++;
-            }
-        }
-    }
-
-    /**
-     * Analyzes the images from the preview surface
-     */
-    public void analyseStream(String searchTerm) {
+    public void startAnalyseStream(String searchTerm, BaseProcessor processor) {
         synchronized (mCameraLock) {
             if (mCamera != null) {
                 if (!searchTerm.isEmpty()) {
-                    mOcrHandler.startOcrDetector(searchTerm);
+                    // camera params
+                    int format = mCamera.getParameters().getPreviewFormat();
+                    Camera.Size preview = mCamera.getParameters().getPreviewSize();
+
+                    // sets the dimensions in case the image shall be saved (defined outside)
+                    processor.setImageFormat(preview.width, preview.height, mCameraOrientation, format);
+
+                    mOcrHandler.setProcessor(processor);
+                    mOcrHandler.startOcrDetector(mCameraOrientation);
                     mMediaSoundHelper.play(MediaActionSound.START_VIDEO_RECORDING);
-                } else {
-                    mOcrHandler.stopOcrDetector();
-                    mMediaSoundHelper.play(MediaActionSound.STOP_VIDEO_RECORDING);
                 }
             }
+        }
+    }
+
+    /**
+     * Stops analyzing the images from the preview surface
+     */
+    public void stopAnalyseStream() {
+        synchronized (mCameraLock) {
+            mOcrHandler.stopOcrDetector();
+            mMediaSoundHelper.play(MediaActionSound.STOP_VIDEO_RECORDING);
         }
     }
 
@@ -229,8 +196,8 @@ public class CameraService extends Observable {
                 params.setPreviewFormat(ImageFormat.NV21);
 
                 // updates the orientation
-                mDisplayOrientation = getDisplayOrientation(context);
-                mCamera.setDisplayOrientation(mDisplayOrientation);
+                mCameraOrientation = getDisplayOrientation(context);
+                mCamera.setDisplayOrientation(mCameraOrientation);
 
                 // sets the focus mode
                 if (params.getSupportedFocusModes().contains(FOCUS_MODE)) {
@@ -247,14 +214,13 @@ public class CameraService extends Observable {
                 mMediaSoundHelper = new MediaSoundHelper();
 
                 // initializes the ocr engine
-                mOcrHandler = new OcrHandler(context, mCamera, mDisplayOrientation, new Handler() {
+                mOcrHandler = new OcrHandler(context, mCamera, new Handler() {
                     public void handleMessage(Message msg) {
                         setChanged();
                         notifyObservers(msg.getData());
                         super.handleMessage(msg);
                     }
                 });
-                mCamera.setPreviewCallbackWithBuffer(mOcrHandler);
             }
             else {
                 throw new RuntimeException("Could not open camera.");
@@ -462,7 +428,6 @@ public class CameraService extends Observable {
      * Generates a list of acceptable preview sizes.  Preview sizes are not acceptable if there is
      * not a corresponding picture size of the same aspect ratio.  If there is a corresponding
      * picture size of the same aspect ratio, the picture size is paired up with the preview size.
-     * <p/>
      * This is necessary because even if we don't use still pictures, the still picture size must be
      * set to a size that is the same aspect ratio as the preview size we choose.  Otherwise, the
      * preview images may be distorted on some devices.
@@ -507,7 +472,6 @@ public class CameraService extends Observable {
 
     /**
      * Selects the most suitable preview and picture size, given the desired width and height.
-     * <p/>
      * Even though we may only need the preview size, it's necessary to find both the preview
      * size and the picture size of the camera together, because these need to have the same aspect
      * ratio.  On some hardware, if you would only set the preview size, you will get a distorted
