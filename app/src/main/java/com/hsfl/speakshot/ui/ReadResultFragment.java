@@ -55,12 +55,22 @@ public class ReadResultFragment extends Fragment {
             }
         });
 
+        // play current text block
+        final FloatingActionButton playButton = (FloatingActionButton)mInflatedView.findViewById(R.id.read_fragment_play);
+        playButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String text = "Ergebnis " + (counter+1) + " von " + detectedTexts.size() + ": " + detectedTexts.get(counter);
+                AudioService.getInstance().speak(text);
+            }
+        });
+
         // next text block
         final FloatingActionButton nextButton = (FloatingActionButton)mInflatedView.findViewById(R.id.read_fragment_next);
         nextButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 counter = (counter+1) % detectedTexts.size();
                 updateTextView();
+                playButton.performClick();
             }
         });
 
@@ -70,14 +80,7 @@ public class ReadResultFragment extends Fragment {
             public void onClick(View v) {
                 counter = (counter-1 < 0) ? detectedTexts.size()-1 : counter-1;
                 updateTextView();
-            }
-        });
-
-        // play current text block
-        final FloatingActionButton playButton = (FloatingActionButton)mInflatedView.findViewById(R.id.read_fragment_play);
-        playButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                AudioService.getInstance().speak(detectedTexts.get(counter));
+                playButton.performClick();
             }
         });
 
