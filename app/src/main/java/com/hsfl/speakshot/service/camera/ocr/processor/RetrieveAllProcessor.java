@@ -58,8 +58,11 @@ public class RetrieveAllProcessor extends BaseProcessor {
         String snapshot = "";
         if ((texts.size() > 0) && (mImagePersisting)) {
             snapshot = Constants.IMAGE_PATH + "/img-" + System.currentTimeMillis() + ".jpg";
+            // copy the image else the buffer would be overridden before the saving is completed
+            byte[] copy = new byte[image.length];
+            System.arraycopy(image, 0, copy, 0, image.length);
             // saves the image asynchronously to the external storage
-            new ImagePersistenceHelper(mImageFormat, mImageRotation, mImageWidth, mImageHeight, snapshot).execute(image);
+            new ImagePersistenceHelper(mImageFormat, mImageRotation, mImageWidth, mImageHeight, snapshot).execute(copy);
         }
         sendResponseBundle(texts, snapshot);
     }

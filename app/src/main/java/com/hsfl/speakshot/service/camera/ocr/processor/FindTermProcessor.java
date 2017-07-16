@@ -75,7 +75,6 @@ public class FindTermProcessor extends BaseProcessor {
         mHandler.sendMessage(msg);
     }
 
-
     @Override
     public void receiveDetections(SparseArray<TextBlock> detections, byte[] image) {
         ArrayList<String> texts = sparseToList(detections);
@@ -86,8 +85,11 @@ public class FindTermProcessor extends BaseProcessor {
             // saves the image to the storage
             if (mImagePersisting) {
                 snapshot = Constants.IMAGE_PATH + "/img-" + System.currentTimeMillis() + ".jpg";
+                // copy the image else the buffer would be overridden before the saving is completed
+                byte[] copy = new byte[image.length];
+                System.arraycopy(image, 0, copy, 0, image.length);
                 // saves the image asynchronously to the external storage
-                new ImagePersistenceHelper(mImageFormat, mImageRotation, mImageWidth, mImageHeight, snapshot).execute(image);
+                new ImagePersistenceHelper(mImageFormat, mImageRotation, mImageWidth, mImageHeight, snapshot).execute(copy);
             }
             // response to the listener
             sendResponseBundle(s, texts, snapshot);
