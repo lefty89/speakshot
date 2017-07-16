@@ -52,7 +52,7 @@
     <!-- search mode selector / spinner / combobox -->
     <string-array name="search_mode_array">
         <item>General</item>
-        <item>Door Plate</item>
+        <item>Doorplate</item>
     </string-array>
 
 </resources>
