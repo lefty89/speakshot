@@ -1,10 +1,15 @@
 package com.hsfl.speakshot.ui;
 
 import android.app.Fragment;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.hsfl.speakshot.MainActivity;
@@ -75,6 +80,54 @@ public class ReadResultFragment extends Fragment {
                 AudioService.getInstance().speak(detectedTexts.get(counter));
             }
         });
+
+        // set colors: buttons, textViews and background
+        String themeId = ((MainActivity)getActivity()).getThemeId();
+        final TextView resultText = (TextView)mInflatedView.findViewById(R.id.txt_sections_result);
+        final TextView headerText = (TextView)mInflatedView.findViewById(R.id.txt_sections_header);
+        final FrameLayout frameLayoutBackground = (FrameLayout) mInflatedView.findViewById(R.id.read_result_fragment_background);
+        if (themeId.equals("light")) {
+
+            frameLayoutBackground.setBackgroundColor(Color.WHITE);
+
+            resultText.setTextColor(Color.BLACK);
+            headerText.setTextColor(Color.BLACK);
+
+            DrawableCompat.setTintList(DrawableCompat.wrap(closeButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorA)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(closeButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorA)));
+
+            DrawableCompat.setTintList(DrawableCompat.wrap(nextButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorA)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(nextButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorA)));
+
+            DrawableCompat.setTintList(DrawableCompat.wrap(prevButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorA)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(prevButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorA)));
+
+            DrawableCompat.setTintList(DrawableCompat.wrap(playButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorA)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(playButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorA)));
+
+            //imageViewModeIcon.setColorFilter(ContextCompat.getColor(((MainActivity)getActivity()).getApplicationContext(), R.color.darkColorA));
+        }
+        else /*if (themeId.equals("dark"))*/ {
+
+            frameLayoutBackground.setBackgroundColor(Color.BLACK);
+
+            resultText.setTextColor(Color.WHITE);
+            headerText.setTextColor(Color.WHITE);
+
+            DrawableCompat.setTintList(DrawableCompat.wrap(closeButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorA)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(closeButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorA)));
+
+            DrawableCompat.setTintList(DrawableCompat.wrap(nextButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorA)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(nextButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorA)));
+
+            DrawableCompat.setTintList(DrawableCompat.wrap(prevButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorA)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(prevButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorA)));
+
+            DrawableCompat.setTintList(DrawableCompat.wrap(playButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorA)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(playButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorA)));
+
+            //imageViewModeIcon.setColorFilter(ContextCompat.getColor(((MainActivity)getActivity()).getApplicationContext(), R.color.lightColorA));
+        }
 
         return mInflatedView;
     }

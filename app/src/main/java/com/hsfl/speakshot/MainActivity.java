@@ -1,5 +1,6 @@
 package com.hsfl.speakshot;
 
+import android.content.Context;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatDelegate;
 import com.hsfl.speakshot.service.dictionary.DictionaryService;
