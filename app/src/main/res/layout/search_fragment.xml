@@ -7,6 +7,7 @@
     tools:context="com.hsfl.speakshot.MainActivity">
 
     <ImageView
+        android:id="@+id/mode_icon"
         android:layout_width="@dimen/mode_icon_size"
         android:layout_height="@dimen/mode_icon_size"
         android:layout_gravity="top|start"

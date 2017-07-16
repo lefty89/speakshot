@@ -21,6 +21,8 @@ import android.view.WindowManager;
 import android.support.design.widget.FloatingActionButton;
 import android.preference.PreferenceManager;
 import android.content.SharedPreferences;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.content.res.ColorStateList;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -29,8 +31,8 @@ public class MainActivity extends AppCompatActivity {
     /**
      * main app modes
      */
-    private final int MODE_SEARCH = 0;
-    private final int MODE_READ = 1;
+    public static final int MODE_SEARCH = 0;
+    public static final int MODE_READ = 1;
     private int CurrentMode = 1;
 
     /**
@@ -83,24 +85,6 @@ public class MainActivity extends AppCompatActivity {
             AudioService.getInstance().init(getApplicationContext());
         }
 
-        // switch button to change the mode
-        final FloatingActionButton modeSwitch = (FloatingActionButton)findViewById(R.id.btn_mode_select);
-        modeSwitch.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                CurrentMode = CurrentMode == MODE_SEARCH ? MODE_READ : MODE_SEARCH;
-                // swtich background color
-                if (CurrentMode == MODE_SEARCH) {
-                    modeSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_volume_up_black_24dp, getTheme()));
-                    mViewService.to(new SearchFragment(), null);
-                }
-                else {
-                    modeSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_search_black_24dp, getTheme()));
-                    mViewService.to(new ReadFragment(), null);
-                }
-            }
-        });
-        mViewService.to(new ReadFragment(), null);
-
         // button to show the settings activity
         final FloatingActionButton settingsButton = (FloatingActionButton)findViewById(R.id.btn_settings);
         settingsButton.setOnClickListener(new View.OnClickListener() {
@@ -108,6 +92,55 @@ public class MainActivity extends AppCompatActivity {
                 showSettings();
             }
         });
+
+        // switch button to change the mode
+        final FloatingActionButton modeSwitch = (FloatingActionButton)findViewById(R.id.btn_mode_select);
+        modeSwitch.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                CurrentMode = CurrentMode == MODE_SEARCH ? MODE_READ : MODE_SEARCH;
+                // swtich background color
+                String themeId = getThemeId();
+                if (CurrentMode == MODE_SEARCH) {
+                    modeSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_volume_up_black_24dp, getTheme()));
+                    mViewService.to(new SearchFragment(), null);
+                    // set button colors
+                    if (themeId.equals("light")) {
+                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkPurple)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightPurple)));
+
+                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkPurple)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightPurple)));
+                    }
+                    else /*if (themeId.equals("dark"))*/ {
+                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightPurple)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkPurple)));
+
+                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightPurple)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkPurple)));
+                    }
+                }
+                else /*if (CurrentMode == MODE_READ)*/ {
+                    modeSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_search_black_24dp, getTheme()));
+                    mViewService.to(new ReadFragment(), null);
+                    // set button colors
+                    if (themeId.equals("light")) {
+                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkBlue)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightBlue)));
+
+                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkBlue)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightBlue)));
+                    }
+                    else /*if (themeId.equals("dark"))*/ {
+                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightBlue)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkBlue)));
+
+                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightBlue)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkBlue)));
+                    }
+                }
+            }
+        });
+        mViewService.to(new ReadFragment(), null);
     }
 
     @Override
@@ -178,6 +211,26 @@ public class MainActivity extends AppCompatActivity {
             setTheme(R.style.ThemeDarkReadMode);
             Log.d(TAG, "switch to dark theme " + themeId);
         }
+    }
+
+    /**
+     * returns the theme id ("light"|"dark")
+     * @return String
+     */
+    public String getThemeId()
+    {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String themeId = preferences.getString("theme", "");
+        return themeId;
+    }
+
+    /**
+     * returns the current mode (MODE_READ|MODE_SEARCH)
+     * @return int
+     */
+    public int getCurrentMode()
+    {
+        return CurrentMode;
     }
 
     static {
