@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hsfl.speakshot.ui.surfaces;
+package com.hsfl.speakshot.ui.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.*;
-import android.widget.Toast;
 import com.hsfl.speakshot.service.camera.CameraService;
 
 public class CameraPreviewSurface extends ViewGroup implements SurfaceHolder.Callback {

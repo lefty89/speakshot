@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context="com.hsfl.speakshot.MainActivity">
 
-    <com.hsfl.speakshot.ui.surfaces.CameraPreviewSurface
+    <com.hsfl.speakshot.ui.views.CameraPreviewSurface
         android:id="@+id/camera_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

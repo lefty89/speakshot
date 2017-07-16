@@ -2,6 +2,7 @@ package com.hsfl.speakshot;
 
 import android.support.v7.app.AppCompatDelegate;
 import com.hsfl.speakshot.service.dictionary.DictionaryService;
+import com.hsfl.speakshot.service.guide.GuidingService;
 import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.audio.AudioService;
 import com.hsfl.speakshot.service.camera.CameraService;
@@ -20,7 +21,7 @@ import android.view.WindowManager;
 import android.support.design.widget.FloatingActionButton;
 import android.preference.PreferenceManager;
 import android.content.SharedPreferences;
-import com.hsfl.speakshot.ui.surfaces.CameraPreviewSurface;
+import com.hsfl.speakshot.ui.views.CameraPreviewSurface;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -89,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
             mCameraService = CameraService.getInstance();
             // initializes the audio service
             AudioService.getInstance().init(getApplicationContext());
+            // initializes the guiding service
+            GuidingService.getInstance().init(this);
         }
 
         // switch button to change the mode
@@ -114,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
     @Override
     protected void onResume() {
