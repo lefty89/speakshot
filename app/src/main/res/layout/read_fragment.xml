@@ -24,6 +24,16 @@
             app:srcCompat="@drawable/ic_volume_up_black_24dp" />
     </FrameLayout>
     <FrameLayout
+        android:layout_width="@dimen/spinner_frame_size"
+        android:layout_height="@dimen/fab_frame_size"
+        android:layout_gravity="bottom|center_horizontal">
+        <Spinner
+            android:id="@+id/spinner_read_mode"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/read_mode_array"/>
+    </FrameLayout>
+    <FrameLayout
         android:layout_width="@dimen/fab_frame_size"
         android:layout_height="@dimen/fab_frame_size"
         android:layout_gravity="bottom|end">
