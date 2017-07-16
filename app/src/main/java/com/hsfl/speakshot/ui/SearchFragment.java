@@ -134,7 +134,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
                                 FindTermProcessor processor = new FindTermProcessor(searchTerm);
                                 processor.setImagePersisting(true);
                                 // start analyzer
-                                mCameraService.startAnalyseStream(searchTerm, processor);
+                                mCameraService.startAnalyseStream(processor);
                                 Toast.makeText(getActivity().getApplicationContext(), "Searching for: " + searchTerm, Toast.LENGTH_SHORT).show();
                             }
                         }

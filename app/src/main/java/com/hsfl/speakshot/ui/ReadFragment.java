@@ -3,6 +3,7 @@ package com.hsfl.speakshot.ui;
 import android.app.Fragment;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,7 +12,9 @@ import android.widget.Toast;
 
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
+import com.hsfl.speakshot.service.camera.ocr.processor.LocateTextProcessor;
 import com.hsfl.speakshot.service.camera.ocr.processor.RetrieveAllProcessor;
+import com.hsfl.speakshot.service.guide.GuidingService;
 import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.camera.CameraService;
 import android.support.design.widget.FloatingActionButton;

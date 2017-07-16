@@ -138,21 +138,19 @@ public class CameraService extends Observable {
     /**
      * Starts analyzing the images from the preview surface
      */
-    public void startAnalyseStream(String searchTerm, BaseProcessor processor) {
+    public void startAnalyseStream(BaseProcessor processor) {
         synchronized (mCameraLock) {
             if (mCamera != null) {
-                if (!searchTerm.isEmpty()) {
-                    // camera params
-                    int format = mCamera.getParameters().getPreviewFormat();
-                    Camera.Size preview = mCamera.getParameters().getPreviewSize();
+                // camera params
+                int format = mCamera.getParameters().getPreviewFormat();
+                Camera.Size preview = mCamera.getParameters().getPreviewSize();
 
-                    // sets the dimensions in case the image shall be saved (defined outside)
-                    processor.setImageFormat(preview.width, preview.height, mCameraOrientation, format);
+                // sets the dimensions in case the image shall be saved (defined outside)
+                processor.setImageFormat(preview.width, preview.height, mCameraOrientation, format);
 
-                    mOcrHandler.setProcessor(processor);
-                    mOcrHandler.startOcrDetector(mCameraOrientation);
-                    mMediaSoundHelper.play(MediaActionSound.START_VIDEO_RECORDING);
-                }
+                mOcrHandler.setProcessor(processor);
+                mOcrHandler.startOcrDetector(mCameraOrientation);
+                mMediaSoundHelper.play(MediaActionSound.START_VIDEO_RECORDING);
             }
         }
     }
@@ -191,7 +189,7 @@ public class CameraService extends Observable {
                 params.setPreviewFormat(ImageFormat.NV21);
 
                 // updates the orientation
-                mCameraOrientation = getDisplayOrientation(context);
+                mCameraOrientation = calculateDisplayOrientation(context);
                 mCamera.setDisplayOrientation(mCameraOrientation);
 
                 // updates the camera parameter
@@ -351,9 +349,25 @@ public class CameraService extends Observable {
     }
 
     /**
+     * Gets the PreviewSize
+     * @return
+     */
+    public Camera.Size getCameraPreviewSize() {
+        return (mCamera != null) ? mCamera.getParameters().getPreviewSize() : null;
+    }
+
+    /**
+     * Gets the display orientation
+     * @return
+     */
+    public int getDisplayOrientation() {
+        return mCameraOrientation;
+    }
+
+    /**
      * Gets the display orientation
      */
-    private int getDisplayOrientation(Context context) {
+    private int calculateDisplayOrientation(Context context) {
         int ori = 0;
         if (mCameraInfo != null) {
             WindowManager winManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);

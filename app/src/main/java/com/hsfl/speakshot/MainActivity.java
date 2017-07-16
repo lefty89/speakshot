@@ -59,6 +59,11 @@ public class MainActivity extends AppCompatActivity {
      */
     private CameraPreviewSurface mPreview;
 
+    /**
+     * TEST VAR - REMOVE LATER
+     */
+    private boolean mGuidedEnabled = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +119,23 @@ public class MainActivity extends AppCompatActivity {
         settingsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 showSettings();
+            }
+        });
+
+        /////////////////////////////////////////
+        // FOR TESTING PURPOSES ONLY
+        /////////////////////////////////////////
+        final FloatingActionButton guidedButton = (FloatingActionButton)findViewById(R.id.btn_guided);
+        guidedButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (!mGuidedEnabled) {
+                    GuidingService.getInstance().start();
+                }
+                else {
+                    GuidingService.getInstance().stop();
+                }
+                mGuidedEnabled = !mGuidedEnabled;
+                guidedButton.setSelected(mGuidedEnabled);
             }
         });
     }
