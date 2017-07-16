@@ -30,7 +30,7 @@ public class LocateTextProcessor extends BaseProcessor {
     /**
      * The bundle result ids
      */
-    public static final String RESULT_BORDER_HITS = "border_hits";
+    public static final String RESULT_BORDER_HITS = String.format("%s_border_hits", TAG);
 
     /**
      * Offset from border

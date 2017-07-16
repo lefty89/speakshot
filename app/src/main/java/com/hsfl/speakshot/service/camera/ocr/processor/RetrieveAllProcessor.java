@@ -33,8 +33,8 @@ public class RetrieveAllProcessor extends BaseProcessor {
     /**
      * The bundle result ids
      */
-    public static final String RESULT_TEXTS    = "texts";
-    public static final String RESULT_SNAPSHOT = "snapshot";
+    public static final String RESULT_TEXTS    = String.format("%s_texts",    TAG);
+    public static final String RESULT_SNAPSHOT = String.format("%s_snapshot", TAG);
 
     /**
      * Constructor
