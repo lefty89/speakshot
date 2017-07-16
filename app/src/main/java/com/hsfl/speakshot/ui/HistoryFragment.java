@@ -98,7 +98,7 @@ public class HistoryFragment extends Fragment implements Observer {
             }
         });
 
-        // inits the gallery
+        // init the gallery
         initGallery();
         updateBackgroundImage();
 
@@ -121,7 +121,6 @@ public class HistoryFragment extends Fragment implements Observer {
                 mImages.add(f);
             }
         }
-
     }
 
     /**
@@ -149,15 +148,13 @@ public class HistoryFragment extends Fragment implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-
         // gets the detected texts
-        ArrayList<String> texts = ((Bundle)arg).getStringArrayList("texts");
+        ArrayList<String> texts = ((Bundle)arg).getStringArrayList(RetrieveAllProcessor.RESULT_TEXTS);
         if (texts != null) {
             if (texts.size() > 0) {
-
                 // opens the result view with the detected texts
                 Bundle bundle = new Bundle();
-                bundle.putStringArrayList(ReadResultFragment.TEXTS, texts);
+                bundle.putStringArrayList(ReadResultFragment.IN_TEXTS, texts);
                 ViewService.getInstance().toS(new ReadResultFragment(), bundle);
 
             } else {

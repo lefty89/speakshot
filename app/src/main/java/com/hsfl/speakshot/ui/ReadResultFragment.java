@@ -22,7 +22,7 @@ public class ReadResultFragment extends Fragment {
      * Identifiers to read out of the bundle that is given
      * to this fragment
      */
-    public static final String TEXTS = "texts";
+    public static final String IN_TEXTS = "texts";
 
     /**
      * the inflated view
@@ -47,7 +47,7 @@ public class ReadResultFragment extends Fragment {
         ((MainActivity)getActivity()).hideButtonsSettingsModeSwitch();
 
         // gets the detected texts
-        detectedTexts = getArguments().getStringArrayList(ReadResultFragment.TEXTS);
+        detectedTexts = getArguments().getStringArrayList(ReadResultFragment.IN_TEXTS);
         updateTextView();
 
         // close view

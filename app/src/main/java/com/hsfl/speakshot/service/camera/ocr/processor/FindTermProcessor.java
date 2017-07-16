@@ -30,6 +30,13 @@ public class FindTermProcessor extends BaseProcessor {
     private static final String TAG = FindTermProcessor.class.getSimpleName();
 
     /**
+     * The bundle result ids
+     */
+    public static final String RESULT_TERM     = "term";
+    public static final String RESULT_TEXTS    = "texts";
+    public static final String RESULT_SNAPSHOT = "snapshot";
+
+    /**
      * The Search Term
      */
     private String mSearchTerm;
@@ -73,9 +80,9 @@ public class FindTermProcessor extends BaseProcessor {
     private void sendResponseBundle(String s, ArrayList<String> texts, String snapshot) {
         // packs the detector texts into a bundle
         Bundle b = new Bundle();
-        b.putString("term", s);
-        b.putString("snapshot", snapshot);
-        b.putStringArrayList("texts", texts);
+        b.putString(RESULT_TERM, s);
+        b.putString(RESULT_SNAPSHOT, snapshot);
+        b.putStringArrayList(RESULT_TEXTS, texts);
         // create a message from the message handler to send it back to the main UI
         Message msg = mHandler.obtainMessage();
         //attach the bundle to the message

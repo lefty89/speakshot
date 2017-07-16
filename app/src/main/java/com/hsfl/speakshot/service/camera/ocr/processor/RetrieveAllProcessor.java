@@ -31,6 +31,12 @@ public class RetrieveAllProcessor extends BaseProcessor {
     private static final String TAG = RetrieveAllProcessor.class.getSimpleName();
 
     /**
+     * The bundle result ids
+     */
+    public static final String RESULT_TEXTS    = "texts";
+    public static final String RESULT_SNAPSHOT = "snapshot";
+
+    /**
      * Constructor
      */
     public RetrieveAllProcessor() {}
@@ -42,8 +48,8 @@ public class RetrieveAllProcessor extends BaseProcessor {
     private void sendResponseBundle(ArrayList<String> texts, String snapshot) {
         // packs the detector texts into a bundle
         Bundle b = new Bundle();
-        b.putStringArrayList("texts", texts);
-        b.putString("snapshot", snapshot);
+        b.putStringArrayList(RESULT_TEXTS, texts);
+        b.putString(RESULT_SNAPSHOT, snapshot);
         // create a message from the message handler to send it back to the main UI
         Message msg = mHandler.obtainMessage();
         //attach the bundle to the message

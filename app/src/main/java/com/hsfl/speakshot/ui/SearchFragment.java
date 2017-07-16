@@ -67,7 +67,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         sendToReadButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putStringArrayList(ReadResultFragment.TEXTS, detectedTexts);
+                bundle.putStringArrayList(ReadResultFragment.IN_TEXTS, detectedTexts);
                 ViewService.getInstance().toS(new ReadResultFragment(), bundle);
             }
         });
@@ -95,7 +95,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
     @Override
     public void update(Observable o, Object arg) {
         // gets the search term
-        String term = ((Bundle)arg).getString("term");
+        String term = ((Bundle)arg).getString(FindTermProcessor.RESULT_TERM);
         if (term != null) {
             Toast.makeText(getActivity().getApplicationContext(), "Term '" + searchTerm + "' found within " + "'" + term + "'", Toast.LENGTH_SHORT).show();
             ((Vibrator) getActivity().getApplication().getSystemService(android.content.Context.VIBRATOR_SERVICE)).vibrate(800);
@@ -104,14 +104,14 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
             mCameraService.stopAnalyseStream();
         }
         // gets the detected texts
-        ArrayList<String> texts = ((Bundle)arg).getStringArrayList("texts");
+        ArrayList<String> texts = ((Bundle)arg).getStringArrayList(FindTermProcessor.RESULT_TEXTS);
         if (texts != null) {
             detectedTexts = texts;
             // show button
             mInflatedView.findViewById(R.id.btn_send_to_read).setEnabled(true);
         }
         // gets the snapshot path
-        String snapshot = ((Bundle)arg).getString("snapshot");
+        String snapshot = ((Bundle)arg).getString(FindTermProcessor.RESULT_SNAPSHOT);
         if (snapshot != null) {
             Toast.makeText(getActivity().getApplicationContext(), "Snapshot saved to: " + snapshot, Toast.LENGTH_SHORT).show();
         }
