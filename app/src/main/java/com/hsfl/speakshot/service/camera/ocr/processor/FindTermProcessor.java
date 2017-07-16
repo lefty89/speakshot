@@ -21,7 +21,6 @@ import android.util.SparseArray;
 import com.google.android.gms.vision.text.TextBlock;
 import com.hsfl.speakshot.Constants;
 import com.hsfl.speakshot.service.camera.helper.ImagePersistenceHelper;
-
 import java.util.ArrayList;
 
 /**
@@ -34,6 +33,16 @@ public class FindTermProcessor extends BaseProcessor {
      * The Search Term
      */
     private String mSearchTerm;
+
+    /**
+     * Lock object
+     */
+    private final Object mLock = new Object();
+
+    /**
+     * Flag that indicated whether the term was found
+     */
+    private boolean mTermFound = false;
 
     /**
      * Constructor
@@ -78,21 +87,25 @@ public class FindTermProcessor extends BaseProcessor {
     @Override
     public void receiveDetections(SparseArray<TextBlock> detections, byte[] image) {
         ArrayList<String> texts = sparseToList(detections);
-
         String s = findSearchTerm(texts);
-        if (!s.isEmpty()) {
-            String snapshot = "";
-            // saves the image to the storage
-            if (mImagePersisting) {
-                snapshot = Constants.IMAGE_PATH + "/img-" + System.currentTimeMillis() + ".jpg";
-                // copy the image else the buffer would be overridden before the saving is completed
-                byte[] copy = new byte[image.length];
-                System.arraycopy(image, 0, copy, 0, image.length);
-                // saves the image asynchronously to the external storage
-                new ImagePersistenceHelper(mImageFormat, mImageRotation, mImageWidth, mImageHeight, snapshot).execute(copy);
+
+        // critical part
+        synchronized (mLock) {
+            if ((!mTermFound) &&(!s.isEmpty())) {
+                mTermFound = true;
+                String snapshot = "";
+                // saves the image to the storage
+                if (mImagePersisting) {
+                    snapshot = Constants.IMAGE_PATH + "/img-" + System.currentTimeMillis() + ".jpg";
+                    // copy the image else the buffer would be overridden before the saving is completed
+                    byte[] copy = new byte[image.length];
+                    System.arraycopy(image, 0, copy, 0, image.length);
+                    // saves the image asynchronously to the external storage
+                    new ImagePersistenceHelper(mImageFormat, mImageRotation, mImageWidth, mImageHeight, snapshot).execute(copy);
+                }
+                // response to the listener
+                sendResponseBundle(s, texts, snapshot);
             }
-            // response to the listener
-            sendResponseBundle(s, texts, snapshot);
         }
     }
 }

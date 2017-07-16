@@ -66,17 +66,19 @@ public class OcrDetector implements Camera.PreviewCallback {
      * Starts the continuous detection
      */
     void startOcrDetector() {
-            int width  = mCamera.getParameters().getPreviewSize().width;
-            int height = mCamera.getParameters().getPreviewSize().height;
+        int width  = mCamera.getParameters().getPreviewSize().width;
+        int height = mCamera.getParameters().getPreviewSize().height;
 
-            // creates preview buffers
-            mCamera.addCallbackBuffer(createPreviewBuffer(width, height));
+        // creates preview buffers
+        mCamera.addCallbackBuffer(createPreviewBuffer(width, height));
+        mCamera.addCallbackBuffer(createPreviewBuffer(width, height));
+        mCamera.addCallbackBuffer(createPreviewBuffer(width, height));
 
-            // start processor
-            mProcessingThread = new Thread(mFrameProcessor);
-            mFrameProcessor.setActive(true);
+        // start processor
+        mProcessingThread = new Thread(mFrameProcessor);
+        mFrameProcessor.setActive(true);
 
-            mProcessingThread.start();
+        mProcessingThread.start();
     }
 
     /**
