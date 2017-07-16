@@ -2,21 +2,21 @@
 
     <!-- Base application theme. -->
     <style name="ThemeLightReadMode" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorAccent">@color/lightBlue</item>
-        <item name="android:tint">@color/darkBlue</item>
+        <item name="colorAccent">@color/lightColorA</item>
+        <item name="android:tint">@color/darkColorA</item>
     </style>
     <style name="ThemeLightSearchMode" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorAccent">@color/lightPurple</item>
-        <item name="android:tint">@color/darkPurple</item>
+        <item name="colorAccent">@color/lightColorB</item>
+        <item name="android:tint">@color/darkColorB</item>
     </style>
 
     <style name="ThemeDarkReadMode" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorAccent">@color/darkBlue</item>
-        <item name="android:tint">@color/lightBlue</item>
+        <item name="colorAccent">@color/darkColorA</item>
+        <item name="android:tint">@color/lightColorA</item>
     </style>
     <style name="ThemeDarkSearchMode" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorAccent">@color/darkPurple</item>
-        <item name="android:tint">@color/lightPurple</item>
+        <item name="colorAccent">@color/darkColorB</item>
+        <item name="android:tint">@color/lightColorB</item>
     </style>
 
 </resources>

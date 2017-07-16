@@ -105,18 +105,18 @@ public class MainActivity extends AppCompatActivity {
                     mViewService.to(new SearchFragment(), null);
                     // set button colors
                     if (themeId.equals("light")) {
-                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkPurple)));
-                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightPurple)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
 
-                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkPurple)));
-                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightPurple)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
                     }
                     else /*if (themeId.equals("dark"))*/ {
-                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightPurple)));
-                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkPurple)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
 
-                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightPurple)));
-                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkPurple)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
                     }
                 }
                 else /*if (CurrentMode == MODE_READ)*/ {
@@ -124,18 +124,18 @@ public class MainActivity extends AppCompatActivity {
                     mViewService.to(new ReadFragment(), null);
                     // set button colors
                     if (themeId.equals("light")) {
-                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkBlue)));
-                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightBlue)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorA)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorA)));
 
-                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkBlue)));
-                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightBlue)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorA)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorA)));
                     }
                     else /*if (themeId.equals("dark"))*/ {
-                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightBlue)));
-                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkBlue)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorA)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorA)));
 
-                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightBlue)));
-                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkBlue)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorA)));
+                        DrawableCompat.setTintList(DrawableCompat.wrap(modeSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorA)));
                     }
                 }
             }

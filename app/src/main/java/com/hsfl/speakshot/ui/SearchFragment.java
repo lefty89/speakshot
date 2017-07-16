@@ -97,24 +97,23 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         final ImageView imageViewModeIcon = (ImageView)mInflatedView.findViewById(R.id.mode_icon);
         // set button colors
         String themeId = ((MainActivity)getActivity()).getThemeId();
-        Log.d(TAG, "SearchFragment.onCreateView - themeId: " + themeId);
         if (themeId.equals("light")) {
-            DrawableCompat.setTintList(DrawableCompat.wrap(lightSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkPurple)));
-            DrawableCompat.setTintList(DrawableCompat.wrap(lightSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightPurple)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(lightSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(lightSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
 
-            DrawableCompat.setTintList(DrawableCompat.wrap(sendToReadButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkPurple)));
-            DrawableCompat.setTintList(DrawableCompat.wrap(sendToReadButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightPurple)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(sendToReadButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(sendToReadButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
 
-            imageViewModeIcon.setColorFilter(ContextCompat.getColor(((MainActivity)getActivity()).getApplicationContext(), R.color.darkPurple));
+            imageViewModeIcon.setColorFilter(ContextCompat.getColor(((MainActivity)getActivity()).getApplicationContext(), R.color.darkColorB));
         }
         else /*if (themeId.equals("dark"))*/ {
-            DrawableCompat.setTintList(DrawableCompat.wrap(lightSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightPurple)));
-            DrawableCompat.setTintList(DrawableCompat.wrap(lightSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkPurple)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(lightSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(lightSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
 
-            DrawableCompat.setTintList(DrawableCompat.wrap(sendToReadButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightPurple)));
-            DrawableCompat.setTintList(DrawableCompat.wrap(sendToReadButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkPurple)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(sendToReadButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(sendToReadButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
 
-            imageViewModeIcon.setColorFilter(ContextCompat.getColor(((MainActivity)getActivity()).getApplicationContext(), R.color.lightPurple));
+            imageViewModeIcon.setColorFilter(ContextCompat.getColor(((MainActivity)getActivity()).getApplicationContext(), R.color.lightColorB));
         }
 
         return mInflatedView;

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- mode icon -->
-    <color name="colorModeIcon">#a3c6ff</color>
-    <color name="darkBlue">#000077</color>
-    <color name="lightBlue">#9999ff</color>
-    <color name="darkPurple">#770077</color>
-    <color name="lightPurple">#ff99ff</color>
+    <color name="darkColorA">#000077</color>
+    <color name="lightColorA">#9999ff</color>
+    <color name="darkColorB">#770077</color>
+    <color name="lightColorB">#ff99ff</color>
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
 </resources>
