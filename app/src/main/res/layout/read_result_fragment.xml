@@ -7,9 +7,10 @@
     tools:context="com.hsfl.speakshot.MainActivity">
 
     <FrameLayout
+        android:id="@+id/read_result_fragment_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/lightBlue">
+        android:background="@color/white">
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"

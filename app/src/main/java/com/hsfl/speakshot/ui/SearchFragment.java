@@ -3,15 +3,21 @@ package com.hsfl.speakshot.ui;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.widget.ImageView;
+import android.util.Log;
 
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
@@ -23,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 
 public class SearchFragment extends Fragment implements Observer, View.OnTouchListener {
     private static final String TAG = SearchFragment.class.getSimpleName();
@@ -78,10 +85,38 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         lightSwitch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             mCameraService.setFlashLightEnabled(!mCameraService.isFlashLightEnabled());
-            lightSwitch.setSelected(mCameraService.isFlashLightEnabled());
+            if (mCameraService.isFlashLightEnabled())
+                lightSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_flash_off_black_24dp, getActivity().getTheme()));
+            else
+                lightSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_flash_off_black_24dp, getActivity().getTheme()));
             }
         });
-        lightSwitch.setSelected(mCameraService.isFlashLightEnabled());
+        if (mCameraService.isFlashLightEnabled())
+            lightSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_flash_on_black_24dp, getActivity().getTheme()));
+        else
+            lightSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_flash_off_black_24dp, getActivity().getTheme()));
+
+        final ImageView imageViewModeIcon = (ImageView)mInflatedView.findViewById(R.id.mode_icon);
+        // set button colors
+        String themeId = ((MainActivity)getActivity()).getThemeId();
+        if (themeId.equals("light")) {
+            DrawableCompat.setTintList(DrawableCompat.wrap(lightSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(lightSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
+
+            DrawableCompat.setTintList(DrawableCompat.wrap(sendToReadButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(sendToReadButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
+
+            imageViewModeIcon.setColorFilter(ContextCompat.getColor(((MainActivity)getActivity()).getApplicationContext(), R.color.darkColorB));
+        }
+        else /*if (themeId.equals("dark"))*/ {
+            DrawableCompat.setTintList(DrawableCompat.wrap(lightSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(lightSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
+
+            DrawableCompat.setTintList(DrawableCompat.wrap(sendToReadButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(sendToReadButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
+
+            imageViewModeIcon.setColorFilter(ContextCompat.getColor(((MainActivity)getActivity()).getApplicationContext(), R.color.lightColorB));
+        }
 
         return mInflatedView;
     }

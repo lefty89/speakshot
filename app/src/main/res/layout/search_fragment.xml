@@ -7,6 +7,7 @@
     tools:context="com.hsfl.speakshot.MainActivity">
 
     <ImageView
+        android:id="@+id/mode_icon"
         android:layout_width="@dimen/mode_icon_size"
         android:layout_height="@dimen/mode_icon_size"
         android:layout_gravity="top|start"
@@ -21,6 +22,17 @@
             android:layout_height="match_parent"
             android:layout_margin="@dimen/fab_main_margin"
             app:srcCompat="@drawable/buttons_read_result" />
+    </FrameLayout>
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/fab_frame_size"
+        android:layout_gravity="bottom|center_horizontal">
+        <Spinner
+            android:id="@+id/spinner_search_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:entries="@array/search_mode_array" />
     </FrameLayout>
     <FrameLayout
         android:layout_width="@dimen/fab_frame_size"

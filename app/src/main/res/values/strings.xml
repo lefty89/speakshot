@@ -40,33 +40,19 @@
         <item>35</item>
     </string-array>
 
-    <!-- camera settings -->
-    <string name="pref_header_camera">Camera</string>
-
-    <string name="pref_title_resolution">Resolution</string>
-    <string-array name="pref_resolution_titles">
-        <item>Normal</item>
-        <item>Higher</item>
-        <item>Highest</item>
-    </string-array>
-    <string-array name="pref_resolution_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
-
-    <string name="pref_title_frame_rate">Frame rate</string>
-    <string-array name="pref_frame_rate_titles">
-        <item>Low</item>
-        <item>Normal</item>
-        <item>High</item>
-    </string-array>
-    <string-array name="pref_frame_rate_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
-
     <!-- reead results -->
     <string name="read_results_no_text_blocks_found">No text blocks found</string>
+
+    <!-- read mode selector / spinner / combobox -->
+    <string-array name="read_mode_array">
+        <item>General</item>
+        <item>Letter</item>
+    </string-array>
+
+    <!-- search mode selector / spinner / combobox -->
+    <string-array name="search_mode_array">
+        <item>General</item>
+        <item>Doorplate</item>
+    </string-array>
+
 </resources>
