@@ -200,6 +200,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private void showSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
+        intent.putExtra( SettingsActivity.EXTRA_SHOW_FRAGMENT, SettingsActivity.GeneralPreferenceFragment.class.getName() );
+        intent.putExtra( SettingsActivity.EXTRA_NO_HEADERS, true );
         startActivity(intent);
     }
 
