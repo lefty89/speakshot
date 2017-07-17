@@ -1,5 +1,4 @@
 <resources>
-
     <!-- Base application theme. -->
     <style name="ThemeLightReadMode" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorAccent">@color/lightColorA</item>
@@ -56,5 +55,4 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:background">@color/black</item>
     </style>
-
 </resources>

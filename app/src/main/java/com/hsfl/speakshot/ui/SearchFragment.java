@@ -84,17 +84,11 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         final FloatingActionButton lightSwitch = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_light_toggle);
         lightSwitch.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            mCameraService.setFlashLightEnabled(!mCameraService.isFlashLightEnabled());
-            if (mCameraService.isFlashLightEnabled())
-                lightSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_flash_off_black_24dp, getActivity().getTheme()));
-            else
-                lightSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_flash_off_black_24dp, getActivity().getTheme()));
+                mCameraService.setFlashLightEnabled(!mCameraService.isFlashLightEnabled());
+                lightSwitch.setSelected(mCameraService.isFlashLightEnabled());
             }
         });
-        if (mCameraService.isFlashLightEnabled())
-            lightSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_flash_on_black_24dp, getActivity().getTheme()));
-        else
-            lightSwitch.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_flash_off_black_24dp, getActivity().getTheme()));
+        lightSwitch.setSelected(mCameraService.isFlashLightEnabled());
 
         final ImageView imageViewModeIcon = (ImageView)mInflatedView.findViewById(R.id.mode_icon);
         // set button colors
