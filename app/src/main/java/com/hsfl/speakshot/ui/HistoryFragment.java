@@ -72,10 +72,7 @@ public class HistoryFragment extends Fragment implements Observer {
         final FloatingActionButton prevButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_history_prev);
         prevButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mCurrentPosition--;
-                if (mCurrentPosition < 0) {
-                    mCurrentPosition += mImages.size();
-                }
+                nextImage(-1);
                 updateBackgroundImage();
             }
         });
@@ -93,7 +90,17 @@ public class HistoryFragment extends Fragment implements Observer {
         final FloatingActionButton nextButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_history_next);
         nextButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mCurrentPosition = (mCurrentPosition+1) % mImages.size();
+                nextImage(1);
+                updateBackgroundImage();
+            }
+        });
+
+        // delete button
+        final FloatingActionButton deleteButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_history_delete);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                deleteImageFromGallery();
+                nextImage(0);
                 updateBackgroundImage();
             }
         });
@@ -109,6 +116,23 @@ public class HistoryFragment extends Fragment implements Observer {
     public void onDestroyView() {
         super.onDestroyView();
         mCameraService.deleteObserver(this);
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        // gets the detected texts
+        ArrayList<String> texts = ((Bundle)arg).getStringArrayList(RetrieveAllProcessor.RESULT_TEXTS);
+        if (texts != null) {
+            if (texts.size() > 0) {
+                // opens the result view with the detected texts
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList(ReadResultFragment.IN_TEXTS, texts);
+                ViewService.getInstance().toS(new ReadResultFragment(), bundle);
+
+            } else {
+                Toast.makeText(getActivity().getBaseContext(), "Nothing found", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     /**
@@ -146,20 +170,32 @@ public class HistoryFragment extends Fragment implements Observer {
         }
     }
 
-    @Override
-    public void update(Observable o, Object arg) {
-        // gets the detected texts
-        ArrayList<String> texts = ((Bundle)arg).getStringArrayList(RetrieveAllProcessor.RESULT_TEXTS);
-        if (texts != null) {
-            if (texts.size() > 0) {
-                // opens the result view with the detected texts
-                Bundle bundle = new Bundle();
-                bundle.putStringArrayList(ReadResultFragment.IN_TEXTS, texts);
-                ViewService.getInstance().toS(new ReadResultFragment(), bundle);
-
-            } else {
-                Toast.makeText(getActivity().getBaseContext(), "Nothing found", Toast.LENGTH_SHORT).show();
+    /**
+     * Removes the current image from the gallery
+     */
+    private void deleteImageFromGallery() {
+        if (mImages.size() > 0) {
+            // gets the current file
+            File f = mImages.get(mCurrentPosition);
+            if (f.exists()) {
+                // deletes the file
+                boolean b = f.delete();
+                if (b) {
+                    // remove the file from the gallery list
+                    mImages.remove(f);
+                }
             }
+        }
+    }
+
+    /**
+     * Switches to the next/prev image
+     * @param i
+     */
+    private void nextImage(int i) {
+        mCurrentPosition = (mCurrentPosition+i) % mImages.size();
+        if (mCurrentPosition < 0) {
+            mCurrentPosition += mImages.size();
         }
     }
 }
