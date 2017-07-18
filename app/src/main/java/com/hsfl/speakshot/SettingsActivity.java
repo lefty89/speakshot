@@ -177,7 +177,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("theme"));
-            bindPreferenceSummaryToValue(findPreference("font_size"));
         }
 
         @Override
