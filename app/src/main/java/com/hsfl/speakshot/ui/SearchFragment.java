@@ -2,8 +2,10 @@ package com.hsfl.speakshot.ui;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -14,7 +16,10 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageView;
 import android.util.Log;
@@ -111,6 +116,17 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
 
             imageViewModeIcon.setColorFilter(ContextCompat.getColor(((MainActivity)getActivity()).getApplicationContext(), R.color.lightColorB));
         }
+
+        // populate spinner with items using the custom adapter which sets up the colors and font size
+        String[] spin_arry = getResources().getStringArray(R.array.search_mode_array);
+        MainActivity.CustomArrayAdapter mAdapter = new MainActivity.CustomArrayAdapter<CharSequence>((MainActivity)getActivity(), spin_arry);
+        mAdapter.setThemeId(themeId);
+        int spinnerPadding = (int)((MainActivity)getActivity()).getResources().getDimension(R.dimen.spinner_padding);
+        mAdapter.setSpinnerPadding(spinnerPadding);
+        float spinnerTextSize = ((MainActivity)getActivity()).getResources().getDimension(R.dimen.spinner_dropdown_text_size);
+        mAdapter.setSpinnerTextSize(spinnerTextSize);
+        final Spinner spinnerSearchMode = (Spinner)mInflatedView.findViewById(R.id.spinner_search_mode);
+        spinnerSearchMode.setAdapter(mAdapter);
 
         return mInflatedView;
     }

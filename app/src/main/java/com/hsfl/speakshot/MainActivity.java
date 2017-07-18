@@ -1,5 +1,7 @@
 package com.hsfl.speakshot;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatDelegate;
 import com.hsfl.speakshot.service.dictionary.DictionaryService;
 import com.hsfl.speakshot.service.guide.GuidingService;
@@ -16,12 +18,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.support.design.widget.FloatingActionButton;
 import android.preference.PreferenceManager;
 import android.content.SharedPreferences;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.content.res.ColorStateList;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
+
 import com.hsfl.speakshot.ui.views.CameraPreviewSurface;
 
 
@@ -54,6 +60,56 @@ public class MainActivity extends AppCompatActivity {
      * TEST VAR - REMOVE LATER
      */
     private boolean mGuidedEnabled = false;
+
+    /**
+     * nested class which is used to style the mode spinner
+     */
+    public static class CustomArrayAdapter<T> extends ArrayAdapter<T> {
+        private String themeId = "";
+        private int spinnerPadding = 0;
+        private float spinnerTextSize = 0;
+
+        public CustomArrayAdapter(Context ctx, T [] objects)
+        {
+            super(ctx, android.R.layout.simple_spinner_item, objects);
+        }
+
+        @Override
+        public View getDropDownView(int position, View convertView, ViewGroup parent)
+        {
+            View view = super.getView(position, convertView, parent);
+            TextView text = (TextView)view.findViewById(android.R.id.text1);
+
+            text.setPadding(spinnerPadding, spinnerPadding, spinnerPadding, spinnerPadding);
+            text.setTextSize(spinnerTextSize);
+
+            if (themeId.equals("light")) {
+                text.setBackgroundColor(Color.WHITE);
+                text.setTextColor(Color.BLACK);
+            }
+            else /*if (themeId.equals("dark"))*/ {
+                text.setBackgroundColor(Color.BLACK);
+                text.setTextColor(Color.WHITE);
+            }
+
+            return view;
+        }
+
+        public void setThemeId(String themeId)
+        {
+            this.themeId = themeId;
+        }
+
+        public void setSpinnerPadding(int spinnerPadding)
+        {
+            this.spinnerPadding = spinnerPadding;
+        }
+
+        public void setSpinnerTextSize(float spinnerTextSize)
+        {
+            this.spinnerTextSize = spinnerTextSize;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
                 mCurrentMode = !mCurrentMode;
             }
         });
+
         mViewService.to(new ReadFragment(), null);
     }
 

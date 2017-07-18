@@ -3,8 +3,8 @@
     <!-- mode icon -->
     <color name="darkColorA">#000077</color>
     <color name="lightColorA">#9999ff</color>
-    <color name="darkColorB">#770077</color>
-    <color name="lightColorB">#ff99ff</color>
+    <color name="darkColorB">#007777</color>
+    <color name="lightColorB">#99ffff</color>
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
 </resources>
