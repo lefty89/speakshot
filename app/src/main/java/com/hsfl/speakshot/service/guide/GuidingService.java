@@ -22,7 +22,7 @@ public class GuidingService implements Observer {
             "OK",                   // 0000
             "weiter links",         // 0001 : left
             "weiter oben",          // 0010 : top
-            "weiter unten-links",   // 0011 : left, top
+            "weiter oben-links",    // 0011 : left, top
             "weiter rechts",        // 0100 : right
             "weiter zurück",        // 0101 : right, left
             "weiter oben-rechts",   // 0110 : right, top
@@ -127,10 +127,10 @@ public class GuidingService implements Observer {
         if (hits != 0) {
 
             // visual output
-            if (((hits & 1) >> 0) == 1) mGuidingLayout.playAnimationFor("left");
-            if (((hits & 2) >> 1) == 1) mGuidingLayout.playAnimationFor("top");
-            if (((hits & 4) >> 2) == 1) mGuidingLayout.playAnimationFor("right");
-            if (((hits & 8) >> 3) == 1) mGuidingLayout.playAnimationFor("bottom");
+            if (((hits & 1) >> 0) == 1) mGuidingLayout.playAnimationFor(GuidingLayout.BORDER_LEFT);
+            if (((hits & 2) >> 1) == 1) mGuidingLayout.playAnimationFor(GuidingLayout.BORDER_TOP);
+            if (((hits & 4) >> 2) == 1) mGuidingLayout.playAnimationFor(GuidingLayout.BORDER_RIGHT);
+            if (((hits & 8) >> 3) == 1) mGuidingLayout.playAnimationFor(GuidingLayout.BORDER_BOTTOM);
 
             // acoustic output
             if (mAudioEnabled) {

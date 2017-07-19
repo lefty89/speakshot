@@ -17,6 +17,14 @@ public class GuidingLayout extends FrameLayout {
     private static final String TAG = GuidingLayout.class.getSimpleName();
 
     /**
+     * IDs for the different borders
+     */
+    public final static String BORDER_LEFT   = "left";
+    public final static String BORDER_RIGHT  = "right";
+    public final static String BORDER_TOP    = "top";
+    public final static String BORDER_BOTTOM = "bottom";
+
+    /**
      * Border settings
      */
     private final int MARK_LENGTH   = 50;
@@ -104,9 +112,9 @@ public class GuidingLayout extends FrameLayout {
         final int height = bottom - top;
 
         // add mars to all sides
-        addBorderMark("left",   width, height, new int[]{0,0,MARK_LENGTH,0},             new int[]{0,0,MARK_LENGTH,height});
-        addBorderMark("top",    width, height, new int[]{0,0,0,MARK_LENGTH},             new int[]{0,0,width,MARK_LENGTH});
-        addBorderMark("bottom", width, height, new int[]{0,height,0,height-MARK_LENGTH}, new int[]{0,height-MARK_LENGTH,width,height});
-        addBorderMark("right",  width, height, new int[]{width,0,width-MARK_LENGTH,0},   new int[]{width-MARK_LENGTH,0,width,height});
+        addBorderMark(BORDER_LEFT,   width, height, new int[]{0,0,MARK_LENGTH,0},             new int[]{0,0,MARK_LENGTH,height});
+        addBorderMark(BORDER_TOP,    width, height, new int[]{0,0,0,MARK_LENGTH},             new int[]{0,0,width,MARK_LENGTH});
+        addBorderMark(BORDER_BOTTOM, width, height, new int[]{0,height,0,height-MARK_LENGTH}, new int[]{0,height-MARK_LENGTH,width,height});
+        addBorderMark(BORDER_RIGHT,  width, height, new int[]{width,0,width-MARK_LENGTH,0},   new int[]{width-MARK_LENGTH,0,width,height});
     }
 }
