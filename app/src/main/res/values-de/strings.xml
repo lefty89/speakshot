@@ -1,0 +1,64 @@
+<resources>
+    <string name="app_name">SpeakShot</string>
+    <string name="title_activity_settings">Einstellungen</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- general settings -->
+    <string name="pref_header_general">Allgemein</string>
+
+    <string name="pref_description_misc">Sonstiges</string>
+
+    <string name="pref_title_vibration_switch">Vibration aktivieren</string>
+    <string name="pref_description_vibration_switch">Erlaubt der App taktiles Feedback zu geben.</string>
+
+    <!-- audio output -->
+    <string name="pref_description_audio">Audio</string>
+
+    <string name="pref_title_audio_output_switch">Audio-Ausgabe aktivieren</string>
+    <string name="pref_description_audio_output_switch">Erlaubt der App die Audio-Ausgabe von Textergebnissen, Anweisungen oder Hinweisen.</string>
+
+    <string name="pref_title_assistance_switch">Snapshot-Unterstützung aktivieren</string>
+    <string name="pref_description_assistance_switch">Erlaubt der App den Benutzer beim Aufnahemen eines Bilds mit der Kamera mit Sprachanweisungen zu unterstützen.</string>
+
+    <string name="pref_title_hints_switch">Hinweise aktivieren</string>
+    <string name="pref_description_hints_switch">Erlaubt der App dem Benutzer Hinweise zu geben.</string>
+
+    <!-- appearance settings -->
+    <string name="pref_header_appearance">Aussehen</string>
+
+    <string name="pref_title_theme">Theme</string>
+    <string name="pref_description_theme">Damit der Wechsel des Themes wirksam wird, muss die App neugestartet werden.</string>
+    <string-array name="pref_theme_titles">
+        <item>Hell</item>
+        <item>Dunkel</item>
+    </string-array>
+    <string-array name="pref_theme_values">
+        <item>light</item>
+        <item>dark</item>
+    </string-array>
+
+    <!-- reead results -->
+    <string name="read_results_no_text_blocks_found">Es wurden keine Textblöcke gefunden.</string>
+
+    <!-- read mode selector / spinner / combobox -->
+    <string-array name="read_mode_array">
+        <item>Allgemein</item>
+        <item>Brief</item>
+    </string-array>
+    <string-array name="read_mode_values">
+        <item>general</item>
+        <item>letter</item>
+    </string-array>
+
+    <!-- search mode selector / spinner / combobox -->
+    <string-array name="search_mode_array">
+        <item>Allgemein</item>
+        <item>Türschild</item>
+    </string-array>
+    <string-array name="search_mode_values">
+        <item>general</item>
+        <item>doorplate</item>
+    </string-array>
+
+</resources>
