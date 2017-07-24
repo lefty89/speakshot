@@ -7,6 +7,8 @@ import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.speech.SpeechRecognizer;
+
+import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.service.audio.listener.SpeechListener;
 
 import java.util.Locale;
@@ -36,8 +38,8 @@ public class AudioService implements TextToSpeech.OnInitListener {
     /**
      * tts settings
      */
-    private int mPitch = 0;
-    private int mSpeechRate = 0;
+    private static float mPitch = 1;
+    private static float mSpeechRate = 1;
     private Locale mLocale = Locale.getDefault();
 
     /**
@@ -62,6 +64,8 @@ public class AudioService implements TextToSpeech.OnInitListener {
      */
     public void speak(String text) {
         if (mTtsIsReady) {
+            mTts.setPitch(mPitch);
+            mTts.setSpeechRate(mSpeechRate);
             mTts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
         }
     }
@@ -119,5 +123,23 @@ public class AudioService implements TextToSpeech.OnInitListener {
         } else {
             Log.d(TAG, "Initilization Failed");
         }
+    }
+
+    /**
+     * Sets the voice pitch - 1.0 is normal
+     * @param pitch
+     */
+    public static void setPitch(float pitch)
+    {
+        mPitch = pitch;
+    }
+
+    /**
+     * Sets the voice speed - 1.0 is normal
+     * @param speechRate
+     */
+    public static void setSpeechRate(float speechRate)
+    {
+        mSpeechRate = speechRate;
     }
 }

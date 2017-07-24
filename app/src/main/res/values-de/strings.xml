@@ -24,6 +24,24 @@
     <string name="pref_title_hints_switch">Hinweise aktivieren</string>
     <string name="pref_description_hints_switch">Erlaubt der App dem Benutzer Hinweise zu geben.</string>
 
+    <string name="pref_title_speechrate">Sprechgeschwindigkeit</string>
+    <string-array name="pref_speechrate_titles">
+        <item>Langsam</item>
+        <item>Normal</item>
+        <item>Schneller</item>
+        <item>Sehr schnell</item>
+        <item>Maximum</item>
+    </string-array>
+    <string-array name="pref_speechrate_values">
+        <item>0.5</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string name="speech_demo_sentence">Dies ist die neue Sprechgeschwindigkeit. Gefällt sie dir?</string>
+
     <!-- appearance settings -->
     <string name="pref_header_appearance">Aussehen</string>
 

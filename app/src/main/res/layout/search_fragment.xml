@@ -23,7 +23,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:entries="@array/search_mode_array" />
+            android:entries="@array/search_mode_array"
+            android:entryValues="@array/search_mode_values" />
         <FrameLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

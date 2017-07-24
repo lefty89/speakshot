@@ -24,6 +24,24 @@
     <string name="pref_title_hints_switch">Enable hints</string>
     <string name="pref_description_hints_switch">Allows the app to give the user hints.</string>
 
+    <string name="pref_title_speechrate">Reading speed</string>
+    <string-array name="pref_speechrate_titles">
+        <item>Slow</item>
+        <item>Normal</item>
+        <item>Faster</item>
+        <item>Very Fast</item>
+        <item>Fastest</item>
+    </string-array>
+    <string-array name="pref_speechrate_values">
+        <item>0.5</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string name="speech_demo_sentence">This is the newly assigned speed. Are you happy with it?</string>
+
     <!-- appearance settings -->
     <string name="pref_header_appearance">Appearance</string>
 

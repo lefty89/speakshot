@@ -57,6 +57,11 @@ public class MainActivity extends AppCompatActivity {
     private CameraPreviewSurface mPreview;
 
     /**
+     * This listener calls a method to apply preferences changes to the app
+     */
+    private SharedPreferences.OnSharedPreferenceChangeListener mSharedPreferenceChangeListener;
+
+    /**
      * TEST VAR - REMOVE LATER
      */
     private boolean mGuidedEnabled = false;
@@ -227,6 +232,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // apply preferences changes to the app
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        float speechRate = Float.valueOf(prefs.getString("speech_rate", ""));
+        AudioService.setSpeechRate(speechRate);
+        // this class field "li
+        mSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                if (key.equals("speech_rate")) {
+                    float speechRate = Float.valueOf(prefs.getString(key, ""));
+                    AudioService.setSpeechRate(speechRate);
+                    AudioService.getInstance().speak(getResources().getString(R.string.speech_demo_sentence));
+                }
+            }
+        };
+        prefs.registerOnSharedPreferenceChangeListener(mSharedPreferenceChangeListener);
+
         mViewService.to(new ReadFragment(), null);
     }
 
@@ -315,6 +336,15 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String themeId = preferences.getString("theme", "");
         return themeId;
+    }
+
+    /**
+     * returns the reading speed (float value)
+     * @return float
+     */
+    public float getSpeechRate() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        return Float.valueOf(preferences.getString("speech_rate", ""));
     }
 
     /**
