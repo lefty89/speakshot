@@ -40,6 +40,8 @@
 
     <!-- reead results -->
     <string name="read_results_no_text_blocks_found">Es wurden keine Textblöcke gefunden.</string>
+    <string name="read_results_audio_result_x_of_y">Ergebnis %1$d von %2$d : %3$s</string>
+    <string name="read_results_textview_header_result_x_of_y">Ergebnis %1$d von %2$d</string>
 
     <!-- read mode selector / spinner / combobox -->
     <string-array name="read_mode_array">

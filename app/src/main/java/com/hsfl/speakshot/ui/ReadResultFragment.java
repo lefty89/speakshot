@@ -67,7 +67,7 @@ public class ReadResultFragment extends Fragment {
         final FloatingActionButton playButton = (FloatingActionButton)mInflatedView.findViewById(R.id.read_fragment_play);
         playButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String text = "Ergebnis " + (counter+1) + " von " + detectedTexts.size() + ": " + detectedTexts.get(counter);
+                String text = ((MainActivity)getActivity()).getResources().getString(R.string.read_results_audio_result_x_of_y, counter+1, detectedTexts.size(), detectedTexts.get(counter));
                 AudioService.getInstance().speak(text);
             }
         });
@@ -150,6 +150,7 @@ public class ReadResultFragment extends Fragment {
         final TextView resultText = (TextView)mInflatedView.findViewById(R.id.txt_sections_result);
         resultText.setText(detectedTexts.get(counter));
         final TextView headerText = (TextView)mInflatedView.findViewById(R.id.txt_sections_header);
-        headerText.setText(String.format("Section %1s of %2s", counter+1, detectedTexts.size()));
+        String text = ((MainActivity)getActivity()).getResources().getString(R.string.read_results_textview_header_result_x_of_y, counter+1, detectedTexts.size());
+        headerText.setText(text);
     }
 }
