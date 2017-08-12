@@ -20,6 +20,8 @@ import android.preference.RingtonePreference;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
+import com.hsfl.speakshot.service.audio.AudioService;
+
 import java.util.List;
 
 /**
@@ -34,6 +36,8 @@ import java.util.List;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
+    private static final String TAG = SettingsActivity.class.getSimpleName();
+
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
@@ -81,6 +85,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 // simple string representation.
                 preference.setSummary(stringValue);
             }
+
             return true;
         }
     };
@@ -177,6 +182,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("theme"));
+            bindPreferenceSummaryToValue(findPreference("speech_rate"));
         }
 
         @Override

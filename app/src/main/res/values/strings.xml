@@ -7,19 +7,46 @@
     <!-- general settings -->
     <string name="pref_header_general">General</string>
 
-    <string name="pref_title_audio_output_switch">Enable audio output</string>
-    <string name="pref_description_audio_output_switch">Allows the app to output audio for text and instructions.</string>
+    <string name="pref_description_misc">Miscellaneous</string>
 
     <string name="pref_title_vibration_switch">Enable vibration</string>
     <string name="pref_description_vibration_switch">Allows the app to give tactile feedback.</string>
 
-    <string name="pref_title_assistance_switch">Enable assistance</string>
-    <string name="pref_description_assistance_switch">Allows the app to assist the user when making snapshot.</string>
+    <!-- audio output -->
+    <string name="pref_description_audio">Audio output</string>
+
+    <string name="pref_title_audio_output_switch">Enable audio output</string>
+    <string name="pref_description_audio_output_switch">Allows the app to output audio for reading text results, instructions or hints.</string>
+
+    <string name="pref_title_assistance_switch">Enable snapshot assistance</string>
+    <string name="pref_description_assistance_switch">Allows the app to assist the user with audio instructions when making a snapshot.</string>
+
+    <string name="pref_title_hints_switch">Enable hints</string>
+    <string name="pref_description_hints_switch">Allows the app to give the user hints.</string>
+
+    <string name="pref_title_speechrate">Reading speed</string>
+    <string-array name="pref_speechrate_titles">
+        <item>Slow</item>
+        <item>Normal</item>
+        <item>Faster</item>
+        <item>Very Fast</item>
+        <item>Fastest</item>
+    </string-array>
+    <string-array name="pref_speechrate_values">
+        <item>0.5</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string name="speech_demo_sentence">This is the newly assigned speed. Are you happy with it?</string>
 
     <!-- appearance settings -->
     <string name="pref_header_appearance">Appearance</string>
 
     <string name="pref_title_theme">Theme</string>
+    <string name="pref_description_theme">In order for the theme change to take effect, the app must be restarted.</string>
     <string-array name="pref_theme_titles">
         <item>Light</item>
         <item>Dark</item>
@@ -31,17 +58,27 @@
 
     <!-- reead results -->
     <string name="read_results_no_text_blocks_found">No text blocks found</string>
+    <string name="read_results_audio_result_x_of_y">Result %1$d of %2$d : %3$s</string>
+    <string name="read_results_textview_header_result_x_of_y">Result %1$d of %2$d</string>
 
     <!-- read mode selector / spinner / combobox -->
     <string-array name="read_mode_array">
         <item>General</item>
         <item>Letter</item>
     </string-array>
+    <string-array name="read_mode_values">
+        <item>general</item>
+        <item>letter</item>
+    </string-array>
 
     <!-- search mode selector / spinner / combobox -->
     <string-array name="search_mode_array">
         <item>General</item>
         <item>Doorplate</item>
+    </string-array>
+    <string-array name="search_mode_values">
+        <item>general</item>
+        <item>doorplate</item>
     </string-array>
 
 </resources>
