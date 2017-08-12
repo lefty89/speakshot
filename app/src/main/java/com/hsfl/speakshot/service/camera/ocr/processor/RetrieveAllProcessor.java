@@ -24,6 +24,8 @@ import com.hsfl.speakshot.service.camera.helper.ImagePersistenceHelper;
 
 import java.util.ArrayList;
 
+import static com.hsfl.speakshot.service.camera.ocr.processor.ImageProcessor.RESULT_SNAPSHOT_TRIGGER;
+
 /**
  * A very simple Processor which gets detected TextBlocks
  */
@@ -33,8 +35,7 @@ public class RetrieveAllProcessor extends BaseProcessor {
     /**
      * The bundle result ids
      */
-    public static final String RESULT_TEXTS    = String.format("%s_texts",    TAG);
-    public static final String RESULT_SNAPSHOT = String.format("%s_snapshot", TAG);
+    public static final String RESULT_ALL_TEXTS = String.format("%s_texts", TAG);
 
     /**
      * Constructor
@@ -42,34 +43,21 @@ public class RetrieveAllProcessor extends BaseProcessor {
     public RetrieveAllProcessor() {}
 
     /**
-     * Builds a response Bundle
-     * @param texts
+     * Constructor
      */
-    private void sendResponseBundle(ArrayList<String> texts, String snapshot) {
-        // packs the detector texts into a bundle
-        Bundle b = new Bundle();
-        b.putStringArrayList(RESULT_TEXTS, texts);
-        b.putString(RESULT_SNAPSHOT, snapshot);
-        // create a message from the message handler to send it back to the main UI
-        Message msg = mHandler.obtainMessage();
-        //attach the bundle to the message
-        msg.setData(b);
-        //send the message back to main UI thread
-        mHandler.sendMessage(msg);
+    public RetrieveAllProcessor(boolean triggerImage) {
+        mTriggerImage = triggerImage;
     }
 
     @Override
-    public void receiveDetections(SparseArray<TextBlock> detections, byte[] image) {
+    public void process(Bundle bundle, SparseArray<TextBlock> detections, byte[] image) {
         ArrayList<String> texts = sparseToList(detections);
-        String snapshot = "";
-        if ((texts.size() > 0) && (mImagePersisting)) {
-            snapshot = Constants.IMAGE_PATH + "/img-" + System.currentTimeMillis() + ".jpg";
-            // copy the image else the buffer would be overridden before the saving is completed
-            byte[] copy = new byte[image.length];
-            System.arraycopy(image, 0, copy, 0, image.length);
-            // saves the image asynchronously to the external storage
-            new ImagePersistenceHelper(mImageFormat, mImageRotation, mImageWidth, mImageHeight, snapshot).execute(copy);
+
+        // sets a flag that the image processor shall save the image permanently
+        if ((texts.size() > 0) && (mTriggerImage)) {
+            bundle.putBoolean(RESULT_SNAPSHOT_TRIGGER, true);
         }
-        sendResponseBundle(texts, snapshot);
+        // saves the all terms within the bundle
+        bundle.putStringArrayList(RESULT_ALL_TEXTS, texts);
     }
 }

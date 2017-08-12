@@ -17,11 +17,14 @@ package com.hsfl.speakshot.service.camera.ocr.processor;
 
 import android.os.Bundle;
 import android.os.Message;
+import android.util.Log;
 import android.util.SparseArray;
 import com.google.android.gms.vision.text.TextBlock;
 import com.hsfl.speakshot.Constants;
 import com.hsfl.speakshot.service.camera.helper.ImagePersistenceHelper;
 import java.util.ArrayList;
+
+import static com.hsfl.speakshot.service.camera.ocr.processor.ImageProcessor.RESULT_SNAPSHOT_TRIGGER;
 
 /**
  * A very simple Processor which gets detected TextBlocks
@@ -32,9 +35,8 @@ public class FindTermProcessor extends BaseProcessor {
     /**
      * The bundle result ids
      */
-    public static final String RESULT_TERM     = String.format("%s_term",     TAG);
-    public static final String RESULT_TEXTS    = String.format("%s_texts",    TAG);
-    public static final String RESULT_SNAPSHOT = String.format("%s_snapshot", TAG);
+    public static final String RESULT_TERM_SEARCH = String.format("%s_term_search", TAG);
+    public static final String RESULT_TERM_FOUND  = String.format("%s_term_found", TAG);
 
     /**
      * The Search Term
@@ -42,22 +44,21 @@ public class FindTermProcessor extends BaseProcessor {
     private String mSearchTerm;
 
     /**
-     * Lock object
-     */
-    private final Object mLock = new Object();
-
-    /**
-     * Flag that indicated whether the term was found
-     */
-    private boolean mTermFound = false;
-
-    /**
      * Constructor
-     * @param handler
      * @param searchTerm
      */
     public FindTermProcessor(String searchTerm) {
         mSearchTerm = searchTerm;
+    }
+
+    /**
+     * Constructor
+     * @param searchTerm
+     * @param triggerImage
+     */
+    public FindTermProcessor(String searchTerm, boolean triggerImage) {
+        mSearchTerm   = searchTerm;
+        mTriggerImage = triggerImage;
     }
 
     /**
@@ -73,46 +74,18 @@ public class FindTermProcessor extends BaseProcessor {
         return "";
     }
 
-    /**
-     * Builds a response Bundle
-     * @param s
-     */
-    private void sendResponseBundle(String s, ArrayList<String> texts, String snapshot) {
-        // packs the detector texts into a bundle
-        Bundle b = new Bundle();
-        b.putString(RESULT_TERM, s);
-        b.putString(RESULT_SNAPSHOT, snapshot);
-        b.putStringArrayList(RESULT_TEXTS, texts);
-        // create a message from the message handler to send it back to the main UI
-        Message msg = mHandler.obtainMessage();
-        //attach the bundle to the message
-        msg.setData(b);
-        //send the message back to main UI thread
-        mHandler.sendMessage(msg);
-    }
-
     @Override
-    public void receiveDetections(SparseArray<TextBlock> detections, byte[] image) {
+    public void process(Bundle bundle, SparseArray<TextBlock> detections, byte[] image) {
         ArrayList<String> texts = sparseToList(detections);
         String s = findSearchTerm(texts);
 
-        // critical part
-        synchronized (mLock) {
-            if ((!mTermFound) &&(!s.isEmpty())) {
-                mTermFound = true;
-                String snapshot = "";
-                // saves the image to the storage
-                if (mImagePersisting) {
-                    snapshot = Constants.IMAGE_PATH + "/img-" + System.currentTimeMillis() + ".jpg";
-                    // copy the image else the buffer would be overridden before the saving is completed
-                    byte[] copy = new byte[image.length];
-                    System.arraycopy(image, 0, copy, 0, image.length);
-                    // saves the image asynchronously to the external storage
-                    new ImagePersistenceHelper(mImageFormat, mImageRotation, mImageWidth, mImageHeight, snapshot).execute(copy);
-                }
-                // response to the listener
-                sendResponseBundle(s, texts, snapshot);
-            }
+        if (!s.isEmpty()) {
+            // saves the complete term within the bundle
+            bundle.putString(RESULT_TERM_SEARCH, mSearchTerm);
+            bundle.putString(RESULT_TERM_FOUND, s);
+
+            // sets a flag that the image processor shall save the image permanently
+            if (mTriggerImage) {bundle.putBoolean(RESULT_SNAPSHOT_TRIGGER, true);}
         }
     }
 }

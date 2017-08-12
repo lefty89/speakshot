@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import com.hsfl.speakshot.service.audio.AudioService;
 import com.hsfl.speakshot.service.camera.CameraService;
 import com.hsfl.speakshot.service.camera.ocr.processor.LocateTextProcessor;
+import com.hsfl.speakshot.service.camera.ocr.processor.ProcessorChain;
 import com.hsfl.speakshot.ui.views.GuidingLayout;
 
 import java.util.Observable;
@@ -104,9 +105,11 @@ public class GuidingService implements Observer {
             int w = ((orientation == 90) || (orientation == 270)) ? size.height : size.width;
             int h = ((orientation == 90) || (orientation == 270)) ? size.width  : size.height;
 
-            // adds the analyzer
-            LocateTextProcessor ltp = new LocateTextProcessor(w, h, GUIDE_DELAY);
-            mCameraService.startAnalyseStream(ltp);
+            // creates the container
+            ProcessorChain pc = new ProcessorChain();
+            pc.add(new LocateTextProcessor(w, h, GUIDE_DELAY));
+
+            mCameraService.startAnalyseStream(pc);
         }
     }
 

@@ -9,6 +9,7 @@ import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 import com.hsfl.speakshot.service.camera.ocr.processor.BaseProcessor;
+import com.hsfl.speakshot.service.camera.ocr.processor.ProcessorChain;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
@@ -63,63 +64,60 @@ public class OcrHandler {
     }
 
     /**
-     * Sets a processor after whose the text is analyzed
-     * @param processor
-     */
-    public void setProcessor(BaseProcessor processor) {
-        mProcessor = processor;
-        mProcessor.attachHandler(mHandler);
-    }
-
-    /**
      * Analyzes a given bitmap image
+     * @param chain
      * @param bitmap
      */
-    public void ocrBitmapImage(Bitmap bitmap) {
+    public void ocrBitmapImage(ProcessorChain chain, Bitmap bitmap) {
         synchronized (mCameraLock) {
             // build frame from bitmap
             Frame frame = new Frame.Builder().setBitmap(bitmap).build();
-
+            // connects the handler
+            chain.setHandler(mHandler);
             // gets byte data from the bitmap image
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] image = stream.toByteArray();
-
             // start detection and processing
             SparseArray<TextBlock> detections = mTextRecognizer.detect(frame);
-            mProcessor.receiveDetections(detections, image);
+            // starts the processor chain
+            chain.execute(detections, image);
         }
     }
 
     /**
      * Analyzes a given raw image
+     * @param chain
      * @param data
      * @param format
      * @param width
      * @param height
+     * @param rotation
      */
-    public void ocrRawImage(byte[] data, int format, int width, int height, int rotation) {
+    public void ocrRawImage(ProcessorChain chain, byte[] data, int format, int width, int height, int rotation) {
         synchronized (mCameraLock) {
             // build frame from raw input
             Frame frame = new Frame.Builder().setImageData(ByteBuffer.wrap(data), width, height, format).setRotation((rotation / 90)).build();
-
-            // simply returns all found texts
-            mProcessor.setImagePersisting(true);
-            mProcessor.setImageFormat(width, height, rotation, format);
-
+            // connects the handler
+            chain.setHandler(mHandler);
             // start detection
             SparseArray<TextBlock> detections = mTextRecognizer.detect(frame);
-            mProcessor.receiveDetections(detections, data);
+            // starts the processor chain
+            chain.execute(detections, data);
         }
     }
 
     /**
      * Starts the continuous detection
+     * @param chain
+     * @param rotation
      */
-    public void startOcrDetector(int rotation) {
+    public void startOcrDetector(ProcessorChain chain, int rotation) {
         synchronized (mCameraLock) {
             if (mOcrDetector == null) {
-                mOcrDetector = new OcrDetector(mTextRecognizer, mCamera, rotation, mProcessor);
+                // attach handler
+                chain.setHandler(mHandler);
+                mOcrDetector = new OcrDetector(mTextRecognizer, mCamera, rotation, chain);
                 // attaches a buffer callback
                 mCamera.setPreviewCallbackWithBuffer(mOcrDetector);
             }
@@ -150,4 +148,6 @@ public class OcrHandler {
             }
         }
     }
+
+
 }

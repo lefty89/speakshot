@@ -1,27 +1,20 @@
 package com.hsfl.speakshot.ui;
 
 import android.app.Fragment;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.hardware.Camera;
 import android.os.Bundle;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.ArrayAdapter;
-import android.content.Context;
 import android.widget.Toast;
 
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
-import com.hsfl.speakshot.service.camera.ocr.processor.LocateTextProcessor;
+import com.hsfl.speakshot.service.camera.ocr.processor.ImageProcessor;
+import com.hsfl.speakshot.service.camera.ocr.processor.ProcessorChain;
 import com.hsfl.speakshot.service.camera.ocr.processor.RetrieveAllProcessor;
-import com.hsfl.speakshot.service.guide.GuidingService;
 import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.camera.CameraService;
 import android.support.design.widget.FloatingActionButton;
@@ -123,7 +116,7 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
     @Override
     public void update(Observable o, Object arg) {
         // gets the detected texts
-        ArrayList<String> texts = ((Bundle)arg).getStringArrayList(RetrieveAllProcessor.RESULT_TEXTS);
+        ArrayList<String> texts = ((Bundle)arg).getStringArrayList(RetrieveAllProcessor.RESULT_ALL_TEXTS);
         if (texts != null) {
             if (texts.size() > 0) {
                 detectedTexts = texts;
@@ -134,8 +127,8 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
             }
         }
         // toasts the snapshot path
-        String snapshot = ((Bundle)arg).getString(RetrieveAllProcessor.RESULT_SNAPSHOT);
-        if ((snapshot != null) && (!snapshot.equals(""))) {
+        String snapshot = ((Bundle)arg).getString(ImageProcessor.RESULT_SNAPSHOT_PATH);
+        if (snapshot != null) {
             Toast.makeText(getActivity().getApplicationContext(), "Snapshot saved to: " + snapshot, Toast.LENGTH_SHORT).show();
         }
     }
@@ -157,10 +150,13 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
     @Override
     public boolean onLongClick(View v) {
         if (mIsLongTab) {
-            RetrieveAllProcessor processor = new RetrieveAllProcessor();
-            processor.setImagePersisting(true);
+
+            // creates a new processor chain
+            ProcessorChain pc = new ProcessorChain();
+            pc.add(new RetrieveAllProcessor(true));
+
             // creates a processor that returns all texts found, also save the image here
-            mCameraService.analyzePicture(processor);
+            mCameraService.analyzePicture(pc);
         }
         mIsLongTab = false;
         return false;

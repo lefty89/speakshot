@@ -16,6 +16,7 @@ import com.hsfl.speakshot.Constants;
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
 import com.hsfl.speakshot.service.camera.CameraService;
+import com.hsfl.speakshot.service.camera.ocr.processor.ProcessorChain;
 import com.hsfl.speakshot.service.camera.ocr.processor.RetrieveAllProcessor;
 import com.hsfl.speakshot.service.view.ViewService;
 
@@ -82,7 +83,11 @@ public class HistoryFragment extends Fragment implements Observer {
         analyzeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // analyzes the given file using the processor to read all
-                mCameraService.analyzePicture(mImages.get(mCurrentPosition), new RetrieveAllProcessor());
+
+                ProcessorChain pc = new ProcessorChain();
+                pc.add(new RetrieveAllProcessor());
+
+                mCameraService.analyzePicture(mImages.get(mCurrentPosition), pc);
             }
         });
 
@@ -121,7 +126,7 @@ public class HistoryFragment extends Fragment implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         // gets the detected texts
-        ArrayList<String> texts = ((Bundle)arg).getStringArrayList(RetrieveAllProcessor.RESULT_TEXTS);
+        ArrayList<String> texts = ((Bundle)arg).getStringArrayList(RetrieveAllProcessor.RESULT_ALL_TEXTS);
         if (texts != null) {
             if (texts.size() > 0) {
                 // opens the result view with the detected texts

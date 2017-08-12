@@ -11,6 +11,7 @@ import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 import com.hsfl.speakshot.service.camera.ocr.processor.BaseProcessor;
+import com.hsfl.speakshot.service.camera.ocr.processor.ProcessorChain;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -30,9 +31,9 @@ public class OcrDetector implements Camera.PreviewCallback {
     private int mRotation = 0;
 
     /**
-     * The text processor to check against
+     * The processor chain
      */
-    private BaseProcessor mProcessor = null;
+    private ProcessorChain mChain = null;
 
     /**
      * Map to convert between a byte array, received from the camera, and its associated byte
@@ -51,13 +52,13 @@ public class OcrDetector implements Camera.PreviewCallback {
     /**
      * Constructor
      */
-    OcrDetector(TextRecognizer recognizer, Camera camera, int rotation, BaseProcessor processor) {
+    OcrDetector(TextRecognizer recognizer, Camera camera, int rotation, ProcessorChain chain) {
         // assigns the camera
         mCamera = camera;
         // gets the camera orientation
         mRotation = rotation;
-        // text processor
-        mProcessor = processor;
+        // processor chain
+        mChain = chain;
         // connecting the frame processor
         mFrameProcessor = new FrameProcessingRunnable(recognizer);
     }
@@ -285,7 +286,8 @@ public class OcrDetector implements Camera.PreviewCallback {
                 // frame.
                 try {
                     SparseArray<TextBlock> detections = (SparseArray<TextBlock>) mDetector.detect(outputFrame);
-                    mProcessor.receiveDetections(detections, data.array());
+                    mChain.execute(detections, data.array());
+
                 } catch (Throwable t) {
                     Log.e(TAG, "Exception thrown from receiver.", t);
                 } finally {

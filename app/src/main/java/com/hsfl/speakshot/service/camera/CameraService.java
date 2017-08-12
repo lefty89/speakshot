@@ -15,7 +15,7 @@ import android.util.Log;
 import android.view.WindowManager;
 import com.google.android.gms.common.images.Size;
 import android.view.SurfaceHolder;
-import com.hsfl.speakshot.service.camera.ocr.processor.BaseProcessor;
+import com.hsfl.speakshot.service.camera.ocr.processor.ProcessorChain;
 
 import java.io.*;
 import java.util.*;
@@ -91,7 +91,7 @@ public class CameraService extends Observable {
     /**
      * Snaps a new image and analyze it immediately
      */
-    public void analyzePicture(final BaseProcessor processor) {
+    public void analyzePicture(final ProcessorChain chain) {
         synchronized (mCameraLock) {
             if (mCamera != null) {
                 Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
@@ -100,12 +100,11 @@ public class CameraService extends Observable {
                         int height = camera.getParameters().getPreviewSize().height;
                         int format = camera.getParameters().getPreviewFormat();
 
-                        // sets the dimensions in case the image shall be saved (defined outside)
-                        processor.setImageFormat(width, height, 0, format);
-                        // sets the processor
-                        mOcrHandler.setProcessor(processor);
+                        // attaches the image processor
+                        chain.setImageProcessor(width, height, mCameraOrientation, format);
+
                         // starts the ocr for this image
-                        mOcrHandler.ocrRawImage(data, format, width, height, mCameraOrientation);
+                        mOcrHandler.ocrRawImage(chain, data, format, width, height, mCameraOrientation);
                         // restarts the background preview
                         mCamera.startPreview();
                     }
@@ -119,7 +118,7 @@ public class CameraService extends Observable {
     /**
      * Creates a bitmap out of a given file and analyze it
      */
-    public void analyzePicture(File file, BaseProcessor processor) {
+    public void analyzePicture(File file, ProcessorChain container) {
 
         final List<String> acceptedExts = Arrays.asList("jpg","jpeg","png");
         final String fileExt = file.getName().substring(file.getName().lastIndexOf(".")+1).toLowerCase();
@@ -127,29 +126,27 @@ public class CameraService extends Observable {
         if ((acceptedExts.contains(fileExt)) && (file.exists())) {
             // gets a drawable to draw into the image view
             Bitmap b = BitmapFactory.decodeFile(file.getAbsolutePath());
-            // sets the dimensions in case the image shall be saved (defined outside)
-            processor.setImageFormat(b.getWidth(), b.getHeight(), 0, ImageFormat.JPEG);
+            // adds the image processor
+            container.setImageProcessor(b.getWidth(), b.getHeight(), 0, ImageFormat.JPEG);
 
-            mOcrHandler.setProcessor(processor);
-            mOcrHandler.ocrBitmapImage(b);
+            mOcrHandler.ocrBitmapImage(container, b);
         }
     }
 
     /**
      * Starts analyzing the images from the preview surface
      */
-    public void startAnalyseStream(BaseProcessor processor) {
+    public void startAnalyseStream(ProcessorChain container) {
         synchronized (mCameraLock) {
             if (mCamera != null) {
                 // camera params
                 int format = mCamera.getParameters().getPreviewFormat();
                 Camera.Size preview = mCamera.getParameters().getPreviewSize();
 
-                // sets the dimensions in case the image shall be saved (defined outside)
-                processor.setImageFormat(preview.width, preview.height, mCameraOrientation, format);
+                // wraps the processor
+                container.setImageProcessor(preview.width, preview.height, mCameraOrientation, format);
 
-                mOcrHandler.setProcessor(processor);
-                mOcrHandler.startOcrDetector(mCameraOrientation);
+                mOcrHandler.startOcrDetector(container, mCameraOrientation);
                 mMediaSoundHelper.play(MediaActionSound.START_VIDEO_RECORDING);
             }
         }

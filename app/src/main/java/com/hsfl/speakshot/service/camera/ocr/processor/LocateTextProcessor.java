@@ -63,24 +63,8 @@ public class LocateTextProcessor extends BaseProcessor {
         mInterval = interval;
     }
 
-    /**
-     * Builds a response Bundle
-     * @param hits
-     */
-    private void sendResponseBundle(int hits) {
-        // packs the detector texts into a bundle
-        Bundle b = new Bundle();
-        b.putInt(RESULT_BORDER_HITS, hits);
-        // create a message from the message handler to send it back to the main UI
-        Message msg = mHandler.obtainMessage();
-        //attach the bundle to the message
-        msg.setData(b);
-        //send the message back to main UI thread
-        mHandler.sendMessage(msg);
-    }
-
     @Override
-    public void receiveDetections(SparseArray<TextBlock> detections, byte[] image) {
+    public void process(Bundle bundle, SparseArray<TextBlock> detections, byte[] image) {
         // critical part
         synchronized (mLock) {
             if (mLastCheck+mInterval <= System.currentTimeMillis()) {
@@ -111,8 +95,8 @@ public class LocateTextProcessor extends BaseProcessor {
                 hits     |= (right)?4:0;
                 hits     |= (bot)  ?8:0;
 
-                // notifies the observer
-                sendResponseBundle(hits);
+                // adds the hits
+                bundle.putInt(RESULT_BORDER_HITS, hits);
             }
         }
     }

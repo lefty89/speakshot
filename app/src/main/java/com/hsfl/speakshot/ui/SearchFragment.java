@@ -2,31 +2,26 @@ package com.hsfl.speakshot.ui;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageView;
-import android.util.Log;
 
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
 import com.hsfl.speakshot.service.camera.ocr.processor.FindTermProcessor;
+import com.hsfl.speakshot.service.camera.ocr.processor.ImageProcessor;
+import com.hsfl.speakshot.service.camera.ocr.processor.ProcessorChain;
 import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.camera.CameraService;
 
@@ -140,7 +135,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
     @Override
     public void update(Observable o, Object arg) {
         // gets the search term
-        String term = ((Bundle)arg).getString(FindTermProcessor.RESULT_TERM);
+        String term = ((Bundle)arg).getString(FindTermProcessor.RESULT_TERM_FOUND);
         if (term != null) {
             Toast.makeText(getActivity().getApplicationContext(), "Term '" + searchTerm + "' found within " + "'" + term + "'", Toast.LENGTH_SHORT).show();
             ((Vibrator) getActivity().getApplication().getSystemService(android.content.Context.VIBRATOR_SERVICE)).vibrate(800);
@@ -149,14 +144,14 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
             mCameraService.stopAnalyseStream();
         }
         // gets the detected texts
-        ArrayList<String> texts = ((Bundle)arg).getStringArrayList(FindTermProcessor.RESULT_TEXTS);
+        ArrayList<String> texts = ((Bundle)arg).getStringArrayList(FindTermProcessor.RESULT_TERM_SEARCH);
         if (texts != null) {
             detectedTexts = texts;
             // show button
             mInflatedView.findViewById(R.id.btn_send_to_read).setEnabled(true);
         }
         // gets the snapshot path
-        String snapshot = ((Bundle)arg).getString(FindTermProcessor.RESULT_SNAPSHOT);
+        String snapshot = ((Bundle)arg).getString(ImageProcessor.RESULT_SNAPSHOT_PATH);
         if (snapshot != null) {
             Toast.makeText(getActivity().getApplicationContext(), "Snapshot saved to: " + snapshot, Toast.LENGTH_SHORT).show();
         }
@@ -176,10 +171,11 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
                             if (!searchTerm.equals("")) {
                                 // creates a processor that searches for a given term and saves
                                 // the image on success
-                                FindTermProcessor processor = new FindTermProcessor(searchTerm);
-                                processor.setImagePersisting(true);
+                                ProcessorChain pc = new ProcessorChain();
+                                pc.add(new FindTermProcessor(searchTerm, true));
+
                                 // start analyzer
-                                mCameraService.startAnalyseStream(processor);
+                                mCameraService.startAnalyseStream(pc);
                                 Toast.makeText(getActivity().getApplicationContext(), "Searching for: " + searchTerm, Toast.LENGTH_SHORT).show();
                             }
                         }

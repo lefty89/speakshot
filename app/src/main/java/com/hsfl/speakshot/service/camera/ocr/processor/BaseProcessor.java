@@ -15,7 +15,7 @@
  */
 package com.hsfl.speakshot.service.camera.ocr.processor;
 
-import android.os.Handler;
+import android.os.Bundle;
 import android.util.SparseArray;
 import com.google.android.gms.vision.text.TextBlock;
 
@@ -28,22 +28,9 @@ public abstract class BaseProcessor {
     private static final String TAG = BaseProcessor.class.getSimpleName();
 
     /**
-     * Callback handler
+     * Trigger image save
      */
-    Handler mHandler;
-
-    /**
-     * Image Settings
-     */
-    int mImageWidth    = 0;
-    int mImageHeight   = 0;
-    int mImageFormat   = 0;
-    int mImageRotation = 0;
-
-    /**
-     * Flag that indicates image storing
-     */
-    boolean mImagePersisting = false;
+    protected boolean mTriggerImage = false;
 
     /**
      * Constructor
@@ -68,41 +55,11 @@ public abstract class BaseProcessor {
     }
 
     /**
-     * Sets the handler to whose the result is published
-     * @param handler
-     */
-    public void attachHandler(Handler handler) {
-        mHandler = handler;
-    }
-
-    /**
-     * Sets the image settings
-     * @param width
-     * @param height
-     * @param rotation
-     * @param format
-     */
-    public void setImageFormat(int width, int height, int rotation, int format) {
-        mImageWidth = width;
-        mImageHeight = height;
-        mImageRotation = rotation;
-        mImageFormat = format;
-    }
-
-    /**
-     * Sets the image persisting flag
-     * @param b
-     */
-    public void setImagePersisting(boolean b) {
-        mImagePersisting = b;
-    }
-
-    /**
      * Called by the detector to deliver detection results.
      * If your application called for it, this could be a place to check for
      * equivalent detections by tracking TextBlocks that are similar in location and content from
      * previous frames, or reduce noise by eliminating TextBlocks that have not persisted through
      * multiple detections.
      */
-    public abstract void receiveDetections(SparseArray<TextBlock> detections, byte[] image);
+    public abstract void process(Bundle bundle, SparseArray<TextBlock> detections, byte[] image);
 }
