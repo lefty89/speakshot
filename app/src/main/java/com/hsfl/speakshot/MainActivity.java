@@ -234,13 +234,13 @@ public class MainActivity extends AppCompatActivity {
 
         // apply preferences changes to the app
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        float speechRate = Float.valueOf(prefs.getString("speech_rate", ""));
+        float speechRate = Float.valueOf(prefs.getString("speech_rate", "1"));
         AudioService.setSpeechRate(speechRate);
         // this class field "li
         mSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
                 if (key.equals("speech_rate")) {
-                    float speechRate = Float.valueOf(prefs.getString(key, ""));
+                    float speechRate = Float.valueOf(prefs.getString(key, "1"));
                     AudioService.setSpeechRate(speechRate);
                     AudioService.getInstance().speak(getResources().getString(R.string.speech_demo_sentence));
                 }
