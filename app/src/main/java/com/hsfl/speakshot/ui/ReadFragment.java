@@ -34,7 +34,7 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
     private static final String TAG = ReadFragment.class.getSimpleName();
 
     /**
-     * Flag that helps to chose whether its a long or short tab
+     * Flag that helps to choose whether it's a long or short tab
      */
     private boolean mIsLongTab = false;
 
@@ -77,7 +77,12 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
                 bundle.putStringArrayList(ReadResultFragment.IN_TEXTS, detectedTexts);
                 ViewService.getInstance().toS(new ReadResultFragment(), bundle);
                 // make buttons for settings and mode switch invisible
-                ((MainActivity)getActivity()).hideButtonsSettingsModeSwitch();
+                MainActivity mainActivity = (MainActivity) getActivity();
+                mainActivity.hideButtonsSettingsModeSwitch();
+                // speak hint
+                if (mainActivity.getHintsEnabled()) {
+                    AudioService.getInstance().speak(mainActivity.getResources().getString(R.string.read_mode_results_hint));
+                }
             }
         });
         resultButton.setEnabled(false);
@@ -97,6 +102,11 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
         historyButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 ViewService.getInstance().toS(new HistoryFragment(), null);
+                // speak hint
+                MainActivity mainActivity = (MainActivity) getActivity();
+                if (mainActivity.getHintsEnabled()) {
+                    AudioService.getInstance().speak(mainActivity.getResources().getString(R.string.read_mode_history_hint));
+                }
             }
         });
 
@@ -139,7 +149,7 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
         String snapshot = ((Bundle)arg).getString(RetrieveAllProcessor.RESULT_SNAPSHOT);
         if ((snapshot != null) && (!snapshot.equals(""))) {
             Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.toast_snapshot_saved_to, snapshot), Toast.LENGTH_SHORT).show();
-            AudioService.getInstance().speak(getResources().getString(R.string.read_mode_snapshot_saved_to, snapshot));
+            AudioService.getInstance().speak(getResources().getString(R.string.read_mode_snapshot_saved));
         }
     }
 
@@ -150,7 +160,9 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
         }
         if (event.getAction() == MotionEvent.ACTION_UP) {
             if (mIsLongTab) {
+                // TODO sometimes the app crashes here.
                 mCameraService.focus(event.getX(), event.getY());
+                AudioService.getInstance().stopSpeaking();
             }
             mIsLongTab = false;
         }

@@ -84,11 +84,17 @@
     <!-- toasts -->
     <string name="toast_no_text_found">No text found.</string>
     <string name="toast_snapshot_saved_to">Photo saved to %1$s.</string>
+    <string name="toast_search_term_found_within_text">Search term \'%1$s\' found within \'%2$s\'.</string>
+    <string name="toast_searching_for">Searching for \'%1$s\'.</string>
 
     <!-- hints -->
     <string name="read_mode_hint_general">Read Mode entered. In order to read text you have to take a photo. Long press on free display space. If necessary you can switch on the light by pressing the button in the bottom right corner. Alternatively, you can also view your already taken photos by pressing the button in the bottom middle.</string>
     <string name="read_mode_hint_no_text_found">No text found.</string>
-    <string name="read_mode_snapshot_saved_to">Photo saved.</string>
-    <string name="search_mode_hint_general">Search Mode entered.</string>
+    <string name="read_mode_snapshot_saved">Photo saved. In order to read the found text results, press the button in the left bottom corner.</string>
+    <string name="read_mode_snapshot_deleted">Photo deleted.</string>
+    <string name="read_mode_results_hint">By means of the buttons at the bottom of the screen "previous text block", "read current text block" and "next text block" you can navigate through the results just as you would with an audio player.</string>
+    <string name="read_mode_history_hint">By means of the buttons at the bottom of the screen "previous photo", "analyze current photo" und "next photo" you can navigate through the stored photos. You can delete the current photo by pressing the button in the bottom right corner.</string>
+    <string name="search_mode_hint_general">Search Mode entered. In order to search a certain text you have to enter a search term. Tap on free display space. If the text you are looking for has been found, you can display all found text blocks by pressing the button at the bottom left.</string>
+    <string name="search_mode_dialog_search_term">Search:</string>
 
 </resources>

@@ -27,6 +27,7 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.content.res.ColorStateList;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.os.Vibrator;
 
 import com.hsfl.speakshot.ui.views.CameraPreviewSurface;
 
@@ -228,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
                 modeSwitch.setSelected(mCurrentMode);
                 mCurrentMode = !mCurrentMode;
                 speakModeHint();
+                vibrate(10);
             }
         });
 
@@ -273,6 +275,16 @@ public class MainActivity extends AppCompatActivity {
         showButtonsSettingsModeSwitch();
         ViewService.getInstance().back();
         AudioService.getInstance().stopSpeaking();
+    }
+
+    /**
+     * Vibrates for the specified period of time in milliseconds.
+     * @params period
+     */
+    public void vibrate(long period)
+    {
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        v.vibrate(period);
     }
 
     /**
@@ -350,12 +362,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * returns whether audio output is enabled
+     * @return boolean
+     */
+    public boolean getAudioEnabled() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        return prefs.getBoolean("audio_output_switch", true);
+    }
+
+    /**
      * returns whether the hints are enabled
      * @return boolean
      */
     public boolean getHintsEnabled() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         return prefs.getBoolean("hints_switch", true);
+    }
+
+    /**
+     * returns whether vibration is enabled
+     * @return boolean
+     */
+    public boolean getVibrationEnabled() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        return prefs.getBoolean("vibration_switch", true);
     }
 
     /**

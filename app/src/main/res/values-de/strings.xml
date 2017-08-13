@@ -84,11 +84,17 @@
     <!-- toasts -->
     <string name="toast_no_text_found">Es wurde kein Text gefunden.</string>
     <string name="toast_snapshot_saved_to">Foto in %1$s gespeichert.</string>
+    <string name="toast_search_term_found_within_text">Suchbegriff \'%1$s\' gefunden innerhalb von \'%2$s\'.</string>
+    <string name="toast_searching_for">Suche nach \'%1$s\'.</string>
 
     <!-- hints -->
     <string name="read_mode_hint_general">Lese-Modus. Um Text vorlesen zu lassen, mache zunächst ein Foto. Drücke dazu lange auf einen freien Bereich des Displays. Falls nötig kannst du das Licht mit der Schaltfläche in der rechten unteren Ecke einschalten. Alternativ kannst du auch deine gemachten Fotos erneut aufrufen mittels der Schaltfläche unten in der Mitte.</string>
     <string name="read_mode_hint_no_text_found">Es wurde kein Text gefunden.</string>
-    <string name="read_mode_snapshot_saved_to">Foto gespeichert.</string>
-    <string name="search_mode_hint_general">Such-Modus</string>
+    <string name="read_mode_snapshot_saved">Foto gespeichert. Um den gefundenen Text vorlesen zu lassen, drücke auf die Schaltfläche unten links.</string>
+    <string name="read_mode_snapshot_deleted">Foto gelöscht.</string>
+    <string name="read_mode_results_hint">Mit den unteren Schaltflächen "vorheriger Textblock", "Textblock vorlesen" und "nächsten Textblock" kannst du durch die Ergebnisse navigieren wie bei einem Audio-Player.</string>
+    <string name="read_mode_history_hint">Mit den unteren Schaltflächen "vorheriges Foto", "Foto untersuchen" und "nächstes Foto" kannst du durch die gespeicherten Fotos navigieren. Mit der Schaltfläche unten rechts kannst du das gerade angezeigte Foto löschen.</string>
+    <string name="search_mode_hint_general">Such-Modus. Um nach einem Text zu suchen, musst du zunächst den Suchbegriff eingeben. Tippe dazu kurz auf einen freien Bereich des Displays. Wenn der gesuchte Text gefunden wurde, kannst du alle gefundenen Textblöcke anzeigen lassen, indem du auf die Schaltfläche unten links drückst.</string>
+    <string name="search_mode_dialog_search_term">Suchen nach:</string>
 
 </resources>

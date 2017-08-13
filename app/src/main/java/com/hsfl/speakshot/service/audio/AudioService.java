@@ -42,7 +42,7 @@ public class AudioService implements TextToSpeech.OnInitListener {
     private static float mSpeechRate = 1;
     private Locale mLocale = Locale.getDefault();
 
-    /**
+    /** testing
      * Empty constructor
      */
     AudioService() {}
@@ -63,7 +63,7 @@ public class AudioService implements TextToSpeech.OnInitListener {
      * @param text
      */
     public void speak(String text) {
-        if (mTtsIsReady) {
+        if (mTtsIsReady && MainActivity.getInstance().getAudioEnabled()) {
             mTts.setPitch(mPitch);
             mTts.setSpeechRate(mSpeechRate);
             mTts.speak(text, TextToSpeech.QUEUE_FLUSH, null);

@@ -26,6 +26,7 @@ import android.util.Log;
 
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
+import com.hsfl.speakshot.service.audio.AudioService;
 import com.hsfl.speakshot.service.camera.ocr.processor.FindTermProcessor;
 import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.camera.CameraService;
@@ -81,6 +82,11 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
                 Bundle bundle = new Bundle();
                 bundle.putStringArrayList(ReadResultFragment.IN_TEXTS, detectedTexts);
                 ViewService.getInstance().toS(new ReadResultFragment(), bundle);
+                // speak hint
+                MainActivity mainActivity = (MainActivity) getActivity();
+                if (mainActivity.getHintsEnabled()) {
+                    AudioService.getInstance().speak(mainActivity.getResources().getString(R.string.read_mode_results_hint));
+                }
             }
         });
         sendToReadButton.setEnabled(false);
@@ -142,8 +148,8 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         // gets the search term
         String term = ((Bundle)arg).getString(FindTermProcessor.RESULT_TERM);
         if (term != null) {
-            Toast.makeText(getActivity().getApplicationContext(), "Term '" + searchTerm + "' found within " + "'" + term + "'", Toast.LENGTH_SHORT).show();
-            ((Vibrator) getActivity().getApplication().getSystemService(android.content.Context.VIBRATOR_SERVICE)).vibrate(800);
+            Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.toast_search_term_found_within_text, searchTerm, term), Toast.LENGTH_SHORT).show();
+            ((MainActivity)getActivity()).vibrate(500);
             // reset analysing
             searchTerm = "";
             mCameraService.stopAnalyseStream();
@@ -158,7 +164,8 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         // gets the snapshot path
         String snapshot = ((Bundle)arg).getString(FindTermProcessor.RESULT_SNAPSHOT);
         if (snapshot != null) {
-            Toast.makeText(getActivity().getApplicationContext(), "Snapshot saved to: " + snapshot, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.toast_snapshot_saved_to, snapshot), Toast.LENGTH_SHORT).show();
+            AudioService.getInstance().speak(getResources().getString(R.string.read_mode_snapshot_saved));
         }
     }
 
@@ -168,7 +175,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
             // open modal
             final EditText txt = new EditText(getActivity());
             new AlertDialog.Builder(getActivity())
-                    .setMessage("Search for word")
+                    .setMessage(getResources().getString(R.string.search_mode_dialog_search_term))
                     .setView(txt)
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
@@ -180,7 +187,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
                                 processor.setImagePersisting(true);
                                 // start analyzer
                                 mCameraService.startAnalyseStream(processor);
-                                Toast.makeText(getActivity().getApplicationContext(), "Searching for: " + searchTerm, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.toast_searching_for, searchTerm), Toast.LENGTH_SHORT).show();
                             }
                         }
                     })
