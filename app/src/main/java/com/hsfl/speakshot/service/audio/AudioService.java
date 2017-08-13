@@ -71,6 +71,15 @@ public class AudioService implements TextToSpeech.OnInitListener {
     }
 
     /**
+     * Stops the text output.
+     */
+    public void stopSpeaking() {
+        if (mTtsIsReady) {
+            mTts.stop();
+        }
+    }
+
+    /**
      * Showing google speech input dialog
      * */
     public void listen() {
@@ -119,6 +128,7 @@ public class AudioService implements TextToSpeech.OnInitListener {
                 Log.d(TAG, "Language is not supported");
             } else {
                 mTtsIsReady = true;
+                MainActivity.getInstance().speakModeHint();
             }
         } else {
             Log.d(TAG, "Initilization Failed");

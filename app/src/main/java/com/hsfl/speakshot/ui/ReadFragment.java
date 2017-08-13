@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
+import com.hsfl.speakshot.service.audio.AudioService;
 import com.hsfl.speakshot.service.camera.ocr.processor.LocateTextProcessor;
 import com.hsfl.speakshot.service.camera.ocr.processor.RetrieveAllProcessor;
 import com.hsfl.speakshot.service.guide.GuidingService;
@@ -130,13 +131,15 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
                 // enable / disable result button
                 mInflatedView.findViewById(R.id.btn_show_results).setEnabled(true);
             } else {
-                Toast.makeText(getActivity().getApplicationContext(), "Nothing found", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.toast_no_text_found), Toast.LENGTH_SHORT).show();
+                AudioService.getInstance().speak(getResources().getString(R.string.read_mode_hint_no_text_found));
             }
         }
         // toasts the snapshot path
         String snapshot = ((Bundle)arg).getString(RetrieveAllProcessor.RESULT_SNAPSHOT);
         if ((snapshot != null) && (!snapshot.equals(""))) {
-            Toast.makeText(getActivity().getApplicationContext(), "Snapshot saved to: " + snapshot, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.toast_snapshot_saved_to, snapshot), Toast.LENGTH_SHORT).show();
+            AudioService.getInstance().speak(getResources().getString(R.string.read_mode_snapshot_saved_to, snapshot));
         }
     }
 

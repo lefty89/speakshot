@@ -81,4 +81,14 @@
         <item>doorplate</item>
     </string-array>
 
+    <!-- toasts -->
+    <string name="toast_no_text_found">No text found.</string>
+    <string name="toast_snapshot_saved_to">Photo saved to %1$s.</string>
+
+    <!-- hints -->
+    <string name="read_mode_hint_general">Read Mode entered. In order to read text you have to take a photo. Long press on free display space. If necessary you can switch on the light by pressing the button in the bottom right corner. Alternatively, you can also view your already taken photos by pressing the button in the bottom middle.</string>
+    <string name="read_mode_hint_no_text_found">No text found.</string>
+    <string name="read_mode_snapshot_saved_to">Photo saved.</string>
+    <string name="search_mode_hint_general">Search Mode entered.</string>
+
 </resources>
