@@ -17,8 +17,8 @@ import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
 import com.hsfl.speakshot.service.audio.AudioService;
 import com.hsfl.speakshot.service.camera.CameraService;
-import com.hsfl.speakshot.service.camera.ocr.processor.ProcessorChain;
-import com.hsfl.speakshot.service.camera.ocr.processor.RetrieveAllProcessor;
+import com.hsfl.speakshot.service.camera.ocr.OcrHandler;
+import com.hsfl.speakshot.service.camera.ocr.serialization.TextBlockParcel;
 import com.hsfl.speakshot.service.view.ViewService;
 
 import java.io.File;
@@ -62,6 +62,21 @@ public class HistoryFragment extends Fragment implements Observer {
         // adds an observer for the text recognizer
         mCameraService.addObserver(this);
 
+        // init controls
+        initializeControls();
+
+        // init the gallery
+        initGallery();
+        updateBackgroundImage();
+
+        return mInflatedView;
+    }
+
+    /**
+     * Inits the UI controls
+     */
+    private void initializeControls() {
+
         // close button
         final FloatingActionButton closeButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_history_close);
         closeButton.setOnClickListener(new View.OnClickListener() {
@@ -84,9 +99,7 @@ public class HistoryFragment extends Fragment implements Observer {
         analyzeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // analyzes the given file using the processor to read all
-                ProcessorChain pc = new ProcessorChain();
-                pc.add(new RetrieveAllProcessor());
-                mCameraService.analyzePicture(mImages.get(mCurrentPosition), pc);
+                mCameraService.analyzePicture(mImages.get(mCurrentPosition));
 
                 // speak hint
                 MainActivity mainActivity = ((MainActivity) getActivity());
@@ -114,12 +127,6 @@ public class HistoryFragment extends Fragment implements Observer {
                 updateBackgroundImage();
             }
         });
-
-        // init the gallery
-        initGallery();
-        updateBackgroundImage();
-
-        return mInflatedView;
     }
 
     @Override
@@ -130,17 +137,20 @@ public class HistoryFragment extends Fragment implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        // gets the detected texts
-        ArrayList<String> texts = ((Bundle)arg).getStringArrayList(RetrieveAllProcessor.RESULT_ALL_TEXTS);
-        if (texts != null) {
-            if (texts.size() > 0) {
-                // opens the result view with the detected texts
-                Bundle bundle = new Bundle();
-                bundle.putStringArrayList(ReadResultFragment.IN_TEXTS, texts);
-                ViewService.getInstance().toS(new ReadResultFragment(), bundle);
 
-            } else {
-                Toast.makeText(getActivity().getBaseContext(), getResources().getString(R.string.toast_no_text_found), Toast.LENGTH_SHORT).show();
+        String type = ((Bundle)arg).getString(OcrHandler.BUNDLE_TYPE);
+        if ((type != null) && (type.equals(OcrHandler.DETECTOR_ACTION_BITMAP))) {
+            ArrayList<TextBlockParcel> texts = ((Bundle)arg).getParcelableArrayList(OcrHandler.BUNDLE_DETECTIONS);
+
+            if (texts != null) {
+                if (texts.size() > 0) {
+                    // opens the result view with the detected texts
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelableArrayList(ReadResultFragment.IN_TEXTS_PAREL, texts);
+                    ViewService.getInstance().toS(new ReadResultFragment(), bundle);
+                } else {
+                    Toast.makeText(getActivity().getBaseContext(), getResources().getString(R.string.toast_no_text_found), Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }

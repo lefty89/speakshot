@@ -8,14 +8,30 @@ import android.util.SparseArray;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
-import com.hsfl.speakshot.service.camera.ocr.processor.BaseProcessor;
-import com.hsfl.speakshot.service.camera.ocr.processor.ProcessorChain;
+import com.hsfl.speakshot.service.camera.ocr.serialization.ImageConfigParcel;
+import com.hsfl.speakshot.service.camera.ocr.serialization.TextBlockParcel;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 public class OcrHandler {
     private static final String TAG = OcrHandler.class.getSimpleName();
+
+    /**
+     * Detector actions
+     */
+    public static final String DETECTOR_ACTION_BITMAP = String.format("%s_detect_bitmap", TAG);
+    public static final String DETECTOR_ACTION_RAW    = String.format("%s_detect_raw", TAG);
+    public static final String DETECTOR_ACTION_STREAM = String.format("%s_detect_stream", TAG);
+
+    /**
+     * Bundle settings
+     */
+    public static final String BUNDLE_TYPE       = String.format("%s_bundle_type", TAG);
+    public static final String BUNDLE_IMG_DATA   = String.format("%s_bundle_img_data", TAG);
+    public static final String BUNDLE_IMG_CONFIG = String.format("%s_bundle_img_config", TAG);
+    public static final String BUNDLE_DETECTIONS = String.format("%s_bundle_detections", TAG);
 
     /**
      * The current camera object
@@ -31,11 +47,6 @@ public class OcrHandler {
      * The text recognizer
      */
     private TextRecognizer mTextRecognizer;
-
-    /**
-     * The text processor
-     */
-    private BaseProcessor mProcessor = null;
 
     /**
      * Continious OCR detector
@@ -68,56 +79,54 @@ public class OcrHandler {
      * @param chain
      * @param bitmap
      */
-    public void ocrBitmapImage(ProcessorChain chain, Bitmap bitmap) {
+    public void ocrBitmapImage(Bitmap bitmap, ImageConfigParcel config) {
         synchronized (mCameraLock) {
             // build frame from bitmap
             Frame frame = new Frame.Builder().setBitmap(bitmap).build();
-            // connects the handler
-            chain.setHandler(mHandler);
+
             // gets byte data from the bitmap image
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] image = stream.toByteArray();
-            // start detection and processing
+
+            // process detection
             SparseArray<TextBlock> detections = mTextRecognizer.detect(frame);
-            // starts the processor chain
-            chain.execute(detections, image);
+
+            // send response
+            sendResponse(DETECTOR_ACTION_BITMAP, config, image, detections);
         }
     }
 
     /**
      * Analyzes a given raw image
-     * @param chain
      * @param data
-     * @param format
-     * @param width
-     * @param height
-     * @param rotation
+     * @param config
      */
-    public void ocrRawImage(ProcessorChain chain, byte[] data, int format, int width, int height, int rotation) {
+    public void ocrRawImage(byte[] data, ImageConfigParcel config) {
         synchronized (mCameraLock) {
             // build frame from raw input
-            Frame frame = new Frame.Builder().setImageData(ByteBuffer.wrap(data), width, height, format).setRotation((rotation / 90)).build();
-            // connects the handler
-            chain.setHandler(mHandler);
-            // start detection
+            Frame frame = new Frame.Builder().setImageData(ByteBuffer.wrap(data), config.getWidth(), config.getHeight(), config.getFormat()).setRotation((config.getRotation() / 90)).build();
+
+            // process detection
             SparseArray<TextBlock> detections = mTextRecognizer.detect(frame);
-            // starts the processor chain
-            chain.execute(detections, data);
+
+            // send response
+            sendResponse(DETECTOR_ACTION_RAW, config, data, detections);
         }
     }
 
     /**
      * Starts the continuous detection
-     * @param chain
      * @param rotation
      */
-    public void startOcrDetector(ProcessorChain chain, int rotation) {
+    public void startOcrDetector(int rotation) {
         synchronized (mCameraLock) {
             if (mOcrDetector == null) {
-                // attach handler
-                chain.setHandler(mHandler);
-                mOcrDetector = new OcrDetector(mTextRecognizer, mCamera, rotation, chain);
+                int format = mCamera.getParameters().getPreviewFormat();
+                Camera.Size size = mCamera.getParameters().getPreviewSize();
+                // preview config
+                ImageConfigParcel config = new ImageConfigParcel(size.width, size.height, rotation, format);
+                mOcrDetector = new OcrDetector(this, mTextRecognizer, mCamera, config);
                 // attaches a buffer callback
                 mCamera.setPreviewCallbackWithBuffer(mOcrDetector);
             }
@@ -149,5 +158,32 @@ public class OcrHandler {
         }
     }
 
+    /**
+     * Releases the continuous detector
+     */
+    protected void sendResponse(String type, ImageConfigParcel config, byte[] image, SparseArray<TextBlock> detections) {
 
+        // convert text block sparse array to parcel text array list
+        ArrayList<TextBlockParcel> tp = new ArrayList<>();
+        for (int i = 0; i < detections.size(); ++i) {
+            TextBlock item = detections.valueAt(i);
+            if (item != null && item.getValue() != null) {
+                tp.add(new TextBlockParcel(detections.valueAt(i)));
+            }
+        }
+
+        // create response bundle
+        Bundle bundle = new Bundle();
+        bundle.putString(BUNDLE_TYPE, type);
+        bundle.putParcelable(BUNDLE_IMG_CONFIG, config);
+        bundle.putByteArray(BUNDLE_IMG_DATA, image);
+        bundle.putParcelableArrayList(BUNDLE_DETECTIONS, tp);
+
+        // create a message from the message handler to send it back to the main UI
+        Message msg = mHandler.obtainMessage();
+        //attach the bundle to the message
+        msg.setData(bundle);
+        //send the message back to main UI thread
+        mHandler.sendMessage(msg);
+    }
 }

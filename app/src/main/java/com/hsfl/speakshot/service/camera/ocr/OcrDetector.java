@@ -10,8 +10,7 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
-import com.hsfl.speakshot.service.camera.ocr.processor.BaseProcessor;
-import com.hsfl.speakshot.service.camera.ocr.processor.ProcessorChain;
+import com.hsfl.speakshot.service.camera.ocr.serialization.ImageConfigParcel;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -26,14 +25,14 @@ public class OcrDetector implements Camera.PreviewCallback {
     private Camera mCamera;
 
     /**
-     * The camera orientation
+     * The camera preview config
      */
-    private int mRotation = 0;
+    private ImageConfigParcel mConfig = null;
 
     /**
-     * The processor chain
+     * The return handler
      */
-    private ProcessorChain mChain = null;
+    private OcrHandler mHandler = null;
 
     /**
      * Map to convert between a byte array, received from the camera, and its associated byte
@@ -52,13 +51,13 @@ public class OcrDetector implements Camera.PreviewCallback {
     /**
      * Constructor
      */
-    OcrDetector(TextRecognizer recognizer, Camera camera, int rotation, ProcessorChain chain) {
+    OcrDetector(OcrHandler handler, TextRecognizer recognizer, Camera camera, ImageConfigParcel config) {
         // assigns the camera
         mCamera = camera;
         // gets the camera orientation
-        mRotation = rotation;
-        // processor chain
-        mChain = chain;
+        mConfig = config;
+        // handler
+        mHandler = handler;
         // connecting the frame processor
         mFrameProcessor = new FrameProcessingRunnable(recognizer);
     }
@@ -263,16 +262,12 @@ public class OcrDetector implements Camera.PreviewCallback {
                         return;
                     }
 
-                    // gets camera size and format
-                    int format = mCamera.getParameters().getPreviewFormat();
-                    Camera.Size size = mCamera.getParameters().getPreviewSize();
-
                     // build a frame
                     outputFrame = new Frame.Builder()
-                            .setImageData(mPendingFrameData, size.width, size.height, format)
+                            .setImageData(mPendingFrameData, mConfig.getWidth(), mConfig.getHeight(), mConfig.getFormat())
                             .setId(mPendingFrameId)
                             .setTimestampMillis(mPendingTimeMillis)
-                            .setRotation((mRotation / 90))
+                            .setRotation((mConfig.getRotation() / 90))
                             .build();
                     // Hold onto the frame data locally, so that we can use this for detection
                     // below.  We need to clear mPendingFrameData to ensure that this buffer isn't
@@ -285,9 +280,8 @@ public class OcrDetector implements Camera.PreviewCallback {
                 // the camera to add pending frame(s) while we are running detection on the current
                 // frame.
                 try {
-                    SparseArray<TextBlock> detections = (SparseArray<TextBlock>) mDetector.detect(outputFrame);
-                    mChain.execute(detections, data.array());
-
+                    // detect and send response
+                    mHandler.sendResponse(OcrHandler.DETECTOR_ACTION_STREAM, mConfig, data.array(), ((SparseArray<TextBlock>)mDetector.detect(outputFrame)));
                 } catch (Throwable t) {
                     Log.e(TAG, "Exception thrown from receiver.", t);
                 } finally {

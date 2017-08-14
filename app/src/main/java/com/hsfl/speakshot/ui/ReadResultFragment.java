@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
+import com.hsfl.speakshot.service.camera.ocr.serialization.TextBlockParcel;
 import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.audio.AudioService;
 import android.support.design.widget.FloatingActionButton;
@@ -27,6 +28,7 @@ public class ReadResultFragment extends Fragment {
      * to this fragment
      */
     public static final String IN_TEXTS = "texts";
+    public static final String IN_TEXTS_PAREL = "texts_parcel";
 
     /**
      * the inflated view
@@ -41,7 +43,7 @@ public class ReadResultFragment extends Fragment {
     /**
      * contains the returned ocr texts
      */
-    private ArrayList<String> detectedTexts;
+    private ArrayList<TextBlockParcel> detectedTexts;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,9 +53,22 @@ public class ReadResultFragment extends Fragment {
         ((MainActivity)getActivity()).hideButtonsSettingsModeSwitch();
 
         // gets the detected texts
-        detectedTexts = getArguments().getStringArrayList(ReadResultFragment.IN_TEXTS);
-        updateTextView();
+        if (getArguments().getStringArrayList(ReadResultFragment.IN_TEXTS_PAREL) != null) {
+            detectedTexts = getArguments().getParcelableArrayList(ReadResultFragment.IN_TEXTS_PAREL);
+        }
 
+        updateTextView();
+        initializeControls();
+
+
+
+        return mInflatedView;
+    }
+
+    /**
+     * Inits the UI controls
+     */
+    private void initializeControls() {
         // close view
         final FloatingActionButton closeButton = (FloatingActionButton)mInflatedView.findViewById(R.id.read_fragment_close);
         closeButton.setOnClickListener(new View.OnClickListener() {
@@ -66,7 +81,7 @@ public class ReadResultFragment extends Fragment {
         final FloatingActionButton playButton = (FloatingActionButton)mInflatedView.findViewById(R.id.read_fragment_play);
         playButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String text = ((MainActivity)getActivity()).getResources().getString(R.string.read_results_audio_result_x_of_y, counter+1, detectedTexts.size(), detectedTexts.get(counter));
+                String text = ((MainActivity)getActivity()).getResources().getString(R.string.read_results_audio_result_x_of_y, counter+1, detectedTexts.size(), detectedTexts.get(counter).getText());
                 AudioService.getInstance().speak(text);
             }
         });
@@ -138,8 +153,6 @@ public class ReadResultFragment extends Fragment {
 
             //imageViewModeIcon.setColorFilter(ContextCompat.getColor(((MainActivity)getActivity()).getApplicationContext(), R.color.lightColorA));
         }
-
-        return mInflatedView;
     }
 
     /**
@@ -147,7 +160,7 @@ public class ReadResultFragment extends Fragment {
      */
     private void updateTextView() {
         final TextView resultText = (TextView)mInflatedView.findViewById(R.id.txt_sections_result);
-        resultText.setText(detectedTexts.get(counter));
+        resultText.setText(detectedTexts.get(counter).getText());
         final TextView headerText = (TextView)mInflatedView.findViewById(R.id.txt_sections_header);
         String text = ((MainActivity)getActivity()).getResources().getString(R.string.read_results_textview_header_result_x_of_y, counter+1, detectedTexts.size());
         headerText.setText(text);

@@ -15,7 +15,7 @@ import android.util.Log;
 import android.view.WindowManager;
 import com.google.android.gms.common.images.Size;
 import android.view.SurfaceHolder;
-import com.hsfl.speakshot.service.camera.ocr.processor.ProcessorChain;
+import com.hsfl.speakshot.service.camera.ocr.serialization.ImageConfigParcel;
 
 import java.io.*;
 import java.util.*;
@@ -91,7 +91,7 @@ public class CameraService extends Observable {
     /**
      * Snaps a new image and analyze it immediately
      */
-    public void analyzePicture(final ProcessorChain chain) {
+    public void analyzePicture() {
         synchronized (mCameraLock) {
             if (mCamera != null) {
                 Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
@@ -100,11 +100,11 @@ public class CameraService extends Observable {
                         int height = camera.getParameters().getPreviewSize().height;
                         int format = camera.getParameters().getPreviewFormat();
 
-                        // attaches the image processor
-                        chain.setImageProcessor(width, height, mCameraOrientation, format);
+                        // image configuration
+                        ImageConfigParcel config = new ImageConfigParcel(width, height, mCameraOrientation, format);
 
                         // starts the ocr for this image
-                        mOcrHandler.ocrRawImage(chain, data, format, width, height, mCameraOrientation);
+                        mOcrHandler.ocrRawImage(data, config);
                         // restarts the background preview
                         mCamera.startPreview();
                     }
@@ -118,7 +118,7 @@ public class CameraService extends Observable {
     /**
      * Creates a bitmap out of a given file and analyze it
      */
-    public void analyzePicture(File file, ProcessorChain container) {
+    public void analyzePicture(File file) {
 
         final List<String> acceptedExts = Arrays.asList("jpg","jpeg","png");
         final String fileExt = file.getName().substring(file.getName().lastIndexOf(".")+1).toLowerCase();
@@ -126,28 +126,20 @@ public class CameraService extends Observable {
         if ((acceptedExts.contains(fileExt)) && (file.exists())) {
             // gets a drawable to draw into the image view
             Bitmap b = BitmapFactory.decodeFile(file.getAbsolutePath());
-            // adds the image processor
-            container.setImageProcessor(b.getWidth(), b.getHeight(), 0, ImageFormat.JPEG);
 
-            mOcrHandler.ocrBitmapImage(container, b);
+            // image configuration
+            ImageConfigParcel config = new ImageConfigParcel(b.getWidth(), b.getHeight(), 0, ImageFormat.JPEG);
+            mOcrHandler.ocrBitmapImage(b, config);
         }
     }
 
     /**
      * Starts analyzing the images from the preview surface
      */
-    public void startAnalyseStream(ProcessorChain container) {
+    public void startStream() {
         synchronized (mCameraLock) {
             if (mCamera != null) {
-                // camera params
-                int format = mCamera.getParameters().getPreviewFormat();
-                Camera.Size preview = mCamera.getParameters().getPreviewSize();
-
-                // wraps the processor
-                container.setImageProcessor(preview.width, preview.height, mCameraOrientation, format);
-
-                mOcrHandler.startOcrDetector(container, mCameraOrientation);
-                mMediaSoundHelper.play(MediaActionSound.START_VIDEO_RECORDING);
+                mOcrHandler.startOcrDetector(mCameraOrientation);
             }
         }
     }
@@ -155,10 +147,18 @@ public class CameraService extends Observable {
     /**
      * Stops analyzing the images from the preview surface
      */
-    public void stopAnalyseStream() {
+    public void stopStream() {
         synchronized (mCameraLock) {
             mOcrHandler.stopOcrDetector();
-            mMediaSoundHelper.play(MediaActionSound.STOP_VIDEO_RECORDING);
+        }
+    }
+
+    /**
+     * Plays a camera sound
+     */
+    public void play(int action) {
+        if (mMediaSoundHelper != null) {
+            mMediaSoundHelper.play(action);
         }
     }
 

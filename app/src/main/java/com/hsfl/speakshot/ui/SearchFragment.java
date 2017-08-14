@@ -5,8 +5,10 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.hardware.Camera;
+import android.media.MediaActionSound;
 import android.os.Bundle;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,12 +18,13 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.ImageView;
 
+import com.hsfl.speakshot.Constants;
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
 import com.hsfl.speakshot.service.audio.AudioService;
-import com.hsfl.speakshot.service.camera.ocr.processor.FindTermProcessor;
-import com.hsfl.speakshot.service.camera.ocr.processor.ImageProcessor;
-import com.hsfl.speakshot.service.camera.ocr.processor.ProcessorChain;
+import com.hsfl.speakshot.service.camera.helper.ImagePersistenceHelper;
+import com.hsfl.speakshot.service.camera.ocr.OcrHandler;
+import com.hsfl.speakshot.service.camera.ocr.serialization.*;
 import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.camera.CameraService;
 
@@ -52,7 +55,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
     /**
      * contains the returned ocr texts
      */
-    private ArrayList<String> detectedTexts;
+    private ArrayList<TextBlockParcel> detectedTexts;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -65,16 +68,27 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         mInflatedView.setOnTouchListener(this);
 
         mCameraService = CameraService.getInstance();
-        // adds an observer for the text recognizer
-        mCameraService.addObserver(this);
         mCameraService.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
 
+        // add observer
+        mCameraService.addObserver(this);
+
+        // init controls
+        initializeControls();
+
+        return mInflatedView;
+    }
+
+    /**
+     * Inits the UI controls
+     */
+    private void initializeControls() {
         // show result view
         final FloatingActionButton sendToReadButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_send_to_read);
         sendToReadButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putStringArrayList(ReadResultFragment.IN_TEXTS, detectedTexts);
+                bundle.putParcelableArrayList(ReadResultFragment.IN_TEXTS_PAREL, detectedTexts);
                 ViewService.getInstance().toS(new ReadResultFragment(), bundle);
                 // speak hint
                 MainActivity mainActivity = (MainActivity) getActivity();
@@ -127,8 +141,6 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         mAdapter.setSpinnerTextSize(spinnerTextSize);
         final Spinner spinnerSearchMode = (Spinner)mInflatedView.findViewById(R.id.spinner_search_mode);
         spinnerSearchMode.setAdapter(mAdapter);
-
-        return mInflatedView;
     }
 
     @Override
@@ -139,33 +151,51 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
 
     @Override
     public void update(Observable o, Object arg) {
-        // gets the search term
-        String term = ((Bundle)arg).getString(FindTermProcessor.RESULT_TERM_FOUND);
-        if (term != null) {
-            Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.toast_search_term_found_within_text, searchTerm, term), Toast.LENGTH_SHORT).show();
-            ((MainActivity)getActivity()).vibrate(500);
-            // reset analysing
-            searchTerm = "";
-            mCameraService.stopAnalyseStream();
-        }
-        // gets the detected texts
-        ArrayList<String> texts = ((Bundle)arg).getStringArrayList(FindTermProcessor.RESULT_TERM_SEARCH);
-        if (texts != null) {
-            detectedTexts = texts;
-            // show button
-            mInflatedView.findViewById(R.id.btn_send_to_read).setEnabled(true);
-        }
-        // gets the snapshot path
-        String snapshot = ((Bundle)arg).getString(ImageProcessor.RESULT_SNAPSHOT_PATH);
-        if (snapshot != null) {
-            Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.toast_snapshot_saved_to, snapshot), Toast.LENGTH_SHORT).show();
-            AudioService.getInstance().speak(getResources().getString(R.string.read_mode_snapshot_saved));
+
+        String type = ((Bundle)arg).getString(OcrHandler.BUNDLE_TYPE);
+        if ((!searchTerm.isEmpty()) && (type != null) && (type.equals(OcrHandler.DETECTOR_ACTION_STREAM))) {
+            ArrayList<TextBlockParcel> texts = ((Bundle)arg).getParcelableArrayList(OcrHandler.BUNDLE_DETECTIONS);
+
+            // find the term
+            int found = -1;
+            for(int i=0; i<texts.size(); i++) {
+                if (texts.get(i).getText().toLowerCase().contains(searchTerm)) { found = i; }
+            }
+
+            // gets the search term
+            if (found != -1) {
+                Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.toast_search_term_found_within_text, searchTerm, texts.get(found)), Toast.LENGTH_SHORT).show();
+                ((MainActivity)getActivity()).vibrate(500);
+                // reset analysing
+                searchTerm = "";
+                mCameraService.play(MediaActionSound.STOP_VIDEO_RECORDING);
+
+                // get image and image config
+                ImageConfigParcel config = ((Bundle)arg).getParcelable(OcrHandler.BUNDLE_IMG_CONFIG);
+                byte[] image = ((Bundle)arg).getByteArray(OcrHandler.BUNDLE_IMG_DATA);
+
+                // save an image
+                if ((config != null) && (image != null)) {
+                    String snapshot = Constants.IMAGE_PATH + "/img-" + System.currentTimeMillis() + ".jpg";
+                    // saves the image asynchronously to the external storage
+                    new ImagePersistenceHelper(config.getFormat(), config.getRotation(), config.getWidth(), config.getHeight(), snapshot).execute(image);
+                    Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.toast_snapshot_saved_to, snapshot), Toast.LENGTH_SHORT).show();
+                    AudioService.getInstance().speak(getResources().getString(R.string.read_mode_snapshot_saved));
+                }
+
+                // gets the detected texts
+                detectedTexts = texts;
+                // show button
+                mInflatedView.findViewById(R.id.btn_send_to_read).setEnabled(true);
+            }
         }
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if (searchTerm.equals("")) {
+        final SearchFragment sf = this;
+
+        if (searchTerm.isEmpty()) {
             // open modal
             final EditText txt = new EditText(getActivity());
             new AlertDialog.Builder(getActivity())
@@ -174,14 +204,8 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             searchTerm = txt.getText().toString();
-                            if (!searchTerm.equals("")) {
-                                // creates a processor that searches for a given term and saves
-                                // the image on success
-                                ProcessorChain pc = new ProcessorChain();
-                                pc.add(new FindTermProcessor(searchTerm, true));
-
-                                // start analyzer
-                                mCameraService.startAnalyseStream(pc);
+                            if (!searchTerm.isEmpty()) {
+                                mCameraService.play(MediaActionSound.START_VIDEO_RECORDING);
                                 Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.toast_searching_for, searchTerm), Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -194,7 +218,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         } else {
             // stop searching
             searchTerm = "";
-            mCameraService.stopAnalyseStream();
+            mCameraService.play(MediaActionSound.STOP_VIDEO_RECORDING);
             Toast.makeText(getActivity().getApplicationContext(), "Stop searching", Toast.LENGTH_SHORT).show();
         }
         return false;

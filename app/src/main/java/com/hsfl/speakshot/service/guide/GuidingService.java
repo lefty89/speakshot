@@ -1,22 +1,24 @@
 package com.hsfl.speakshot.service.guide;
 
 import android.app.Activity;
+import android.graphics.Rect;
 import android.hardware.*;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import com.hsfl.speakshot.service.audio.AudioService;
 import com.hsfl.speakshot.service.camera.CameraService;
-import com.hsfl.speakshot.service.camera.ocr.processor.LocateTextProcessor;
-import com.hsfl.speakshot.service.camera.ocr.processor.ProcessorChain;
+import com.hsfl.speakshot.service.camera.ocr.OcrHandler;
+import com.hsfl.speakshot.service.camera.ocr.serialization.TextBlockParcel;
 import com.hsfl.speakshot.service.guide.orientation.*;
 import com.hsfl.speakshot.ui.views.GuidingLayout;
 
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
 import static android.content.Context.SENSOR_SERVICE;
 
-public class GuidingService implements Observer{
+public class GuidingService implements Observer {
     private static final String TAG = GuidingService.class.getSimpleName();
 
     /**
@@ -45,9 +47,24 @@ public class GuidingService implements Observer{
     private static GuidingService instance = null;
 
     /**
+     * Offset from border
+     */
+    private final int THRESHOLD = 80;
+
+    /**
      * The time between guides in milliseconds
      */
     private final int GUIDE_DELAY = 3000;
+
+    /**
+     * Helper var
+     */
+    private long mLastCheck = System.currentTimeMillis();
+
+    /**
+     * Lock object
+     */
+    private final Object mLock = new Object();
 
     /**
      * The layout for the border marks
@@ -58,11 +75,6 @@ public class GuidingService implements Observer{
      * Camera service
      */
     private CameraService mCameraService = null;
-
-    /**
-     * Flag that indicates whether audio is enabled
-     */
-    private boolean mAudioEnabled = true;
 
     /**
      * SensorManager
@@ -115,21 +127,6 @@ public class GuidingService implements Observer{
     public void start() {
         mCameraService.addObserver(this);
 
-        Camera.Size size = mCameraService.getCameraPreviewSize();
-        int orientation  = mCameraService.getDisplayOrientation();
-
-        if (size != null) {
-            // if camera is rotated around 90/270 degrees then switch width and height
-            int w = ((orientation == 90) || (orientation == 270)) ? size.height : size.width;
-            int h = ((orientation == 90) || (orientation == 270)) ? size.width  : size.height;
-
-            // creates the container
-            ProcessorChain pc = new ProcessorChain();
-            pc.add(new LocateTextProcessor(w, h, GUIDE_DELAY));
-
-            mCameraService.startAnalyseStream(pc);
-        }
-
         // starts the orientation provider
         if (currentOrientationProvider != null) {
             currentOrientationProvider.start();
@@ -145,29 +142,66 @@ public class GuidingService implements Observer{
         if (currentOrientationProvider != null) {
             currentOrientationProvider.stop();
         }
-        // stops the stream analyzer analyzer
-        mCameraService.stopAnalyseStream();
         // deletes the observer
         mCameraService.deleteObserver(this);
     }
 
     @Override
+
     public void update(Observable o, Object arg) {
         // gets the detected texts
-        int hits = ((Bundle)arg).getInt(LocateTextProcessor.RESULT_BORDER_HITS);
-        if (hits != 0) {
+        String type = ((Bundle)arg).getString(OcrHandler.BUNDLE_TYPE);
+        if ((type != null) && (type.equals(OcrHandler.DETECTOR_ACTION_STREAM))) {
+            ArrayList<TextBlockParcel> detections = ((Bundle) arg).getParcelableArrayList(OcrHandler.BUNDLE_DETECTIONS);
 
-            // visual output
-            if (((hits & 1) >> 0) == 1) mGuidingLayout.playAnimationFor(GuidingLayout.BORDER_LEFT);
-            if (((hits & 2) >> 1) == 1) mGuidingLayout.playAnimationFor(GuidingLayout.BORDER_TOP);
-            if (((hits & 4) >> 2) == 1) mGuidingLayout.playAnimationFor(GuidingLayout.BORDER_RIGHT);
-            if (((hits & 8) >> 3) == 1) mGuidingLayout.playAnimationFor(GuidingLayout.BORDER_BOTTOM);
+            // get orientation and size
+            Camera.Size size = mCameraService.getCameraPreviewSize();
+            int orientation  = mCameraService.getDisplayOrientation();
 
-            // acoustic output
-            if (mAudioEnabled) {
-                AudioService.getInstance().speak(mOrientationTexts[hits]);
+            // if camera is rotated around 90/270 degrees then switch width and height
+            int w = ((orientation == 90) || (orientation == 270)) ? size.height : size.width;
+            int h = ((orientation == 90) || (orientation == 270)) ? size.width  : size.height;
+
+            // critical part
+            synchronized (mLock) {
+                if (mLastCheck+GUIDE_DELAY <= System.currentTimeMillis()) {
+                    mLastCheck = System.currentTimeMillis();
+
+                    // temp vars
+                    boolean left = false, right = false, bot = false, top = false;
+
+                    // bounding area rectangle
+                    Rect r1 = new Rect(THRESHOLD, THRESHOLD, w-THRESHOLD, h-THRESHOLD);
+
+                    // loop through all blocks
+                    for (int i=0; i<detections.size(); i++) {
+                        if (detections.get(i) != null) {
+                            // text rectangle
+                            Rect r2 = detections.get(i).getBoundingBox();
+                            // calculate the intersection
+                            left  = (Math.max(r1.left, r2.left)     == r1.left)   || left;
+                            top   = (Math.max(r1.top, r2.top)       == r1.top)    || top;
+                            right = (Math.min(r1.right, r2.right)   == r1.right)  || right;
+                            bot   = (Math.min(r1.bottom, r2.bottom) == r1.bottom) || bot;
+                        }
+                    }
+
+                    // build up hits
+                    int hits =  (left) ?1:0;
+                    hits     |= (top)  ?2:0;
+                    hits     |= (right)?4:0;
+                    hits     |= (bot)  ?8:0;
+
+                    // visual output
+                    if (((hits & 1) >> 0) == 1) mGuidingLayout.playAnimationFor(GuidingLayout.BORDER_LEFT);
+                    if (((hits & 2) >> 1) == 1) mGuidingLayout.playAnimationFor(GuidingLayout.BORDER_TOP);
+                    if (((hits & 4) >> 2) == 1) mGuidingLayout.playAnimationFor(GuidingLayout.BORDER_RIGHT);
+                    if (((hits & 8) >> 3) == 1) mGuidingLayout.playAnimationFor(GuidingLayout.BORDER_BOTTOM);
+
+                    // acoustic output
+                    AudioService.getInstance().speak(mOrientationTexts[hits]);
+                }
             }
-
         }
     }
 }

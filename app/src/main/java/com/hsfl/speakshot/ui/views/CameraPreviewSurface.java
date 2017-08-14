@@ -66,6 +66,7 @@ public class CameraPreviewSurface extends ViewGroup implements SurfaceHolder.Cal
      */
     public void pause() {
         mRequireUpdate = true;
+        mCameraService.stopStream();
         mCameraService.stopPreview();
         mCameraService.release();
     }
@@ -93,6 +94,7 @@ public class CameraPreviewSurface extends ViewGroup implements SurfaceHolder.Cal
             // inform the camera service that the dimensions of the underling surface has changed
             mCameraService.init(getContext()); // !!!
             mCameraService.startPreview(width, height, mSurfaceView.getHolder());
+            mCameraService.startStream();
             mRequireUpdate = false;
         }
     }
