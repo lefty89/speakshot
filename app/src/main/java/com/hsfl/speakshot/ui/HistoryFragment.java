@@ -122,9 +122,10 @@ public class HistoryFragment extends Fragment implements Observer {
         final FloatingActionButton deleteButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_history_delete);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                deleteImageFromGallery();
-                nextImage(0);
-                updateBackgroundImage();
+                if (deleteImageFromGallery()) {
+                    nextImage(0);
+                    updateBackgroundImage();
+                }
             }
         });
     }
@@ -171,7 +172,7 @@ public class HistoryFragment extends Fragment implements Observer {
      * Updates the background image and header text
      */
     private void updateBackgroundImage() {
-        if ((mCurrentPosition >= 0) && (mCurrentPosition < mImages.size())) {
+        if ((mImages.size() > 0) && (mCurrentPosition >= 0) && (mCurrentPosition < mImages.size())) {
             File f = mImages.get(mCurrentPosition);
 
             // gets a drawable to draw into the image view
@@ -193,7 +194,7 @@ public class HistoryFragment extends Fragment implements Observer {
     /**
      * Removes the current image from the gallery
      */
-    private void deleteImageFromGallery() {
+    private boolean deleteImageFromGallery() {
         if (mImages.size() > 0) {
             // gets the current file
             File f = mImages.get(mCurrentPosition);
@@ -205,8 +206,10 @@ public class HistoryFragment extends Fragment implements Observer {
                     mImages.remove(f);
                     AudioService.getInstance().speak(getResources().getString(R.string.read_mode_snapshot_deleted));
                 }
+                return b;
             }
         }
+        return false;
     }
 
     /**
@@ -214,9 +217,11 @@ public class HistoryFragment extends Fragment implements Observer {
      * @param i
      */
     private void nextImage(int i) {
-        mCurrentPosition = (mCurrentPosition+i) % mImages.size();
-        if (mCurrentPosition < 0) {
-            mCurrentPosition += mImages.size();
+        if (mImages.size() > 0) {
+            mCurrentPosition = (mCurrentPosition+i) % mImages.size();
+            if (mCurrentPosition < 0) {
+                mCurrentPosition += mImages.size();
+            }
         }
     }
 }
