@@ -51,7 +51,7 @@ public class OcrHandler {
     /**
      * Continious OCR detector
      */
-    private OcrDetector mOcrDetector = null;
+    public OcrDetector mOcrDetector = null;
 
     /**
      * Camera lock object
@@ -76,8 +76,8 @@ public class OcrHandler {
 
     /**
      * Analyzes a given bitmap image
-     * @param chain
      * @param bitmap
+     * @param config
      */
     public void ocrBitmapImage(Bitmap bitmap, ImageConfigParcel config) {
         synchronized (mCameraLock) {

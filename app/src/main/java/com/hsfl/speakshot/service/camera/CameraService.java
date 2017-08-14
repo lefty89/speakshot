@@ -92,26 +92,27 @@ public class CameraService extends Observable {
      * Snaps a new image and analyze it immediately
      */
     public void analyzePicture() {
-        synchronized (mCameraLock) {
-            if (mCamera != null) {
-                Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
-                    public void onPreviewFrame(byte[] data, Camera camera) {
-                        int width  = camera.getParameters().getPreviewSize().width;
-                        int height = camera.getParameters().getPreviewSize().height;
-                        int format = camera.getParameters().getPreviewFormat();
+        if (mCamera != null) {
+            Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
+                public void onPreviewFrame(byte[] data, Camera camera) {
+                    int width  = camera.getParameters().getPreviewSize().width;
+                    int height = camera.getParameters().getPreviewSize().height;
+                    int format = camera.getParameters().getPreviewFormat();
 
-                        // image configuration
-                        ImageConfigParcel config = new ImageConfigParcel(width, height, mCameraOrientation, format);
+                    // image configuration
+                    ImageConfigParcel config = new ImageConfigParcel(width, height, mCameraOrientation, format);
 
-                        // starts the ocr for this image
-                        mOcrHandler.ocrRawImage(data, config);
-                        // restarts the background preview
-                        mCamera.startPreview();
-                    }
-                };
-                mCamera.setOneShotPreviewCallback(previewCallback);
-                mMediaSoundHelper.play(MediaActionSound.SHUTTER_CLICK);
-            }
+                    // starts the ocr for this image
+                    mOcrHandler.ocrRawImage(data, config);
+                    // restarts the background preview
+                    mCamera.startPreview();
+
+                    // QUICK HACK REASSIGN OLD BUFFER
+                    mCamera.setPreviewCallbackWithBuffer(mOcrHandler.mOcrDetector);
+                }
+            };
+            mCamera.setOneShotPreviewCallback(previewCallback);
+            mMediaSoundHelper.play(MediaActionSound.SHUTTER_CLICK);
         }
     }
 
@@ -119,7 +120,6 @@ public class CameraService extends Observable {
      * Creates a bitmap out of a given file and analyze it
      */
     public void analyzePicture(File file) {
-
         final List<String> acceptedExts = Arrays.asList("jpg","jpeg","png");
         final String fileExt = file.getName().substring(file.getName().lastIndexOf(".")+1).toLowerCase();
 
