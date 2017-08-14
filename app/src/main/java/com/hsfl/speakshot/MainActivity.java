@@ -27,12 +27,15 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.content.res.ColorStateList;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.os.Vibrator;
 
 import com.hsfl.speakshot.ui.views.CameraPreviewSurface;
 
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    private static MainActivity instance;
 
     /**
      * main app modes
@@ -67,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean mGuidedEnabled = false;
 
     /**
-     * nested class which is used to style the mode spinner
+     * nested class which is used to style the mode spinner ("General", "Doorplate", "Letter")
      */
     public static class CustomArrayAdapter<T> extends ArrayAdapter<T> {
         private String themeId = "";
@@ -119,10 +122,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        Log.d(TAG, "audio enabled: " + preferences.getBoolean("audio_output_switch", true));
-        Log.d(TAG, "vibration enabled: " + preferences.getBoolean("vibration_switch", true));
 
         // sets theme and app settings
         loadSettings();
@@ -231,6 +230,8 @@ public class MainActivity extends AppCompatActivity {
                 }
                 modeSwitch.setSelected(mCurrentMode);
                 mCurrentMode = !mCurrentMode;
+                speakModeHint();
+                vibrate(10);
             }
         });
 
@@ -238,14 +239,13 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         float speechRate = Float.valueOf(prefs.getString("speech_rate", "1"));
         AudioService.setSpeechRate(speechRate);
-        // this class field "li
         mSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-                if (key.equals("speech_rate")) {
-                    float speechRate = Float.valueOf(prefs.getString(key, "1"));
-                    AudioService.setSpeechRate(speechRate);
-                    AudioService.getInstance().speak(getResources().getString(R.string.speech_demo_sentence));
-                }
+            if (key.equals("speech_rate")) {
+                float speechRate = Float.valueOf(prefs.getString(key, "1"));
+                AudioService.setSpeechRate(speechRate);
+                AudioService.getInstance().speak(getResources().getString(R.string.speech_demo_sentence));
+            }
             }
         };
         prefs.registerOnSharedPreferenceChangeListener(mSharedPreferenceChangeListener);
@@ -258,6 +258,8 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onResume");
         // init the preview view and attaches the camera
         mPreview.update();
+        instance = this;
+        speakModeHint();
         super.onResume();
     }
 
@@ -266,6 +268,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onPause");
         // stops the preview and releases all resources
         mPreview.pause();
+        AudioService.getInstance().stopSpeaking();
         super.onPause();
     }
 
@@ -273,6 +276,17 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         showButtonsSettingsModeSwitch();
         ViewService.getInstance().back();
+        AudioService.getInstance().stopSpeaking();
+    }
+
+    /**
+     * Vibrates for the specified period of time in milliseconds.
+     * @params period
+     */
+    public void vibrate(long period)
+    {
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        v.vibrate(period);
     }
 
     /**
@@ -347,6 +361,54 @@ public class MainActivity extends AppCompatActivity {
     public float getSpeechRate() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         return Float.valueOf(preferences.getString("speech_rate", ""));
+    }
+
+    /**
+     * returns whether audio output is enabled
+     * @return boolean
+     */
+    public boolean getAudioEnabled() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        return prefs.getBoolean("audio_output_switch", true);
+    }
+
+    /**
+     * returns whether the hints are enabled
+     * @return boolean
+     */
+    public boolean getHintsEnabled() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        return prefs.getBoolean("hints_switch", true);
+    }
+
+    /**
+     * returns whether vibration is enabled
+     * @return boolean
+     */
+    public boolean getVibrationEnabled() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        return prefs.getBoolean("vibration_switch", true);
+    }
+
+    /**
+     * Speaks the mode hint (general hint for Read | Search Mode).
+     */
+    public void speakModeHint()
+    {
+        // speak hint text
+        if (getHintsEnabled()) {
+            if (mCurrentMode) {
+                AudioService.getInstance().speak(getResources().getString(R.string.read_mode_hint_general));
+            }
+            else {
+                AudioService.getInstance().speak(getResources().getString(R.string.search_mode_hint_general));
+            }
+        }
+    }
+
+    public static MainActivity getInstance()
+    {
+        return instance;
     }
 
     /**

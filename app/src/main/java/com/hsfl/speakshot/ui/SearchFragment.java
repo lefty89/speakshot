@@ -2,23 +2,31 @@ package com.hsfl.speakshot.ui;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageView;
+import android.util.Log;
 
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
+import com.hsfl.speakshot.service.audio.AudioService;
 import com.hsfl.speakshot.service.camera.ocr.processor.FindTermProcessor;
 import com.hsfl.speakshot.service.camera.ocr.processor.ImageProcessor;
 import com.hsfl.speakshot.service.camera.ocr.processor.ProcessorChain;
@@ -76,6 +84,11 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
                 Bundle bundle = new Bundle();
                 bundle.putStringArrayList(ReadResultFragment.IN_TEXTS, detectedTexts);
                 ViewService.getInstance().toS(new ReadResultFragment(), bundle);
+                // speak hint
+                MainActivity mainActivity = (MainActivity) getActivity();
+                if (mainActivity.getHintsEnabled()) {
+                    AudioService.getInstance().speak(mainActivity.getResources().getString(R.string.read_mode_results_hint));
+                }
             }
         });
         sendToReadButton.setEnabled(false);
@@ -137,8 +150,8 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         // gets the search term
         String term = ((Bundle)arg).getString(FindTermProcessor.RESULT_TERM_FOUND);
         if (term != null) {
-            Toast.makeText(getActivity().getApplicationContext(), "Term '" + searchTerm + "' found within " + "'" + term + "'", Toast.LENGTH_SHORT).show();
-            ((Vibrator) getActivity().getApplication().getSystemService(android.content.Context.VIBRATOR_SERVICE)).vibrate(800);
+            Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.toast_search_term_found_within_text, searchTerm, term), Toast.LENGTH_SHORT).show();
+            ((MainActivity)getActivity()).vibrate(500);
             // reset analysing
             searchTerm = "";
             mCameraService.stopAnalyseStream();
@@ -153,7 +166,8 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         // gets the snapshot path
         String snapshot = ((Bundle)arg).getString(ImageProcessor.RESULT_SNAPSHOT_PATH);
         if (snapshot != null) {
-            Toast.makeText(getActivity().getApplicationContext(), "Snapshot saved to: " + snapshot, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.toast_snapshot_saved_to, snapshot), Toast.LENGTH_SHORT).show();
+            AudioService.getInstance().speak(getResources().getString(R.string.read_mode_snapshot_saved));
         }
     }
 
@@ -163,7 +177,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
             // open modal
             final EditText txt = new EditText(getActivity());
             new AlertDialog.Builder(getActivity())
-                    .setMessage("Search for word")
+                    .setMessage(getResources().getString(R.string.search_mode_dialog_search_term))
                     .setView(txt)
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
@@ -176,7 +190,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
 
                                 // start analyzer
                                 mCameraService.startAnalyseStream(pc);
-                                Toast.makeText(getActivity().getApplicationContext(), "Searching for: " + searchTerm, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.toast_searching_for, searchTerm), Toast.LENGTH_SHORT).show();
                             }
                         }
                     })

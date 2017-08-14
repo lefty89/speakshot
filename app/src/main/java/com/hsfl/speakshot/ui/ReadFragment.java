@@ -1,20 +1,29 @@
 package com.hsfl.speakshot.ui;
 
 import android.app.Fragment;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.content.Context;
 import android.widget.Toast;
 
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
-import com.hsfl.speakshot.service.camera.ocr.processor.ImageProcessor;
+import com.hsfl.speakshot.service.audio.AudioService;
+import com.hsfl.speakshot.service.camera.ocr.processor.LocateTextProcessor;
 import com.hsfl.speakshot.service.camera.ocr.processor.ProcessorChain;
 import com.hsfl.speakshot.service.camera.ocr.processor.RetrieveAllProcessor;
+import com.hsfl.speakshot.service.guide.GuidingService;
 import com.hsfl.speakshot.service.view.ViewService;
 import com.hsfl.speakshot.service.camera.CameraService;
 import android.support.design.widget.FloatingActionButton;
@@ -26,7 +35,7 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
     private static final String TAG = ReadFragment.class.getSimpleName();
 
     /**
-     * Flag that helps to chose whether its a long or short tab
+     * Flag that helps to choose whether it's a long or short tab
      */
     private boolean mIsLongTab = false;
 
@@ -69,7 +78,12 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
                 bundle.putStringArrayList(ReadResultFragment.IN_TEXTS, detectedTexts);
                 ViewService.getInstance().toS(new ReadResultFragment(), bundle);
                 // make buttons for settings and mode switch invisible
-                ((MainActivity)getActivity()).hideButtonsSettingsModeSwitch();
+                MainActivity mainActivity = (MainActivity) getActivity();
+                mainActivity.hideButtonsSettingsModeSwitch();
+                // speak hint
+                if (mainActivity.getHintsEnabled()) {
+                    AudioService.getInstance().speak(mainActivity.getResources().getString(R.string.read_mode_results_hint));
+                }
             }
         });
         resultButton.setEnabled(false);
@@ -89,6 +103,11 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
         historyButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 ViewService.getInstance().toS(new HistoryFragment(), null);
+                // speak hint
+                MainActivity mainActivity = (MainActivity) getActivity();
+                if (mainActivity.getHintsEnabled()) {
+                    AudioService.getInstance().speak(mainActivity.getResources().getString(R.string.read_mode_history_hint));
+                }
             }
         });
 
@@ -123,13 +142,15 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
                 // enable / disable result button
                 mInflatedView.findViewById(R.id.btn_show_results).setEnabled(true);
             } else {
-                Toast.makeText(getActivity().getApplicationContext(), "Nothing found", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.toast_no_text_found), Toast.LENGTH_SHORT).show();
+                AudioService.getInstance().speak(getResources().getString(R.string.read_mode_hint_no_text_found));
             }
         }
         // toasts the snapshot path
-        String snapshot = ((Bundle)arg).getString(ImageProcessor.RESULT_SNAPSHOT_PATH);
+        String snapshot = ((Bundle)arg).getString(RetrieveAllProcessor.RESULT_SNAPSHOT_PATH);
         if (snapshot != null) {
-            Toast.makeText(getActivity().getApplicationContext(), "Snapshot saved to: " + snapshot, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.toast_snapshot_saved_to, snapshot), Toast.LENGTH_SHORT).show();
+            AudioService.getInstance().speak(getResources().getString(R.string.read_mode_snapshot_saved));
         }
     }
 
@@ -140,7 +161,9 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
         }
         if (event.getAction() == MotionEvent.ACTION_UP) {
             if (mIsLongTab) {
+                // TODO sometimes the app crashes here.
                 mCameraService.focus(event.getX(), event.getY());
+                AudioService.getInstance().stopSpeaking();
             }
             mIsLongTab = false;
         }

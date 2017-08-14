@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.hsfl.speakshot.Constants;
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
+import com.hsfl.speakshot.service.audio.AudioService;
 import com.hsfl.speakshot.service.camera.CameraService;
 import com.hsfl.speakshot.service.camera.ocr.processor.ProcessorChain;
 import com.hsfl.speakshot.service.camera.ocr.processor.RetrieveAllProcessor;
@@ -83,11 +84,15 @@ public class HistoryFragment extends Fragment implements Observer {
         analyzeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // analyzes the given file using the processor to read all
-
                 ProcessorChain pc = new ProcessorChain();
                 pc.add(new RetrieveAllProcessor());
-
                 mCameraService.analyzePicture(mImages.get(mCurrentPosition), pc);
+
+                // speak hint
+                MainActivity mainActivity = ((MainActivity) getActivity());
+                if (mainActivity.getHintsEnabled()) {
+                    AudioService.getInstance().speak(mainActivity.getResources().getString(R.string.read_mode_results_hint));
+                }
             }
         });
 
@@ -135,7 +140,7 @@ public class HistoryFragment extends Fragment implements Observer {
                 ViewService.getInstance().toS(new ReadResultFragment(), bundle);
 
             } else {
-                Toast.makeText(getActivity().getBaseContext(), "Nothing found", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getBaseContext(), getResources().getString(R.string.toast_no_text_found), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -188,6 +193,7 @@ public class HistoryFragment extends Fragment implements Observer {
                 if (b) {
                     // remove the file from the gallery list
                     mImages.remove(f);
+                    AudioService.getInstance().speak(getResources().getString(R.string.read_mode_snapshot_deleted));
                 }
             }
         }
