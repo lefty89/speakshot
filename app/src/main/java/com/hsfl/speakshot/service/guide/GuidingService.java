@@ -1,19 +1,22 @@
 package com.hsfl.speakshot.service.guide;
 
 import android.app.Activity;
-import android.hardware.Camera;
+import android.hardware.*;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import com.hsfl.speakshot.service.audio.AudioService;
 import com.hsfl.speakshot.service.camera.CameraService;
 import com.hsfl.speakshot.service.camera.ocr.processor.LocateTextProcessor;
 import com.hsfl.speakshot.service.camera.ocr.processor.ProcessorChain;
+import com.hsfl.speakshot.service.guide.orientation.*;
 import com.hsfl.speakshot.ui.views.GuidingLayout;
 
 import java.util.Observable;
 import java.util.Observer;
 
-public class GuidingService implements Observer {
+import static android.content.Context.SENSOR_SERVICE;
+
+public class GuidingService implements Observer{
     private static final String TAG = GuidingService.class.getSimpleName();
 
     /**
@@ -62,6 +65,16 @@ public class GuidingService implements Observer {
     private boolean mAudioEnabled = true;
 
     /**
+     * SensorManager
+     */
+    private SensorManager mSensorManager = null;
+
+    /**
+     * The current orientation provider that delivers device orientation.
+     */
+    private OrientationProvider currentOrientationProvider;
+
+    /**
      * Empty Constructor
      */
     GuidingService() {}
@@ -86,9 +99,14 @@ public class GuidingService implements Observer {
             mGuidingLayout = new GuidingLayout(activity);
             activity.addContentView(mGuidingLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         }
-
         // gets the camera service
         mCameraService = CameraService.getInstance();
+
+        // inits the orientation sensor
+        mSensorManager = (SensorManager)activity.getSystemService(SENSOR_SERVICE);
+        if (mSensorManager.getSensorList(Sensor.TYPE_GYROSCOPE).size() > 0) {
+            currentOrientationProvider = new CalibratedGyroscopeProvider(mSensorManager);
+		}
     }
 
     /**
@@ -111,12 +129,22 @@ public class GuidingService implements Observer {
 
             mCameraService.startAnalyseStream(pc);
         }
+
+        // starts the orientation provider
+        if (currentOrientationProvider != null) {
+            currentOrientationProvider.start();
+        }
     }
 
     /**
      * Stops the guiding process
      */
     public void stop() {
+
+        // stops the orientation provider
+        if (currentOrientationProvider != null) {
+            currentOrientationProvider.stop();
+        }
         // stops the stream analyzer analyzer
         mCameraService.stopAnalyseStream();
         // deletes the observer

@@ -163,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
         final FloatingActionButton guidedButton = (FloatingActionButton)findViewById(R.id.btn_guided);
         guidedButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                /*
                 if (!mGuidedEnabled) {
                     GuidingService.getInstance().start();
                 }
@@ -171,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 mGuidedEnabled = !mGuidedEnabled;
                 guidedButton.setSelected(mGuidedEnabled);
+                */
             }
         });
 
