@@ -8,7 +8,6 @@ import android.hardware.Camera;
 import android.media.MediaActionSound;
 import android.os.Bundle;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -159,7 +158,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
             // find the term
             int found = -1;
             for(int i=0; i<texts.size(); i++) {
-                if (texts.get(i).getText().toLowerCase().contains(searchTerm)) { found = i; }
+                if (texts.get(i).getText().toLowerCase().contains(searchTerm.toLowerCase())) { found = i; }
             }
 
             // gets the search term
