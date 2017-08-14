@@ -2,27 +2,19 @@ package com.hsfl.speakshot.ui;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.hardware.Camera;
 import android.os.Bundle;
-import android.os.Vibrator;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageView;
-import android.util.Log;
 
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
