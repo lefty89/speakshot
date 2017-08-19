@@ -9,37 +9,54 @@ import com.hsfl.speakshot.service.audio.AudioService;
 import com.hsfl.speakshot.service.camera.CameraService;
 import com.hsfl.speakshot.service.camera.ocr.OcrHandler;
 import com.hsfl.speakshot.service.camera.ocr.serialization.TextBlockParcel;
-import com.hsfl.speakshot.service.guide.orientation.*;
 import com.hsfl.speakshot.ui.views.GuidingLayout;
 
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-import static android.content.Context.SENSOR_SERVICE;
-
 public class GuidingService implements Observer {
     private static final String TAG = GuidingService.class.getSimpleName();
 
     /**
+     * Direction texts
+     */
+    private static String[] mDirectionTexts = {
+            "",                             // 0000
+            "weiter links bewegen",         // 0001 : left
+            "weiter oben bewegen",          // 0010 : top
+            "weiter oben-links bewegen",    // 0011 : left, top
+            "weiter rechts bewegen",        // 0100 : right
+            "weiter zurück bewegen",        // 0101 : right, left
+            "weiter oben-rechts bewegen",   // 0110 : right, top
+            "weiter zurück bewegen",        // 0111 : right, left, top
+            "weiter unten bewegen",         // 1000 : bot
+            "weiter unten-links bewegen",   // 1001 : bot, left
+            "weiter zurück bewegen",        // 1010 : bot, top
+            "weiter zurück bewegen",        // 1011 : bot, left, top
+            "weiter unten-rechts bewegen",  // 1100 : bot, right
+            "weiter zurück bewegen",        // 1101 : bot, right, left
+            "weiter zurück bewegen"};       // 1111 : bot, left, top, right
+
+    /**
      * Orientation texts
      */
-    private static String[] mOrientationTexts = {
-            "OK",                   // 0000
-            "weiter links",         // 0001 : left
-            "weiter oben",          // 0010 : top
-            "weiter oben-links",    // 0011 : left, top
-            "weiter rechts",        // 0100 : right
-            "weiter zurück",        // 0101 : right, left
-            "weiter oben-rechts",   // 0110 : right, top
-            "weiter zurück",        // 0111 : right, left, top
-            "weiter unten",         // 1000 : bot
-            "weiter unten-links",   // 1001 : bot, left
-            "weiter zurück",        // 1010 : bot, top
-            "weiter zurück",        // 1011 : bot, left, top
-            "weiter unten-rechts",  // 1100 : bot, right
-            "weiter zurück",        // 1101 : bot, right, left
-            "weiter zurück"};       // 1111 : bot, left, top, right
+    private static String[] mRotationTexts = {
+            "",                                         // 0000
+            "weiter vor neigen",                        // 0001 : to
+            "weiter zurück neigen",                     // 0010 : back
+            "weiter zurück-vorn neigen",                // 0011 : to, back              => never
+            "weiter rechts neigen",                     // 0100 : right
+            "weiter rechts-vor neigen",                 // 0101 : right, to
+            "weiter rechts-zurück neigen",              // 0110 : right, back
+            "weiter zurück-vorn neigen",                // 0111 : right, to, back       => never
+            "weiter links neigen",                      // 1000 : left
+            "weiter links-vor neigen",                  // 1001 : left, to
+            "weiter links-zurück neigen",               // 1010 : left, back
+            "weiter links-zurück-vorn neigen",          // 1011 : left, to, back        => never
+            "weiter links-rechts neigen",               // 1100 : left, right           => never
+            "weiter links-rechts-vorn neigen",          // 1101 : left, right, to       => never
+            "weiter links-rechts-zurück-vorn neigen"};  // 1111 : left, to, back, right => never
 
     /**
      * The GuidingService singleton
@@ -50,6 +67,11 @@ public class GuidingService implements Observer {
      * Offset from border
      */
     private final int THRESHOLD = 80;
+
+    /**
+     * Offset from border
+     */
+    private final int ROTATION_THRESHOLD = 20;
 
     /**
      * The time between guides in milliseconds
@@ -84,7 +106,7 @@ public class GuidingService implements Observer {
     /**
      * The current orientation provider that delivers device orientation.
      */
-    private OrientationProvider currentOrientationProvider;
+    private OrientationProvider mOrientationProvider;
 
     /**
      * Empty Constructor
@@ -115,9 +137,9 @@ public class GuidingService implements Observer {
         mCameraService = CameraService.getInstance();
 
         // inits the orientation sensor
-        mSensorManager = (SensorManager)activity.getSystemService(SENSOR_SERVICE);
+        mSensorManager = (SensorManager)activity.getSystemService(android.content.Context.SENSOR_SERVICE);
         if (mSensorManager.getSensorList(Sensor.TYPE_GYROSCOPE).size() > 0) {
-            currentOrientationProvider = new CalibratedGyroscopeProvider(mSensorManager);
+            mOrientationProvider = new OrientationProvider(mSensorManager);
 		}
     }
 
@@ -126,28 +148,20 @@ public class GuidingService implements Observer {
      */
     public void start() {
         mCameraService.addObserver(this);
-
         // starts the orientation provider
-        if (currentOrientationProvider != null) {
-            currentOrientationProvider.start();
-        }
+        mOrientationProvider.start();
     }
 
     /**
      * Stops the guiding process
      */
     public void stop() {
-
-        // stops the orientation provider
-        if (currentOrientationProvider != null) {
-            currentOrientationProvider.stop();
-        }
-        // deletes the observer
         mCameraService.deleteObserver(this);
+        // stops the orientation provider
+        mOrientationProvider.stop();
     }
 
     @Override
-
     public void update(Observable o, Object arg) {
         // gets the detected texts
         String type = ((Bundle)arg).getString(OcrHandler.BUNDLE_TYPE);
@@ -186,20 +200,21 @@ public class GuidingService implements Observer {
                         }
                     }
 
-                    // build up hits
-                    int hits =  (left) ?1:0;
-                    hits     |= (top)  ?2:0;
-                    hits     |= (right)?4:0;
-                    hits     |= (bot)  ?8:0;
+                    // directional adjustments
+                    int dHits = 0;
+                    if (left)  { dHits |= 1; mGuidingLayout.playAnimationFor(GuidingLayout.BORDER_LEFT); }
+                    if (top)   { dHits |= 2; mGuidingLayout.playAnimationFor(GuidingLayout.BORDER_TOP); }
+                    if (right) { dHits |= 4; mGuidingLayout.playAnimationFor(GuidingLayout.BORDER_RIGHT); }
+                    if (bot)   { dHits |= 8; mGuidingLayout.playAnimationFor(GuidingLayout.BORDER_BOTTOM); }
 
-                    // visual output
-                    if (((hits & 1) >> 0) == 1) mGuidingLayout.playAnimationFor(GuidingLayout.BORDER_LEFT);
-                    if (((hits & 2) >> 1) == 1) mGuidingLayout.playAnimationFor(GuidingLayout.BORDER_TOP);
-                    if (((hits & 4) >> 2) == 1) mGuidingLayout.playAnimationFor(GuidingLayout.BORDER_RIGHT);
-                    if (((hits & 8) >> 3) == 1) mGuidingLayout.playAnimationFor(GuidingLayout.BORDER_BOTTOM);
+                    // rotational adjustments
+                    int rHits = (mOrientationProvider != null) ? mOrientationProvider.getRotationHits(ROTATION_THRESHOLD) : 0;
 
                     // acoustic output
-                    AudioService.getInstance().speak(mOrientationTexts[hits]);
+                    AudioService.getInstance().speak(String.format(
+                        "Ausrichtung: %s", ((dHits == 0) && (rHits == 0)) ?
+                            "Ok" : mDirectionTexts[dHits] + " " + mRotationTexts[rHits]
+                    ));
                 }
             }
         }
