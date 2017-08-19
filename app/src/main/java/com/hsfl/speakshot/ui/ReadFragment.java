@@ -1,7 +1,6 @@
 package com.hsfl.speakshot.ui;
 
 import android.app.Fragment;
-import android.hardware.Camera;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -60,7 +59,6 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
         mCameraService = CameraService.getInstance();
         // adds an observer for the text recognizer
         mCameraService.addObserver(this);
-        mCameraService.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
 
         // init controls
         initializeControls();
@@ -69,7 +67,7 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
     }
 
     /**
-     * Inits the UI controls
+     * Init the UI controls
      */
     private void initializeControls() {
         // show results
@@ -162,8 +160,6 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
         }
         if (event.getAction() == MotionEvent.ACTION_UP) {
             if (mIsLongTab) {
-                // TODO sometimes the app crashes here.
-                mCameraService.focus(event.getX(), event.getY());
                 AudioService.getInstance().stopSpeaking();
             }
             mIsLongTab = false;
