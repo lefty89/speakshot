@@ -13,7 +13,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.ImageView;
 
@@ -24,7 +23,7 @@ import com.hsfl.speakshot.service.audio.AudioService;
 import com.hsfl.speakshot.service.camera.helper.ImagePersistenceHelper;
 import com.hsfl.speakshot.service.camera.ocr.OcrHandler;
 import com.hsfl.speakshot.service.camera.ocr.serialization.*;
-import com.hsfl.speakshot.service.view.ViewService;
+import com.hsfl.speakshot.service.navigation.NavigationService;
 import com.hsfl.speakshot.service.camera.CameraService;
 
 import java.util.ArrayList;
@@ -88,7 +87,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList(ReadResultFragment.IN_TEXTS_PAREL, detectedTexts);
-                ViewService.getInstance().toS(new ReadResultFragment(), bundle);
+                NavigationService.getInstance().toS(new ReadResultFragment(), bundle);
                 // speak hint
                 MainActivity mainActivity = (MainActivity) getActivity();
                 if (mainActivity.getHintsEnabled()) {

@@ -19,7 +19,7 @@ import com.hsfl.speakshot.service.audio.AudioService;
 import com.hsfl.speakshot.service.camera.CameraService;
 import com.hsfl.speakshot.service.camera.ocr.OcrHandler;
 import com.hsfl.speakshot.service.camera.ocr.serialization.TextBlockParcel;
-import com.hsfl.speakshot.service.view.ViewService;
+import com.hsfl.speakshot.service.navigation.NavigationService;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -81,7 +81,7 @@ public class HistoryFragment extends Fragment implements Observer {
         final FloatingActionButton closeButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_history_close);
         closeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ViewService.getInstance().back();
+                NavigationService.getInstance().back();
             }
         });
 
@@ -148,7 +148,7 @@ public class HistoryFragment extends Fragment implements Observer {
                     // opens the result view with the detected texts
                     Bundle bundle = new Bundle();
                     bundle.putParcelableArrayList(ReadResultFragment.IN_TEXTS_PAREL, texts);
-                    ViewService.getInstance().toS(new ReadResultFragment(), bundle);
+                    NavigationService.getInstance().toS(new ReadResultFragment(), bundle);
                 } else {
                     Toast.makeText(getActivity().getBaseContext(), getResources().getString(R.string.toast_no_text_found), Toast.LENGTH_SHORT).show();
                 }

@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
 import com.hsfl.speakshot.service.camera.ocr.serialization.TextBlockParcel;
-import com.hsfl.speakshot.service.view.ViewService;
+import com.hsfl.speakshot.service.navigation.NavigationService;
 import com.hsfl.speakshot.service.audio.AudioService;
 import android.support.design.widget.FloatingActionButton;
 
@@ -73,7 +73,7 @@ public class ReadResultFragment extends Fragment {
         final FloatingActionButton closeButton = (FloatingActionButton)mInflatedView.findViewById(R.id.read_fragment_close);
         closeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ViewService.getInstance().back();
+                NavigationService.getInstance().back();
             }
         });
 

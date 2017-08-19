@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.hsfl.speakshot.Constants;
@@ -17,7 +16,7 @@ import com.hsfl.speakshot.service.audio.AudioService;
 import com.hsfl.speakshot.service.camera.helper.ImagePersistenceHelper;
 import com.hsfl.speakshot.service.camera.ocr.OcrHandler;
 import com.hsfl.speakshot.service.camera.ocr.serialization.*;
-import com.hsfl.speakshot.service.view.ViewService;
+import com.hsfl.speakshot.service.navigation.NavigationService;
 import com.hsfl.speakshot.service.camera.CameraService;
 import android.support.design.widget.FloatingActionButton;
 
@@ -79,7 +78,7 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList(ReadResultFragment.IN_TEXTS_PAREL, detectedTexts);
-                ViewService.getInstance().toS(new ReadResultFragment(), bundle);
+                NavigationService.getInstance().toS(new ReadResultFragment(), bundle);
                 // make buttons for settings and mode switch invisible
                 MainActivity mainActivity = (MainActivity) getActivity();
                 mainActivity.hideButtonsSettingsModeSwitch();
@@ -105,7 +104,7 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
         final FloatingActionButton historyButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_history);
         historyButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ViewService.getInstance().toS(new HistoryFragment(), null);
+                NavigationService.getInstance().toS(new HistoryFragment(), null);
                 // speak hint
                 MainActivity mainActivity = (MainActivity) getActivity();
                 if (mainActivity.getHintsEnabled()) {

@@ -1,12 +1,10 @@
 package com.hsfl.speakshot;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.app.AppCompatDelegate;
-import com.hsfl.speakshot.service.camera.CameraService;
 import com.hsfl.speakshot.service.dictionary.DictionaryService;
 import com.hsfl.speakshot.service.guide.GuidingService;
-import com.hsfl.speakshot.service.view.ViewService;
+import com.hsfl.speakshot.service.navigation.NavigationService;
 import com.hsfl.speakshot.service.audio.AudioService;
 import com.hsfl.speakshot.ui.ReadFragment;
 import com.hsfl.speakshot.ui.SearchFragment;
@@ -19,15 +17,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.support.design.widget.FloatingActionButton;
 import android.preference.PreferenceManager;
 import android.content.SharedPreferences;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.content.res.ColorStateList;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
 import android.os.Vibrator;
 
 import com.hsfl.speakshot.ui.views.CameraPreviewSurface;
@@ -53,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Service provider that handles the views
      */
-    private ViewService mViewService;
+    private NavigationService mNavigationService;
 
     /**
      * The camera background surface
@@ -82,9 +77,9 @@ public class MainActivity extends AppCompatActivity {
         // gets the background surface
         mPreview = (CameraPreviewSurface)findViewById(R.id.camera_view);
 
-        // initializes the ViewService
-        mViewService = ViewService.getInstance();
-        mViewService.init(getFragmentManager());
+        // initializes the NavigationService
+        mNavigationService = NavigationService.getInstance();
+        mNavigationService.init(getFragmentManager());
 
         // initializes the DictionaryService
         mDictionaryService = DictionaryService.getInstance();
@@ -131,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                 // switch background color
                 String themeId = getThemeId();
                 if (mCurrentMode) {
-                    mViewService.to(new SearchFragment(), null);
+                    mNavigationService.to(new SearchFragment(), null);
                     // set button colors
                     if (themeId.equals("light")) {
                         DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
@@ -154,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                         DrawableCompat.setTintList(DrawableCompat.wrap(guidedButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
                     }
                 } else {
-                    mViewService.to(new ReadFragment(), null);
+                    mNavigationService.to(new ReadFragment(), null);
                     // set button colors
                     if (themeId.equals("light")) {
                         DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorA)));
@@ -199,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
         };
         prefs.registerOnSharedPreferenceChangeListener(mSharedPreferenceChangeListener);
 
-        mViewService.to(new ReadFragment(), null);
+        mNavigationService.to(new ReadFragment(), null);
     }
 
     @Override
@@ -224,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         showButtonsSettingsModeSwitch();
-        ViewService.getInstance().back();
+        NavigationService.getInstance().back();
         AudioService.getInstance().stopSpeaking();
     }
 

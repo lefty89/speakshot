@@ -1,16 +1,16 @@
-package com.hsfl.speakshot.service.view;
+package com.hsfl.speakshot.service.navigation;
 
 import android.app.*;
 import android.os.Bundle;
 import com.hsfl.speakshot.R;
 
-public class ViewService {
-    private static final String TAG = ViewService.class.getSimpleName();
+public class NavigationService {
+    private static final String TAG = NavigationService.class.getSimpleName();
 
     /**
-     * The ViewService singleton
+     * The NavigationService singleton
      */
-    private static ViewService instance = null;
+    private static NavigationService instance = null;
 
     /**
      * mFragmentManager
@@ -25,15 +25,15 @@ public class ViewService {
     /**
      * Empty constructor
      */
-    ViewService() {}
+    NavigationService() {}
 
     /**
-     * Gets the ViewService instance
+     * Gets the NavigationService instance
      * @return
      */
-    public static ViewService getInstance() {
+    public static NavigationService getInstance() {
         if (instance == null) {
-            instance = new ViewService();
+            instance = new NavigationService();
         }
         return instance;
     }
