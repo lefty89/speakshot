@@ -111,7 +111,7 @@ public class GuidingService implements Observer {
 
         // inits the orientation sensor
         mSensorManager = (SensorManager)activity.getSystemService(android.content.Context.SENSOR_SERVICE);
-        if (mSensorManager.getSensorList(Sensor.TYPE_GYROSCOPE).size() > 0) {
+        if (OrientationProvider.checkHardwarde(mSensorManager)) {
             mOrientationProvider = new OrientationProvider(mSensorManager);
 		}
     }
@@ -122,7 +122,8 @@ public class GuidingService implements Observer {
     public void start() {
         mCameraService.addObserver(this);
         // starts the orientation provider
-        mOrientationProvider.start();
+        if (mOrientationProvider != null)
+            mOrientationProvider.start();
     }
 
     /**
@@ -131,7 +132,8 @@ public class GuidingService implements Observer {
     public void stop() {
         mCameraService.deleteObserver(this);
         // stops the orientation provider
-        mOrientationProvider.stop();
+        if (mOrientationProvider != null)
+            mOrientationProvider.stop();
     }
 
     @Override

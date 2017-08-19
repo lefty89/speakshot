@@ -96,4 +96,15 @@ public class OrientationProvider implements SensorEventListener {
         }
         return result;
     }
+
+    /**
+     * Checks whether the required sensors are available
+     * @param sensorManager
+     * @return
+     */
+    public static boolean checkHardwarde(SensorManager sensorManager) {
+        return  (sensorManager != null) &&
+                (sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).size() > 0) &&
+                (sensorManager.getSensorList(Sensor.TYPE_MAGNETIC_FIELD).size() > 0);
+    }
 }
