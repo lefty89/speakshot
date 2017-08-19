@@ -19,44 +19,11 @@ public class GuidingService implements Observer {
     private static final String TAG = GuidingService.class.getSimpleName();
 
     /**
-     * Direction texts
+     * Texts that will be outputted by the AudioService
      */
-    private static String[] mDirectionTexts = {
-            "",                             // 0000
-            "weiter links bewegen",         // 0001 : left
-            "weiter oben bewegen",          // 0010 : top
-            "weiter oben-links bewegen",    // 0011 : left, top
-            "weiter rechts bewegen",        // 0100 : right
-            "weiter zurück bewegen",        // 0101 : right, left
-            "weiter oben-rechts bewegen",   // 0110 : right, top
-            "weiter zurück bewegen",        // 0111 : right, left, top
-            "weiter unten bewegen",         // 1000 : bot
-            "weiter unten-links bewegen",   // 1001 : bot, left
-            "weiter zurück bewegen",        // 1010 : bot, top
-            "weiter zurück bewegen",        // 1011 : bot, left, top
-            "weiter unten-rechts bewegen",  // 1100 : bot, right
-            "weiter zurück bewegen",        // 1101 : bot, right, left
-            "weiter zurück bewegen"};       // 1111 : bot, left, top, right
-
-    /**
-     * Orientation texts
-     */
-    private static String[] mRotationTexts = {
-            "",                                         // 0000
-            "weiter vor neigen",                        // 0001 : to
-            "weiter zurück neigen",                     // 0010 : back
-            "weiter zurück-vorn neigen",                // 0011 : to, back              => never
-            "weiter rechts neigen",                     // 0100 : right
-            "weiter rechts-vor neigen",                 // 0101 : right, to
-            "weiter rechts-zurück neigen",              // 0110 : right, back
-            "weiter zurück-vorn neigen",                // 0111 : right, to, back       => never
-            "weiter links neigen",                      // 1000 : left
-            "weiter links-vor neigen",                  // 1001 : left, to
-            "weiter links-zurück neigen",               // 1010 : left, back
-            "weiter links-zurück-vorn neigen",          // 1011 : left, to, back        => never
-            "weiter links-rechts neigen",               // 1100 : left, right           => never
-            "weiter links-rechts-vorn neigen",          // 1101 : left, right, to       => never
-            "weiter links-rechts-zurück-vorn neigen"};  // 1111 : left, to, back, right => never
+    private static String   GUIDING_TEXT;
+    private static String[] DIRECTION_TEXTS;
+    private static String[] ROTATION_TEXTS;
 
     /**
      * The GuidingService singleton
@@ -133,6 +100,12 @@ public class GuidingService implements Observer {
             mGuidingLayout = new GuidingLayout(activity);
             activity.addContentView(mGuidingLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         }
+
+        // init descriptions
+        GUIDING_TEXT  = activity.getString(activity.getResources().getIdentifier("guiding_command", "string", activity.getPackageName()));
+        DIRECTION_TEXTS = activity.getResources().getStringArray(activity.getResources().getIdentifier("guiding_direction", "array", activity.getPackageName()));
+        ROTATION_TEXTS = activity.getResources().getStringArray(activity.getResources().getIdentifier("guiding_rotation", "array", activity.getPackageName()));
+
         // gets the camera service
         mCameraService = CameraService.getInstance();
 
@@ -212,8 +185,8 @@ public class GuidingService implements Observer {
 
                     // acoustic output
                     AudioService.getInstance().speak(String.format(
-                        "Ausrichtung: %s", ((dHits == 0) && (rHits == 0)) ?
-                            "Ok" : mDirectionTexts[dHits] + " " + mRotationTexts[rHits]
+                        GUIDING_TEXT, ((dHits == 0) && (rHits == 0)) ?
+                        "Ok" : DIRECTION_TEXTS[dHits] + " " + ROTATION_TEXTS[rHits]
                     ));
                 }
             }

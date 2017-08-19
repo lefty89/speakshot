@@ -97,4 +97,48 @@
     <string name="search_mode_hint_general">Search Mode entered. In order to search a certain text you have to enter a search term. Tap on free display space. If the text you are looking for has been found, you can display all found text blocks by pressing the button at the bottom left.</string>
     <string name="search_mode_dialog_search_term">Search:</string>
 
+
+    <!-- guiding command -->
+    <string name="guiding_command">Ausrichtung: %s</string>
+
+    <!-- guiding directions -->
+    <string-array name="guiding_direction">
+        <item></item>                               <!-- 0000 -->
+        <item>weiter links bewegen</item>           <!-- 0001 : left -->
+        <item>weiter oben bewegen</item>            <!-- 0010 : top -->
+        <item>weiter oben-links bewegen</item>      <!-- 0011 : left, top -->
+        <item>weiter rechts bewegen</item>          <!-- 0100 : right -->
+        <item>weiter zurück bewegen</item>          <!-- 0101 : right, left -->
+        <item>weiter oben-rechts bewegen</item>     <!-- 0110 : right, top -->
+        <item>weiter zurück bewegen</item>          <!-- 0111 : right, left, top -->
+        <item>weiter unten bewegen</item>           <!-- 1000 : bot -->
+        <item>weiter unten-links bewegen</item>     <!-- 1001 : bot, left -->
+        <item>weiter zurück bewegen</item>          <!-- 1010 : bot, top -->
+        <item>weiter zurück bewegen</item>        <!-- 1011 : bot, left, top -->
+        <item>weiter unten-rechts bewegen</item>   <!-- 1100 : bot, right -->
+        <item>weiter zurück bewegen</item>         <!-- 1101 : bot, right, left -->
+        <item>weiter zurück bewegen</item>         <!-- 1110 : bot, right, right -->
+        <item>weiter zurück bewegen</item>         <!-- 1111 : bot, left, top, right -->
+    </string-array>
+
+    <!-- guiding rotations -->
+    <string-array name="guiding_rotation">
+        <item></item>                                         <!-- 0000 -->
+        <item>weiter vor neigen</item>                        <!-- 0001 : to -->
+        <item>weiter zurück neigen</item>                     <!-- 0010 : back -->
+        <item>weiter zurück-vorn neigen</item>                <!-- 0011 : to, back => never -->
+        <item>weiter rechts neigen</item>                     <!-- 0100 : right -->
+        <item>weiter rechts-vor neigen</item>                 <!-- 0101 : right, to -->
+        <item>weiter rechts-zurück neigen</item>              <!-- 0110 : right, back -->
+        <item>weiter zurück-vorn neigen</item>                <!-- 0111 : right, to, back => never -->
+        <item>weiter links neigen</item>                      <!-- 1000 : left -->
+        <item>weiter links-vor neigen</item>                  <!-- 1001 : left, to -->
+        <item>weiter links-zurück neigen</item>              <!-- 1010 : left, back -->
+        <item>weiter links-zurück-vorn neigen</item>         <!-- 1011 : left, to, back => never -->
+        <item>weiter links-rechts neigen</item>              <!-- 1100 : left, right => never -->
+        <item>weiter links-rechts-vorn neigen</item>         <!-- 1101 : left, right, to => never -->
+        <item>weiter links-rechts-zurück neigen</item>       <!-- 1110 : left, right, back => never -->
+        <item>weiter links-rechts-zurück-vorn neigen</item>  <!-- 1111 : left, to, back, right => never -->
+    </string-array>
+
 </resources>
