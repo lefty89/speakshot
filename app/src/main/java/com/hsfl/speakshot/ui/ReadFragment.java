@@ -113,18 +113,6 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
                 }
             }
         });
-
-        // populate spinner with items using the custom adapter which sets up the colors and font size
-        String themeId = ((MainActivity)getActivity()).getThemeId();
-        String[] spin_arry = getResources().getStringArray(R.array.read_mode_array);
-        MainActivity.CustomArrayAdapter mAdapter = new MainActivity.CustomArrayAdapter<CharSequence>((MainActivity)getActivity(), spin_arry);
-        mAdapter.setThemeId(themeId);
-        int spinnerPadding = (int)((MainActivity)getActivity()).getResources().getDimension(R.dimen.spinner_padding);
-        mAdapter.setSpinnerPadding(spinnerPadding);
-        float spinnerTextSize = ((MainActivity)getActivity()).getResources().getDimension(R.dimen.spinner_dropdown_text_size);
-        mAdapter.setSpinnerTextSize(spinnerTextSize);
-        final Spinner spinnerReadMode = (Spinner)mInflatedView.findViewById(R.id.spinner_read_mode);
-        spinnerReadMode.setAdapter(mAdapter);
     }
 
     @Override

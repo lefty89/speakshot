@@ -3,58 +3,18 @@
     <style name="ThemeLightReadMode" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorAccent">@color/lightColorA</item>
         <item name="android:tint">@color/darkColorA</item>
-
-        <!-- For the resting Spinner style -->
-        <item name="android:spinnerItemStyle">@style/spinnerItemStyle</item>
-
-        <!-- For each individual Spinner list item once clicked on -->
-        <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle</item>
     </style>
     <style name="ThemeLightSearchMode" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorAccent">@color/lightColorB</item>
         <item name="android:tint">@color/darkColorB</item>
-
-        <!-- For the resting Spinner style -->
-        <item name="android:spinnerItemStyle">@style/spinnerItemStyle</item>
-
-        <!-- For each individual Spinner list item once clicked on -->
-        <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle</item>
     </style>
 
     <style name="ThemeDarkReadMode" parent="Theme.AppCompat.NoActionBar">
         <item name="colorAccent">@color/darkColorA</item>
         <item name="android:tint">@color/lightColorA</item>
-
-        <!-- For the resting Spinner style -->
-        <item name="android:spinnerItemStyle">@style/spinnerItemStyle</item>
-
-        <!-- For each individual Spinner list item once clicked on -->
-        <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle</item>
     </style>
     <style name="ThemeDarkSearchMode" parent="Theme.AppCompat.NoActionBar">
         <item name="colorAccent">@color/darkColorB</item>
         <item name="android:tint">@color/lightColorB</item>
-
-        <!-- For the resting Spinner style -->
-        <item name="android:spinnerItemStyle">@style/spinnerItemStyle</item>
-
-        <!-- For each individual Spinner list item once clicked on -->
-        <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle</item>
-    </style>
-
-    <style name="spinnerItemStyle">
-        <item name="android:padding">@dimen/spinner_padding</item>
-        <item name="android:layout_margin">@dimen/spinner_margin</item>
-        <item name="android:textSize">@dimen/spinner_text_size</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:background">@color/black</item>
-    </style>
-    <style name="spinnerDropDownItemStyle">
-        <!--
-        <item name="android:padding">@dimen/spinner_padding</item>
-        <item name="android:textSize">@dimen/spinner_text_size</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:background">@color/black</item>
-        -->
     </style>
 </resources>

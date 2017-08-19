@@ -70,56 +70,6 @@ public class MainActivity extends AppCompatActivity {
      */
     private boolean mGuidedEnabled = false;
 
-    /**
-     * nested class which is used to style the mode spinner ("General", "Doorplate", "Letter")
-     */
-    public static class CustomArrayAdapter<T> extends ArrayAdapter<T> {
-        private String themeId = "";
-        private int spinnerPadding = 0;
-        private float spinnerTextSize = 0;
-
-        public CustomArrayAdapter(Context ctx, T [] objects)
-        {
-            super(ctx, android.R.layout.simple_spinner_item, objects);
-        }
-
-        @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent)
-        {
-            View view = super.getView(position, convertView, parent);
-            TextView text = (TextView)view.findViewById(android.R.id.text1);
-
-            text.setPadding(spinnerPadding, spinnerPadding, spinnerPadding, spinnerPadding);
-            text.setTextSize(spinnerTextSize);
-
-            if (themeId.equals("light")) {
-                text.setBackgroundColor(Color.WHITE);
-                text.setTextColor(Color.BLACK);
-            }
-            else /*if (themeId.equals("dark"))*/ {
-                text.setBackgroundColor(Color.BLACK);
-                text.setTextColor(Color.WHITE);
-            }
-
-            return view;
-        }
-
-        public void setThemeId(String themeId)
-        {
-            this.themeId = themeId;
-        }
-
-        public void setSpinnerPadding(int spinnerPadding)
-        {
-            this.spinnerPadding = spinnerPadding;
-        }
-
-        public void setSpinnerTextSize(float spinnerTextSize)
-        {
-            this.spinnerTextSize = spinnerTextSize;
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

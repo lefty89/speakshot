@@ -18,13 +18,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="bottom|center_horizontal">
-        <Spinner
-            android:id="@+id/spinner_search_mode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:entries="@array/search_mode_array"
-            android:entryValues="@array/search_mode_values" />
         <FrameLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

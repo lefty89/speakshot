@@ -61,26 +61,6 @@
     <string name="read_results_audio_result_x_of_y">Result %1$d of %2$d : %3$s</string>
     <string name="read_results_textview_header_result_x_of_y">Result %1$d of %2$d</string>
 
-    <!-- read mode selector / spinner / combobox -->
-    <string-array name="read_mode_array">
-        <item>General</item>
-        <item>Letter</item>
-    </string-array>
-    <string-array name="read_mode_values">
-        <item>general</item>
-        <item>letter</item>
-    </string-array>
-
-    <!-- search mode selector / spinner / combobox -->
-    <string-array name="search_mode_array">
-        <item>General</item>
-        <item>Doorplate</item>
-    </string-array>
-    <string-array name="search_mode_values">
-        <item>general</item>
-        <item>doorplate</item>
-    </string-array>
-
     <!-- toasts -->
     <string name="toast_no_text_found">No text found.</string>
     <string name="toast_snapshot_saved_to">Photo saved to %1$s.</string>
