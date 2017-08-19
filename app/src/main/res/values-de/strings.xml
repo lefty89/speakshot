@@ -18,9 +18,6 @@
     <string name="pref_title_audio_output_switch">Audio-Ausgabe aktivieren</string>
     <string name="pref_description_audio_output_switch">Erlaubt der App die Audio-Ausgabe von Textergebnissen, Anweisungen oder Hinweisen.</string>
 
-    <string name="pref_title_assistance_switch">Snapshot-Unterstützung aktivieren</string>
-    <string name="pref_description_assistance_switch">Erlaubt der App den Benutzer beim Aufnahemen eines Bilds mit der Kamera mit Sprachanweisungen zu unterstützen.</string>
-
     <string name="pref_title_hints_switch">Hinweise aktivieren</string>
     <string name="pref_description_hints_switch">Erlaubt der App dem Benutzer Hinweise zu geben.</string>
 

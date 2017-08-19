@@ -32,13 +32,6 @@
         <SwitchPreference
             android:dependency="audio_output_switch"
             android:defaultValue="true"
-            android:key="assistance_switch"
-            android:summary="@string/pref_description_assistance_switch"
-            android:title="@string/pref_title_assistance_switch" />
-
-        <SwitchPreference
-            android:dependency="audio_output_switch"
-            android:defaultValue="true"
             android:key="hints_switch"
             android:summary="@string/pref_description_hints_switch"
             android:title="@string/pref_title_hints_switch" />
