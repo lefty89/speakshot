@@ -111,8 +111,8 @@ public class GuidingService implements Observer {
 
         // inits the orientation sensor
         mSensorManager = (SensorManager)activity.getSystemService(android.content.Context.SENSOR_SERVICE);
-        if (OrientationProvider.checkHardwarde(mSensorManager)) {
-            mOrientationProvider = new OrientationProvider(mSensorManager);
+        if (OrientationProvider.checkHardware(mSensorManager)) {
+            mOrientationProvider = new OrientationProvider(ROTATION_THRESHOLD, mSensorManager);
 		}
     }
 
@@ -183,7 +183,7 @@ public class GuidingService implements Observer {
                     if (bot)   { dHits |= 8; mGuidingLayout.playAnimationFor(GuidingLayout.BORDER_BOTTOM); }
 
                     // rotational adjustments
-                    int rHits = (mOrientationProvider != null) ? mOrientationProvider.getRotationHits(ROTATION_THRESHOLD) : 0;
+                    int rHits = (mOrientationProvider != null) ? mOrientationProvider.getRotationHits() : 0;
 
                     // acoustic output
                     AudioService.getInstance().speak(String.format(

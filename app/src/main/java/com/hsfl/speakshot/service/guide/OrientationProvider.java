@@ -10,23 +10,35 @@ public class OrientationProvider implements SensorEventListener {
     /**
      * SensorManager
      */
-    SensorManager mSensorManager = null;
+    private SensorManager mSensorManager = null;
 
     /**
      * Current gravitation
      */
-    float[] mGravs = new float[3];
+    private float[] mGravy = new float[3];
 
     /**
      * Current magnetic field
      */
-    float[] mGeoMags = new float[3];
+    private float[] mGeoMags = new float[3];
+
+    /**
+     * Current magnetic field
+     */
+    private int mRotationHits = 0;
+
+    /**
+     * Current magnetic field
+     */
+    private int mRotationThreshold = 20;
 
     /**
      * Constructor
+     * @param threshold
      * @param sensorManager
      */
-    OrientationProvider(SensorManager sensorManager) {
+    OrientationProvider(int threshold, SensorManager sensorManager) {
+        mRotationThreshold = threshold;
         mSensorManager = sensorManager;
     }
 
@@ -45,35 +57,42 @@ public class OrientationProvider implements SensorEventListener {
         mSensorManager.unregisterListener(this);
     }
 
+    /**
+     * Gets the current orientation
+     * @return
+     */
+    int getRotationHits() {
+        return mRotationHits;
+    }
+
+    /**
+     * Checks whether the required sensors are available
+     * @param sensorManager
+     * @return
+     */
+    static boolean checkHardware(SensorManager sensorManager) {
+        return  (sensorManager != null) &&
+                (sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).size() > 0) &&
+                (sensorManager.getSensorList(Sensor.TYPE_MAGNETIC_FIELD).size() > 0);
+    }
+
     @Override
     public void onSensorChanged(SensorEvent event) {
 
         switch (event.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
-                mGravs = event.values.clone();
+                mGravy = event.values.clone();
             case Sensor.TYPE_MAGNETIC_FIELD:
                 mGeoMags = event.values.clone();
         }
-    }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-    }
-
-    /**
-     * Gets the current orientation
-     * @return
-     */
-    int getRotationHits(int threshold) {
-        int result = 0;
-
-        if (mGravs != null && mGeoMags != null) {
+        if (mGravy != null && mGeoMags != null) {
             float[] vOri = new float[3];
             float[] tMat = new float[9];
             float[] rMat = new float[9];
             float[] iMat = new float[9];
 
-            boolean success = SensorManager.getRotationMatrix(tMat, iMat, mGravs, mGeoMags);
+            boolean success = SensorManager.getRotationMatrix(tMat, iMat, mGravy, mGeoMags);
             if (success) {
 
                 // remaps the matrix
@@ -88,23 +107,17 @@ public class OrientationProvider implements SensorEventListener {
                 int offY = (int) Math.round(degNY / 90);
                 int offZ = (int) Math.round(degNZ / 90);
 
-                result |= ((degNY - (offY * 90)) < -threshold) ? 1 : 0;
-                result |= ((degNY - (offY * 90)) > threshold)  ? 2 : 0;
-                result |= ((degNZ - (offZ * 90)) < -threshold) ? 4 : 0;
-                result |= ((degNZ - (offZ * 90)) > threshold)  ? 8 : 0;
+                mRotationHits = 0;
+                mRotationHits |= ((degNY - (offY * 90)) < -mRotationThreshold) ? 1 : 0;
+                mRotationHits |= ((degNY - (offY * 90)) > mRotationThreshold)  ? 2 : 0;
+                mRotationHits |= ((degNZ - (offZ * 90)) < -mRotationThreshold) ? 4 : 0;
+                mRotationHits |= ((degNZ - (offZ * 90)) > mRotationThreshold)  ? 8 : 0;
             }
         }
-        return result;
     }
 
-    /**
-     * Checks whether the required sensors are available
-     * @param sensorManager
-     * @return
-     */
-    public static boolean checkHardwarde(SensorManager sensorManager) {
-        return  (sensorManager != null) &&
-                (sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).size() > 0) &&
-                (sensorManager.getSensorList(Sensor.TYPE_MAGNETIC_FIELD).size() > 0);
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
+
 }
