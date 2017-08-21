@@ -7,9 +7,11 @@ import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.speech.SpeechRecognizer;
+import android.os.Bundle;
 
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.service.audio.listener.SpeechListener;
+import com.hsfl.speakshot.service.audio.listener.SpeechUtteranceProgressListener;
 
 import java.util.Locale;
 
@@ -64,9 +66,13 @@ public class AudioService implements TextToSpeech.OnInitListener {
      */
     public void speak(String text) {
         if (mTtsIsReady && MainActivity.getInstance().getAudioEnabled()) {
+            // set sound parameters
             mTts.setPitch(mPitch);
             mTts.setSpeechRate(mSpeechRate);
-            mTts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+            // prepare actual speak-call
+            Bundle params = new Bundle();
+            params.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "");
+            mTts.speak(text, TextToSpeech.QUEUE_FLUSH, params, "UniqueID");
         }
     }
 
@@ -110,6 +116,7 @@ public class AudioService implements TextToSpeech.OnInitListener {
     public void init(Context context) {
         // creates speech synthesizer
         mTts = new TextToSpeech(context, this);
+        mTts.setOnUtteranceProgressListener(new SpeechUtteranceProgressListener(context));
         // creates speech recognizer
         if (SpeechRecognizer.isRecognitionAvailable(context)) {
             mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(context);
