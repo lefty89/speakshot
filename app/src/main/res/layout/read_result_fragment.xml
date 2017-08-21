@@ -19,14 +19,19 @@
             android:layout_gravity="bottom|center_horizontal"
             android:weightSum="4">
             <!-- text -->
-            <TextView
-                android:id="@+id/txt_sections_result"
-                android:text="@string/read_results_no_text_blocks_found"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/textview_text_size"
-                android:padding="@dimen/textview_padding"
-                android:gravity="bottom|center_horizontal" />
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/txt_sections_result"
+                    android:text="@string/read_results_no_text_blocks_found"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/textview_text_size"
+                    android:padding="@dimen/textview_padding"
+                    android:layout_weight="1.0"
+                    android:gravity="bottom|center_horizontal" />
+            </ScrollView>>
             <TextView
                 android:text="Section 0/0"
                 android:layout_width="match_parent"
