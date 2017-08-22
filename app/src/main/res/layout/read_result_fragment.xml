@@ -70,7 +70,7 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="bottom|start"
                         android:layout_margin="@dimen/fab_main_margin"
-                        app:srcCompat="@drawable/ic_play_arrow_black_24dp" />
+                        app:srcCompat="@drawable/buttons_play_stop" />
                 </FrameLayout>
                 <FrameLayout
                     android:layout_width="@dimen/fab_frame_size"
