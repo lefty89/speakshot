@@ -34,6 +34,17 @@
                     app:srcCompat="@drawable/buttons_read_result" />
             </FrameLayout>
             <FrameLayout
+                    android:layout_width="@dimen/fab_frame_size"
+                    android:layout_height="@dimen/fab_frame_size"
+                    android:layout_gravity="bottom|center_horizontal">
+                <android.support.design.widget.FloatingActionButton
+                        android:id="@+id/btn_history"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/fab_main_margin"
+                        app:srcCompat="@drawable/ic_folder_black_24dp" />
+            </FrameLayout>
+            <FrameLayout
                 android:layout_width="@dimen/fab_frame_size"
                 android:layout_height="@dimen/fab_frame_size"
                 android:layout_gravity="bottom|end">

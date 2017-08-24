@@ -104,6 +104,19 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         });
         sendToReadButton.setEnabled(false);
 
+        // show history view
+        final FloatingActionButton historyButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_history);
+        historyButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                NavigationService.getInstance().toS(new HistoryFragment(), null);
+                // speak hint
+                MainActivity mainActivity = (MainActivity) getActivity();
+                if (mainActivity.getHintsEnabled()) {
+                    AudioService.getInstance().speak(mainActivity.getResources().getString(R.string.read_mode_history_hint));
+                }
+            }
+        });
+
         // light toggle
         final FloatingActionButton lightSwitch = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_light_toggle);
         lightSwitch.setOnClickListener(new View.OnClickListener() {
@@ -124,6 +137,9 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
             DrawableCompat.setTintList(DrawableCompat.wrap(sendToReadButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
             DrawableCompat.setTintList(DrawableCompat.wrap(sendToReadButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
 
+            DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
+
             imageViewModeIcon.setColorFilter(ContextCompat.getColor(((MainActivity)getActivity()).getApplicationContext(), R.color.darkColorB));
         }
         else /*if (themeId.equals("dark"))*/ {
@@ -132,6 +148,9 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
 
             DrawableCompat.setTintList(DrawableCompat.wrap(sendToReadButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
             DrawableCompat.setTintList(DrawableCompat.wrap(sendToReadButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
+
+            DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
+            DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
 
             imageViewModeIcon.setColorFilter(ContextCompat.getColor(((MainActivity)getActivity()).getApplicationContext(), R.color.lightColorB));
         }
