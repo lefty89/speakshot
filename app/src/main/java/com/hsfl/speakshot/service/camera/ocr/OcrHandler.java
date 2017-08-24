@@ -51,7 +51,7 @@ public class OcrHandler {
     /**
      * Continious OCR detector
      */
-    public OcrDetector mOcrDetector = null;
+    private OcrDetector mOcrDetector = null;
 
     /**
      * Camera lock object
@@ -59,7 +59,7 @@ public class OcrHandler {
     private final Object mCameraLock = new Object();
 
     /**
-     * constructor
+     * Constructor
      */
     public OcrHandler(final Context context, Camera camera, Handler handler) {
         synchronized (mCameraLock) {
@@ -72,6 +72,14 @@ public class OcrHandler {
             // create the TextRecognizer
             mTextRecognizer = new TextRecognizer.Builder(context).build();
         }
+    }
+
+    /**
+     * Returns the ocr detector
+     * @return
+     */
+    public OcrDetector getOcrDetector() {
+        return mOcrDetector;
     }
 
     /**

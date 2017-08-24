@@ -107,8 +107,8 @@ public class CameraService extends Observable {
                     // restarts the background preview
                     mCamera.startPreview();
 
-                    // QUICK HACK REASSIGN OLD BUFFER
-                    mCamera.setPreviewCallbackWithBuffer(mOcrHandler.mOcrDetector);
+                    // reassign stream buffer
+                    mCamera.setPreviewCallbackWithBuffer(mOcrHandler.getOcrDetector());
                 }
             };
             mCamera.setOneShotPreviewCallback(previewCallback);
