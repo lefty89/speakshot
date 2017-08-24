@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.util.Log;
 
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
@@ -164,5 +165,20 @@ public class ResultFragment extends Fragment {
         final TextView headerText = (TextView)mInflatedView.findViewById(R.id.txt_sections_header);
         String text = ((MainActivity)getActivity()).getResources().getString(R.string.result_textview_header_result_x_of_y, counter+1, detectedTexts.size());
         headerText.setText(text);
+    }
+
+    /**
+     * Switches the icon of the play button
+     * @param speaking
+     */
+    public void setIconPlayButtonReadResults(boolean speaking) {
+        final FloatingActionButton playButtonReadResults = (FloatingActionButton)mInflatedView.findViewById(R.id.read_fragment_play);
+        playButtonReadResults.setSelected(speaking);
+        if (speaking) {
+            Log.i(TAG, "test speaking 1");
+        }
+        else {
+            Log.i(TAG, "test speaking 0");
+        }
     }
 }
