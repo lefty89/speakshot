@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.hsfl.speakshot.MainActivity">
 
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/lightColorA">
+        android:background="@color/black">
         <ImageView
             android:id="@+id/img_history"
             android:layout_width="match_parent"
@@ -17,99 +18,129 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:text="[x/x] Image"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/txt_history_header_name"
-                android:textStyle="bold"
-                android:paddingEnd="@dimen/textview_padding" android:paddingStart="@dimen/textview_padding"
-                android:paddingTop="@dimen/textview_padding" android:elevation="1dp"
-                android:paddingBottom="@dimen/fab_margin"/>
-            <TextView
-                android:text="Last modified"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/txt_history_header_mod"
-                android:paddingStart="@dimen/textview_padding" android:paddingEnd="@dimen/textview_padding"
-                android:paddingBottom="@dimen/textview_padding" android:paddingTop="@dimen/fab_margin"/>
-        </LinearLayout>
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/fab_margin"
-            android:layout_gravity="bottom|center_horizontal"
-            android:weightSum="4">
+            android:layout_height="match_parent">
             <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:id="@+id/history_info_container"
+                    android:visibility="invisible"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1000">
+                    <TextView
+                        android:text="[x/x] Image"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/txt_history_header_name"
+                        android:textStyle="bold"
+                        android:paddingEnd="@dimen/textview_padding"
+                        android:paddingStart="@dimen/textview_padding"
+                        android:paddingTop="@dimen/textview_padding"
+                        android:elevation="1dp"
+                        android:paddingBottom="@dimen/fab_margin"/>
+                    <TextView
+                        android:text="Last modified"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/txt_history_header_mod"
+                        android:paddingStart="@dimen/textview_padding" android:paddingEnd="@dimen/textview_padding"
+                        android:paddingBottom="@dimen/textview_padding" android:paddingTop="@dimen/fab_margin"/>
+                </LinearLayout>
+                <FrameLayout
+                    android:layout_width="@dimen/fab_frame_size"
+                    android:layout_height="@dimen/fab_frame_size"
+                    android:layout_gravity="top|end"
+                    android:layout_weight="1">
+                    <android.support.design.widget.FloatingActionButton
+                        android:id="@+id/btn_history_close"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/fab_main_margin"
+                        app:srcCompat="@drawable/ic_close_black_24dp"/>
+                </FrameLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1000">
+                <TextView
+                    android:id="@+id/history_text"
+                    android:textSize="@dimen/textview_text_size"
+                    android:padding="@dimen/textview_padding"
+                    android:text="@string/history_empty"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:gravity="center_vertical|center_horizontal" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/history_controls_container"
+                android:visibility="invisible"
+                android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/fab_margin"
                 android:layout_gravity="bottom|center_horizontal"
                 android:weightSum="4">
-                <FrameLayout
-                    android:layout_width="@dimen/fab_frame_size"
-                    android:layout_height="@dimen/fab_frame_size"
-                    android:layout_weight="1">
-                    <android.support.design.widget.FloatingActionButton
-                        android:id="@+id/btn_history_prev"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="bottom|start"
-                        android:layout_margin="@dimen/fab_main_margin"
-                        app:srcCompat="@drawable/ic_skip_previous_black_24dp"/>
-                </FrameLayout>
-                <FrameLayout
-                    android:layout_width="@dimen/fab_frame_size"
-                    android:layout_height="@dimen/fab_frame_size"
-                    android:layout_weight="1">
-                    <android.support.design.widget.FloatingActionButton
-                        android:id="@+id/btn_history_analyze"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="bottom|start"
-                        android:layout_margin="@dimen/fab_main_margin"
-                        app:srcCompat="@drawable/ic_search_black_24dp"/>
-                </FrameLayout>
-                <FrameLayout
-                    android:layout_width="@dimen/fab_frame_size"
-                    android:layout_height="@dimen/fab_frame_size"
-                    android:layout_weight="1">
-                    <android.support.design.widget.FloatingActionButton
-                        android:id="@+id/btn_history_next"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="bottom|start"
-                        android:layout_margin="@dimen/fab_main_margin"
-                        app:srcCompat="@drawable/ic_skip_next_black_24dp"/>
-                </FrameLayout>
-                <FrameLayout
-                    android:layout_width="@dimen/fab_frame_size"
-                    android:layout_height="@dimen/fab_frame_size"
-                    android:layout_weight="1">
-                    <android.support.design.widget.FloatingActionButton
-                        android:id="@+id/btn_history_delete"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="bottom|start"
-                        android:layout_margin="@dimen/fab_main_margin"
-                        app:srcCompat="@drawable/ic_report_black_24dp"/>
-                </FrameLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/fab_margin"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:weightSum="4">
+                    <FrameLayout
+                        android:layout_width="@dimen/fab_frame_size"
+                        android:layout_height="@dimen/fab_frame_size"
+                        android:layout_weight="1">
+                        <android.support.design.widget.FloatingActionButton
+                            android:id="@+id/btn_history_prev"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="bottom|start"
+                            android:layout_margin="@dimen/fab_main_margin"
+                            app:srcCompat="@drawable/ic_skip_previous_black_24dp"/>
+                    </FrameLayout>
+                    <FrameLayout
+                        android:layout_width="@dimen/fab_frame_size"
+                        android:layout_height="@dimen/fab_frame_size"
+                        android:layout_weight="1">
+                        <android.support.design.widget.FloatingActionButton
+                            android:id="@+id/btn_history_analyze"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="bottom|start"
+                            android:layout_margin="@dimen/fab_main_margin"
+                            app:srcCompat="@drawable/ic_search_black_24dp"/>
+                    </FrameLayout>
+                    <FrameLayout
+                        android:layout_width="@dimen/fab_frame_size"
+                        android:layout_height="@dimen/fab_frame_size"
+                        android:layout_weight="1">
+                        <android.support.design.widget.FloatingActionButton
+                            android:id="@+id/btn_history_next"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="bottom|start"
+                            android:layout_margin="@dimen/fab_main_margin"
+                            app:srcCompat="@drawable/ic_skip_next_black_24dp"/>
+                    </FrameLayout>
+                    <FrameLayout
+                        android:layout_width="@dimen/fab_frame_size"
+                        android:layout_height="@dimen/fab_frame_size"
+                        android:layout_weight="1">
+                        <android.support.design.widget.FloatingActionButton
+                            android:id="@+id/btn_history_delete"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="bottom|start"
+                            android:layout_margin="@dimen/fab_main_margin"
+                            app:srcCompat="@drawable/ic_report_black_24dp"/>
+                    </FrameLayout>
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-        <FrameLayout
-            android:layout_width="@dimen/fab_frame_size"
-            android:layout_height="@dimen/fab_frame_size"
-            android:layout_weight="1"
-            android:layout_gravity="top|end">
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/btn_history_close"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/fab_main_margin"
-                app:srcCompat="@drawable/ic_close_black_24dp"/>
-        </FrameLayout>
     </FrameLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+</FrameLayout>

@@ -6,10 +6,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.hsfl.speakshot.Constants;
@@ -62,12 +64,12 @@ public class HistoryFragment extends Fragment implements Observer {
         // adds an observer for the text recognizer
         mCameraService.addObserver(this);
 
-        // init controls
-        initializeControls();
-
         // init the gallery
         initGallery();
         updateBackgroundImage();
+
+        // init controls
+        initializeControls();
 
         return mInflatedView;
     }
@@ -76,6 +78,13 @@ public class HistoryFragment extends Fragment implements Observer {
      * Inits the UI controls
      */
     private void initializeControls() {
+
+        if (mImages.size() > 0) {
+            // makes buttons and info visible
+            mInflatedView.findViewById(R.id.history_controls_container).setVisibility(View.VISIBLE);
+            mInflatedView.findViewById(R.id.history_info_container).setVisibility(View.VISIBLE);
+            mInflatedView.findViewById(R.id.history_text).setVisibility(View.GONE);
+        }
 
         // close button
         final FloatingActionButton closeButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_history_close);
@@ -125,6 +134,10 @@ public class HistoryFragment extends Fragment implements Observer {
                 if (deleteImageFromGallery()) {
                     nextImage(0);
                     updateBackgroundImage();
+
+                    // gallery is empty
+                    if (mImages.size() == 0)
+                        NavigationService.getInstance().back();
                 }
             }
         });

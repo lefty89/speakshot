@@ -40,7 +40,7 @@
                     android:textSize="@dimen/textview_text_size"
                     android:padding="@dimen/textview_padding"
                     android:id="@+id/txt_sections_result"
-                    android:text="@string/read_results_no_text_blocks_found"
+                    android:text="@string/result_no_text_blocks_found"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:gravity="bottom|center_horizontal"/>

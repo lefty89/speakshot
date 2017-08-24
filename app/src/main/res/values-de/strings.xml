@@ -56,10 +56,13 @@
         <item>dark</item>
     </string-array>
 
-    <!-- reead results -->
-    <string name="read_results_no_text_blocks_found">Es wurden keine Textblöcke gefunden.</string>
-    <string name="read_results_audio_result_x_of_y">Ergebnis %1$d von %2$d : %3$s</string>
-    <string name="read_results_textview_header_result_x_of_y">Ergebnis %1$d von %2$d</string>
+    <!-- history -->
+    <string name="history_empty">Der Verlauf ist leer</string>
+
+    <!-- read results -->
+    <string name="result_no_text_blocks_found">Es wurden keine Textblöcke gefunden.</string>
+    <string name="result_audio_result_x_of_y">Ergebnis %1$d von %2$d : %3$s</string>
+    <string name="result_textview_header_result_x_of_y">Ergebnis %1$d von %2$d</string>
 
     <!-- toasts -->
     <string name="toast_no_text_found">Es wurde kein Text gefunden.</string>
