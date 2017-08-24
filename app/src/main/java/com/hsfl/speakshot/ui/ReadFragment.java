@@ -1,11 +1,11 @@
 package com.hsfl.speakshot.ui;
 
 import android.app.Fragment;
+import android.content.SharedPreferences;
+import android.hardware.Camera;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
+import android.preference.PreferenceManager;
+import android.view.*;
 import android.widget.Toast;
 
 import com.hsfl.speakshot.Constants;
@@ -22,13 +22,8 @@ import android.support.design.widget.FloatingActionButton;
 import java.util.*;
 
 
-public class ReadFragment extends Fragment implements Observer, View.OnTouchListener, View.OnLongClickListener {
+public class ReadFragment extends Fragment implements Observer, View.OnTouchListener {
     private static final String TAG = ReadFragment.class.getSimpleName();
-
-    /**
-     * Flag that helps to choose whether it's a long or short tab
-     */
-    private boolean mIsLongTab = false;
 
     /**
      * the inflated view
@@ -45,6 +40,11 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
      */
     private ArrayList<TextBlockParcel> detectedTexts;
 
+    /**
+     * Gesture detector
+     */
+    private GestureDetector mGestureDetector = null;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mInflatedView = inflater.inflate(R.layout.read_fragment, container, false);
@@ -52,17 +52,25 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
         // make buttons for settings and mode switch invisible
         ((MainActivity)getActivity()).showButtonsSettingsModeSwitch();
 
+        // adds an observer for the text recognizer
+        mCameraService = CameraService.getInstance();
+        mCameraService.addObserver(this);
+
+        // set focus mode
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String focusMode = prefs.getBoolean("use_autofocus_switch", true) ?
+                Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO : Camera.Parameters.FOCUS_MODE_AUTO;
+        mCameraService.setFocusMode(focusMode);
+
+        // adds a gesture detector
+        ReadFragmentGestureDetector readGestureDetector = new ReadFragmentGestureDetector();
+        // Create a GestureDetector
+        mGestureDetector = new GestureDetector(getActivity(), readGestureDetector);
         // add touch listener
         mInflatedView.setOnTouchListener(this);
-        mInflatedView.setOnLongClickListener(this);
-
-        mCameraService = CameraService.getInstance();
-        // adds an observer for the text recognizer
-        mCameraService.addObserver(this);
 
         // init controls
         initializeControls();
-
         return mInflatedView;
     }
 
@@ -155,25 +163,7 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            mIsLongTab = true;
-        }
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            if (mIsLongTab) {
-                AudioService.getInstance().stopSpeaking();
-            }
-            mIsLongTab = false;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean onLongClick(View v) {
-        if (mIsLongTab) {
-            // creates a processor that returns all texts found, also save the image here
-            mCameraService.analyzePicture();
-        }
-        mIsLongTab = false;
-        return false;
+        mGestureDetector.onTouchEvent(event);
+        return true;
     }
 }

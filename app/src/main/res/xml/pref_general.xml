@@ -44,6 +44,12 @@
             android:key="vibration_switch"
             android:summary="@string/pref_description_vibration_switch"
             android:title="@string/pref_title_vibration_switch" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="use_autofocus_switch"
+            android:summary="@string/pref_description_use_autofocus_switch"
+            android:title="@string/pref_title_use_autofocus_switch" />
     </PreferenceCategory>
 
 </PreferenceScreen>

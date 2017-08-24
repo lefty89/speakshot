@@ -1,18 +1,14 @@
 package com.hsfl.speakshot.ui;
 
-import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.hardware.Camera;
 import android.media.MediaActionSound;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
+import android.view.*;
 import android.widget.Toast;
 import android.widget.ImageView;
 
@@ -46,14 +42,19 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
     private CameraService mCameraService;
 
     /**
-     * The team to search for
-     */
-    private String searchTerm = "";
-
-    /**
      * contains the returned ocr texts
      */
     private ArrayList<TextBlockParcel> detectedTexts;
+
+    /**
+     * Gesture detector
+     */
+    private GestureDetector mGestureDetector = null;
+
+    /**
+     * The team to search for
+     */
+    String searchTerm = "";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,18 +63,24 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         // make buttons for settings and mode switch invisible
         ((MainActivity)getActivity()).showButtonsSettingsModeSwitch();
 
+        mCameraService = CameraService.getInstance();
+        mCameraService.addObserver(this);
+
+        // set focus mode
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String focusMode = prefs.getBoolean("use_autofocus_switch", true) ?
+                Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO : Camera.Parameters.FOCUS_MODE_AUTO;
+        mCameraService.setFocusMode(focusMode);
+
+        // adds a gesture detector
+        SearchFragmentGestureDetector searchGestureDetector = new SearchFragmentGestureDetector(this);
+        // Create a GestureDetector
+        mGestureDetector = new GestureDetector(getActivity(), searchGestureDetector);
         // add touch listener
         mInflatedView.setOnTouchListener(this);
 
-        mCameraService = CameraService.getInstance();
-        mCameraService.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-
-        // add observer
-        mCameraService.addObserver(this);
-
         // init controls
         initializeControls();
-
         return mInflatedView;
     }
 
@@ -180,34 +187,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        final SearchFragment sf = this;
-
-        if (searchTerm.isEmpty()) {
-            // open modal
-            final EditText txt = new EditText(getActivity());
-            new AlertDialog.Builder(getActivity())
-                    .setMessage(getResources().getString(R.string.search_mode_dialog_search_term))
-                    .setView(txt)
-                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            searchTerm = txt.getText().toString();
-                            if (!searchTerm.isEmpty()) {
-                                mCameraService.play(MediaActionSound.START_VIDEO_RECORDING);
-                                Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.toast_searching_for, searchTerm), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                        }
-                    })
-                    .show();
-        } else {
-            // stop searching
-            searchTerm = "";
-            mCameraService.play(MediaActionSound.STOP_VIDEO_RECORDING);
-            Toast.makeText(getActivity().getApplicationContext(), "Stop searching", Toast.LENGTH_SHORT).show();
-        }
-        return false;
+        mGestureDetector.onTouchEvent(event);
+        return true;
     }
 }
