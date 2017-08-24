@@ -10,7 +10,7 @@
     <string name="pref_description_misc">Miscellaneous</string>
 
     <string name="pref_title_use_autofocus_switch">Use autofocus</string>
-    <string name="pref_describtion_use_autofocus_switch">Enables the automatic focusing</string>
+    <string name="pref_description_use_autofocus_switch">Enables the automatic focusing</string>
 
     <string name="pref_title_vibration_switch">Enable vibration</string>
     <string name="pref_description_vibration_switch">Allows the app to give tactile feedback.</string>
