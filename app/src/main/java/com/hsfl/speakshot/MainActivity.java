@@ -7,7 +7,7 @@ import com.hsfl.speakshot.service.guide.GuidingService;
 import com.hsfl.speakshot.service.navigation.NavigationService;
 import com.hsfl.speakshot.service.audio.AudioService;
 import com.hsfl.speakshot.ui.ReadFragment;
-import com.hsfl.speakshot.ui.ReadResultFragment;
+import com.hsfl.speakshot.ui.ResultFragment;
 import com.hsfl.speakshot.ui.SearchFragment;
 
 import android.Manifest;
@@ -289,7 +289,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public void setIconPlayButtonReadResults(boolean speaking)
     {
-        ReadResultFragment readResultsFragment = (ReadResultFragment) getFragmentManager().findFragmentById(R.id.read_result_fragment_background);
+        ResultFragment readResultsFragment = (ResultFragment) getFragmentManager().findFragmentById(R.id.result_fragment_background);
         readResultsFragment.setIconPlayButtonReadResults(speaking);
     }
 
