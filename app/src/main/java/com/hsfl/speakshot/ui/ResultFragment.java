@@ -20,8 +20,8 @@ import android.support.design.widget.FloatingActionButton;
 
 import java.util.ArrayList;
 
-public class ReadResultFragment extends Fragment {
-    private static final String TAG = ReadResultFragment.class.getSimpleName();
+public class ResultFragment extends Fragment {
+    private static final String TAG = ResultFragment.class.getSimpleName();
 
     /**
      * Identifiers to read out of the bundle that is given
@@ -47,14 +47,14 @@ public class ReadResultFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mInflatedView = inflater.inflate(R.layout.read_result_fragment, container, false);
+        mInflatedView = inflater.inflate(R.layout.result_fragment, container, false);
 
         // make buttons for settings and mode switch invisible
         ((MainActivity)getActivity()).hideButtonsSettingsModeSwitch();
 
         // gets the detected texts
-        if (getArguments().getStringArrayList(ReadResultFragment.IN_TEXTS_PAREL) != null) {
-            detectedTexts = getArguments().getParcelableArrayList(ReadResultFragment.IN_TEXTS_PAREL);
+        if (getArguments().getStringArrayList(ResultFragment.IN_TEXTS_PAREL) != null) {
+            detectedTexts = getArguments().getParcelableArrayList(ResultFragment.IN_TEXTS_PAREL);
         }
 
         updateTextView();
@@ -110,7 +110,7 @@ public class ReadResultFragment extends Fragment {
         String themeId = ((MainActivity)getActivity()).getThemeId();
         final TextView resultText = (TextView)mInflatedView.findViewById(R.id.txt_sections_result);
         final TextView headerText = (TextView)mInflatedView.findViewById(R.id.txt_sections_header);
-        final FrameLayout frameLayoutBackground = (FrameLayout) mInflatedView.findViewById(R.id.read_result_fragment_background);
+        final FrameLayout frameLayoutBackground = (FrameLayout) mInflatedView.findViewById(R.id.result_fragment_background);
         if (themeId.equals("light")) {
 
             frameLayoutBackground.setBackgroundColor(Color.WHITE);

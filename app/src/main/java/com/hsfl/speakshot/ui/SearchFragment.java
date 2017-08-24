@@ -93,8 +93,8 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         sendToReadButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(ReadResultFragment.IN_TEXTS_PAREL, detectedTexts);
-                NavigationService.getInstance().toS(new ReadResultFragment(), bundle);
+                bundle.putParcelableArrayList(ResultFragment.IN_TEXTS_PAREL, detectedTexts);
+                NavigationService.getInstance().toS(new ResultFragment(), bundle);
                 // speak hint
                 MainActivity mainActivity = (MainActivity) getActivity();
                 if (mainActivity.getHintsEnabled()) {

@@ -147,8 +147,8 @@ public class HistoryFragment extends Fragment implements Observer {
                 if (texts.size() > 0) {
                     // opens the result view with the detected texts
                     Bundle bundle = new Bundle();
-                    bundle.putParcelableArrayList(ReadResultFragment.IN_TEXTS_PAREL, texts);
-                    NavigationService.getInstance().toS(new ReadResultFragment(), bundle);
+                    bundle.putParcelableArrayList(ResultFragment.IN_TEXTS_PAREL, texts);
+                    NavigationService.getInstance().toS(new ResultFragment(), bundle);
                 } else {
                     Toast.makeText(getActivity().getBaseContext(), getResources().getString(R.string.toast_no_text_found), Toast.LENGTH_SHORT).show();
                 }
