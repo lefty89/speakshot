@@ -174,9 +174,11 @@ public class HistoryFragment extends Fragment implements Observer {
      */
     private void initGallery() {
         File imgDir = new File(Constants.IMAGE_PATH);
-        for (File f : imgDir.listFiles()) {
-            if (f.isFile()) {
-                mImages.add(f);
+        if (imgDir.exists()) {
+            for (File f : imgDir.listFiles()) {
+                if (f.isFile()) {
+                    mImages.add(f);
+                }
             }
         }
     }
