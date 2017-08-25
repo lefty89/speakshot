@@ -59,7 +59,10 @@ public class ManualFocusHelper implements Camera.AutoFocusCallback, Camera.AutoF
                 parameters.setMeteringAreas(Arrays.asList(new Camera.Area(meteringRect, 1000)));
             }
 
-            mCamera.setParameters(parameters);
+            try {
+                mCamera.setParameters(parameters);
+            }
+            catch (Exception e) {}
             mCamera.autoFocus(this);
         }
     }
