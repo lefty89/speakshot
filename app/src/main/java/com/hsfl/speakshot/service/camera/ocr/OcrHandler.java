@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.*;
 import android.hardware.Camera;
 import android.os.*;
+import android.util.Log;
 import android.util.SparseArray;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
@@ -71,6 +72,9 @@ public class OcrHandler {
 
             // create the TextRecognizer
             mTextRecognizer = new TextRecognizer.Builder(context).build();
+            if (!mTextRecognizer.isOperational()) {
+                Log.d(TAG, "Text recognizer is not ready");
+            }
         }
     }
 
