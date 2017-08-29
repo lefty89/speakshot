@@ -71,7 +71,7 @@
     <string name="toast_searching_for">Suche nach \'%1$s\'.</string>
 
     <!-- hints -->
-    <string name="read_mode_hint_general">Lese-Modus. Um Text vorlesen zu lassen, mache zunächst ein Foto. Drücke dazu lange auf einen freien Bereich des Displays. Falls nötig kannst du das Licht mit der Schaltfläche in der rechten unteren Ecke einschalten. Alternativ kannst du auch deine gemachten Fotos erneut aufrufen mittels der Schaltfläche unten in der Mitte.</string>
+    <string name="read_mode_hint_general">Lese-Modus. Um Text vorlesen zu lassen, mache zunächst ein Foto. Drücke dazu lange auf einen freien Bereich des Displays. Falls nötig kannst du das Licht mit der Schaltfläche in der rechten unteren Ecke einschalten. Alternativ kannst du auch deine gemachten Fotos erneut aufrufen mittels der Schaltfläche in der unteren linken Ecke.</string>
     <string name="read_mode_hint_no_text_found">Es wurde kein Text gefunden.</string>
     <string name="read_mode_snapshot_saved">Foto gespeichert. Um den gefundenen Text vorlesen zu lassen, drücke auf die Schaltfläche unten links.</string>
     <string name="read_mode_snapshot_deleted">Foto gelöscht.</string>

@@ -18,40 +18,4 @@
         android:layout_height="@dimen/mode_icon_size"
         android:layout_gravity="center_vertical|start"
         app:srcCompat="@drawable/ic_chevron_left_black_24dp" />
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="bottom|center_horizontal">
-        <FrameLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal">
-            <FrameLayout
-                android:layout_width="@dimen/fab_frame_size"
-                android:layout_height="@dimen/fab_frame_size"
-                android:layout_gravity="bottom|left">
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/btn_history"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="@dimen/fab_main_margin"
-                    app:srcCompat="@drawable/ic_analyze" />
-            </FrameLayout>
-            <FrameLayout
-                android:layout_width="@dimen/fab_frame_size"
-                android:layout_height="@dimen/fab_frame_size"
-                android:layout_gravity="bottom|end">
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/btn_light_toggle"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="@dimen/fab_main_margin"
-                    android:enabled="false"
-                    app:srcCompat="@drawable/buttons_switch_light" />
-            </FrameLayout>
-        </FrameLayout>
-    </LinearLayout>
-
 </android.support.design.widget.CoordinatorLayout>

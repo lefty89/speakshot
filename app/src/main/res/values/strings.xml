@@ -71,7 +71,7 @@
     <string name="toast_searching_for">Searching for \'%1$s\'.</string>
 
     <!-- hints -->
-    <string name="read_mode_hint_general">Read Mode entered. In order to read text you have to take a photo. Long press on free display space. If necessary you can switch on the light by pressing the button in the bottom right corner. Alternatively, you can also view your already taken photos by pressing the button in the bottom middle.</string>
+    <string name="read_mode_hint_general">Read Mode entered. In order to read text you have to take a photo. Long press on free display space. If necessary you can switch on the light by pressing the button in the bottom right corner. Alternatively, you can also view your already taken photos by pressing the button in the bottom left corner.</string>
     <string name="read_mode_hint_no_text_found">No text found.</string>
     <string name="read_mode_snapshot_saved">Photo saved. In order to read the found text results, press the button in the left bottom corner.</string>
     <string name="read_mode_snapshot_deleted">Photo deleted.</string>

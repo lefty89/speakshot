@@ -88,51 +88,16 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
      * Inits the UI controls
      */
     private void initializeControls() {
-        // show history view
-        final FloatingActionButton historyButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_history);
-        historyButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                NavigationService.getInstance().toS(new HistoryFragment(), null);
-                // speak hint
-                MainActivity mainActivity = (MainActivity) getActivity();
-                if (mainActivity.getHintsEnabled()) {
-                    AudioService.getInstance().speak(mainActivity.getResources().getString(R.string.read_mode_history_hint));
-                }
-            }
-        });
-
-        // light toggle
-        final FloatingActionButton lightSwitch = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_light_toggle);
-        lightSwitch.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mCameraService.setFlashLightEnabled(!mCameraService.isFlashLightEnabled());
-                lightSwitch.setSelected(mCameraService.isFlashLightEnabled());
-            }
-        });
-        lightSwitch.setSelected(mCameraService.isFlashLightEnabled());
-
         final ImageView imageViewModeIcon = (ImageView)mInflatedView.findViewById(R.id.mode_icon);
         final ImageView imageViewIconSwitchToReadMode = (ImageView)mInflatedView.findViewById(R.id.icon_switch_to_read_mode);
 
         // set button colors
         String themeId = ((MainActivity)getActivity()).getThemeId();
         if (themeId.equals("light")) {
-            DrawableCompat.setTintList(DrawableCompat.wrap(lightSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
-            DrawableCompat.setTintList(DrawableCompat.wrap(lightSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
-
-            DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
-            DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
-
             imageViewModeIcon.setColorFilter(ContextCompat.getColor(((MainActivity)getActivity()).getApplicationContext(), R.color.darkColorB));
             imageViewIconSwitchToReadMode.setColorFilter(ContextCompat.getColor(((MainActivity)getActivity()).getApplicationContext(), R.color.darkColorB));
         }
         else /*if (themeId.equals("dark"))*/ {
-            DrawableCompat.setTintList(DrawableCompat.wrap(lightSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
-            DrawableCompat.setTintList(DrawableCompat.wrap(lightSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
-
-            DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
-            DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
-
             imageViewModeIcon.setColorFilter(ContextCompat.getColor(((MainActivity)getActivity()).getApplicationContext(), R.color.lightColorB));
             imageViewIconSwitchToReadMode.setColorFilter(ContextCompat.getColor(((MainActivity)getActivity()).getApplicationContext(), R.color.lightColorB));
         }

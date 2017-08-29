@@ -69,37 +69,7 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
         // add touch listener
         mInflatedView.setOnTouchListener(this);
 
-        // init controls
-        initializeControls();
         return mInflatedView;
-    }
-
-    /**
-     * Init the UI controls
-     */
-    private void initializeControls() {
-        // light toggle
-        final FloatingActionButton lightSwitch = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_light_toggle);
-        lightSwitch.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mCameraService.setFlashLightEnabled(!mCameraService.isFlashLightEnabled());
-                lightSwitch.setSelected(mCameraService.isFlashLightEnabled());
-            }
-        });
-        lightSwitch.setSelected(mCameraService.isFlashLightEnabled());
-
-        // show history view
-        final FloatingActionButton historyButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_history);
-        historyButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                NavigationService.getInstance().toS(new HistoryFragment(), null);
-                // speak hint
-                MainActivity mainActivity = (MainActivity) getActivity();
-                if (mainActivity.getHintsEnabled()) {
-                    AudioService.getInstance().speak(mainActivity.getResources().getString(R.string.read_mode_history_hint));
-                }
-            }
-        });
     }
 
     @Override

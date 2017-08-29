@@ -1,11 +1,13 @@
 package com.hsfl.speakshot;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatDelegate;
 import com.hsfl.speakshot.service.dictionary.DictionaryService;
 import com.hsfl.speakshot.service.guide.GuidingService;
 import com.hsfl.speakshot.service.navigation.NavigationService;
 import com.hsfl.speakshot.service.audio.AudioService;
+import com.hsfl.speakshot.ui.HistoryFragment;
 import com.hsfl.speakshot.ui.ReadFragment;
 import com.hsfl.speakshot.ui.ResultFragment;
 import com.hsfl.speakshot.ui.SearchFragment;
@@ -27,6 +29,7 @@ import android.content.res.ColorStateList;
 import android.os.Vibrator;
 
 import com.hsfl.speakshot.ui.views.CameraPreviewSurface;
+import com.hsfl.speakshot.service.camera.CameraService;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -135,6 +138,28 @@ public class MainActivity extends AppCompatActivity {
         };
         prefs.registerOnSharedPreferenceChangeListener(mSharedPreferenceChangeListener);
 
+        // show history view
+        final FloatingActionButton historyButton = (FloatingActionButton)findViewById(R.id.btn_history);
+        historyButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                NavigationService.getInstance().toS(new HistoryFragment(), null);
+                // speak hint
+                if (getHintsEnabled()) {
+                    AudioService.getInstance().speak(getResources().getString(R.string.read_mode_history_hint));
+                }
+            }
+        });
+
+        // light toggle
+        final FloatingActionButton lightSwitch = (FloatingActionButton)findViewById(R.id.btn_light_toggle);
+        lightSwitch.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                CameraService.getInstance().setFlashLightEnabled(!CameraService.getInstance().isFlashLightEnabled());
+                lightSwitch.setSelected(CameraService.getInstance().isFlashLightEnabled());
+            }
+        });
+        lightSwitch.setSelected(CameraService.getInstance().isFlashLightEnabled());
+
         mNavigationService.to(new ReadFragment(), null);
     }
 
@@ -193,6 +218,12 @@ public class MainActivity extends AppCompatActivity {
 
         FloatingActionButton btn_mode_guide = (FloatingActionButton)findViewById(R.id.btn_guided);
         btn_mode_guide.setVisibility(View.GONE);
+
+        FloatingActionButton btn_history = (FloatingActionButton)findViewById(R.id.btn_history);
+        btn_history.setVisibility(View.GONE);
+
+        FloatingActionButton btn_light = (FloatingActionButton)findViewById(R.id.btn_light_toggle);
+        btn_light.setVisibility(View.GONE);
     }
 
     /**
@@ -204,6 +235,12 @@ public class MainActivity extends AppCompatActivity {
 
         FloatingActionButton btn_mode_guide = (FloatingActionButton)findViewById(R.id.btn_guided);
         btn_mode_guide.setVisibility(View.VISIBLE);
+
+        FloatingActionButton btn_history = (FloatingActionButton)findViewById(R.id.btn_history);
+        btn_history.setVisibility(View.VISIBLE);
+
+        FloatingActionButton btn_light = (FloatingActionButton)findViewById(R.id.btn_light_toggle);
+        btn_light.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -301,6 +338,8 @@ public class MainActivity extends AppCompatActivity {
     public void switchMode() {
         final FloatingActionButton guidedButton = (FloatingActionButton)findViewById(R.id.btn_guided);
         final FloatingActionButton settingsButton = (FloatingActionButton)findViewById(R.id.btn_settings);
+        final FloatingActionButton historyButton = (FloatingActionButton)findViewById(R.id.btn_history);
+        final FloatingActionButton lightButton = (FloatingActionButton)findViewById(R.id.btn_light_toggle);
 
         // switch background color
         String themeId = getThemeId();
@@ -313,6 +352,12 @@ public class MainActivity extends AppCompatActivity {
 
                 DrawableCompat.setTintList(DrawableCompat.wrap(guidedButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
                 DrawableCompat.setTintList(DrawableCompat.wrap(guidedButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
+
+                DrawableCompat.setTintList(DrawableCompat.wrap(lightButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
+                DrawableCompat.setTintList(DrawableCompat.wrap(lightButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
+
+                DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
+                DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
             }
             else /*if (themeId.equals("dark"))*/ {
                 DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
@@ -320,6 +365,12 @@ public class MainActivity extends AppCompatActivity {
 
                 DrawableCompat.setTintList(DrawableCompat.wrap(guidedButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
                 DrawableCompat.setTintList(DrawableCompat.wrap(guidedButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
+
+                DrawableCompat.setTintList(DrawableCompat.wrap(lightButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
+                DrawableCompat.setTintList(DrawableCompat.wrap(lightButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
+
+                DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
+                DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
             }
         } else {
             mNavigationService.to(new ReadFragment(), null);
@@ -330,6 +381,12 @@ public class MainActivity extends AppCompatActivity {
 
                 DrawableCompat.setTintList(DrawableCompat.wrap(guidedButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorA)));
                 DrawableCompat.setTintList(DrawableCompat.wrap(guidedButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorA)));
+
+                DrawableCompat.setTintList(DrawableCompat.wrap(lightButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorA)));
+                DrawableCompat.setTintList(DrawableCompat.wrap(lightButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorA)));
+
+                DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorA)));
+                DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorA)));
             }
             else /*if (themeId.equals("dark"))*/ {
                 DrawableCompat.setTintList(DrawableCompat.wrap(settingsButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorA)));
@@ -337,6 +394,12 @@ public class MainActivity extends AppCompatActivity {
 
                 DrawableCompat.setTintList(DrawableCompat.wrap(guidedButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorA)));
                 DrawableCompat.setTintList(DrawableCompat.wrap(guidedButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorA)));
+
+                DrawableCompat.setTintList(DrawableCompat.wrap(lightButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorA)));
+                DrawableCompat.setTintList(DrawableCompat.wrap(lightButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorA)));
+
+                DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorA)));
+                DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorA)));
             }
         }
         mCurrentMode = !mCurrentMode;
