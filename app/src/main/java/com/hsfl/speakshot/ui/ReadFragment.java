@@ -78,24 +78,6 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
      * Init the UI controls
      */
     private void initializeControls() {
-        // show results
-        final FloatingActionButton resultButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_show_results);
-        resultButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(ResultFragment.IN_TEXTS_PAREL, detectedTexts);
-                NavigationService.getInstance().toS(new ResultFragment(), bundle);
-                // make buttons for settings and mode switch invisible
-                MainActivity mainActivity = (MainActivity) getActivity();
-                mainActivity.hideButtonsSettingsModeSwitch();
-                // speak hint
-                if (mainActivity.getHintsEnabled()) {
-                    AudioService.getInstance().speak(mainActivity.getResources().getString(R.string.read_mode_results_hint));
-                }
-            }
-        });
-        resultButton.setEnabled(false);
-
         // light toggle
         final FloatingActionButton lightSwitch = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_light_toggle);
         lightSwitch.setOnClickListener(new View.OnClickListener() {
@@ -136,9 +118,6 @@ public class ReadFragment extends Fragment implements Observer, View.OnTouchList
             if (texts != null) {
                 if (texts.size() > 0) {
                     detectedTexts = texts;
-
-                    // enable / disable result button
-                    mInflatedView.findViewById(R.id.btn_show_results).setEnabled(true);
 
                     // get image and image config
                     ImageConfigParcel config = ((Bundle)arg).getParcelable(OcrHandler.BUNDLE_IMG_CONFIG);

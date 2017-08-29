@@ -88,22 +88,6 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
      * Inits the UI controls
      */
     private void initializeControls() {
-        // show result view
-        final FloatingActionButton sendToReadButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_send_to_read);
-        sendToReadButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(ResultFragment.IN_TEXTS_PAREL, detectedTexts);
-                NavigationService.getInstance().toS(new ResultFragment(), bundle);
-                // speak hint
-                MainActivity mainActivity = (MainActivity) getActivity();
-                if (mainActivity.getHintsEnabled()) {
-                    AudioService.getInstance().speak(mainActivity.getResources().getString(R.string.read_mode_results_hint));
-                }
-            }
-        });
-        sendToReadButton.setEnabled(false);
-
         // show history view
         final FloatingActionButton historyButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_history);
         historyButton.setOnClickListener(new View.OnClickListener() {
@@ -136,9 +120,6 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
             DrawableCompat.setTintList(DrawableCompat.wrap(lightSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
             DrawableCompat.setTintList(DrawableCompat.wrap(lightSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
 
-            DrawableCompat.setTintList(DrawableCompat.wrap(sendToReadButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
-            DrawableCompat.setTintList(DrawableCompat.wrap(sendToReadButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
-
             DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
             DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
 
@@ -148,9 +129,6 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         else /*if (themeId.equals("dark"))*/ {
             DrawableCompat.setTintList(DrawableCompat.wrap(lightSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
             DrawableCompat.setTintList(DrawableCompat.wrap(lightSwitch.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
-
-            DrawableCompat.setTintList(DrawableCompat.wrap(sendToReadButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
-            DrawableCompat.setTintList(DrawableCompat.wrap(sendToReadButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
 
             DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
             DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
@@ -202,8 +180,6 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
 
                 // gets the detected texts
                 detectedTexts = texts;
-                // show button
-                mInflatedView.findViewById(R.id.btn_send_to_read).setEnabled(true);
             }
         }
     }
