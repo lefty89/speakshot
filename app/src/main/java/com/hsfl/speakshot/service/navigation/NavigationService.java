@@ -78,13 +78,11 @@ public class NavigationService {
 
     /**
      * Returns to the last view
-     * @param fragment
      */
     public void back() {
         int i = mFragmentManager.getBackStackEntryCount();
         if (i > 0) {
             mFragmentManager.popBackStackImmediate();
         }
-
     }
 }

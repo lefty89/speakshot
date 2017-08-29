@@ -32,10 +32,10 @@
                 app:srcCompat="@drawable/ic_settings_black_24dp" />
         </FrameLayout>
         <FrameLayout
-        android:layout_width="@dimen/fab_frame_size"
-        android:layout_height="@dimen/fab_frame_size"
-        android:layout_centerHorizontal="true">
-        <android.support.design.widget.FloatingActionButton
+            android:layout_width="@dimen/fab_frame_size"
+            android:layout_height="@dimen/fab_frame_size"
+            android:layout_centerHorizontal="true">
+            <android.support.design.widget.FloatingActionButton
                 android:id="@+id/btn_guided"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

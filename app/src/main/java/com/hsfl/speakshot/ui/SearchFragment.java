@@ -128,6 +128,8 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
         lightSwitch.setSelected(mCameraService.isFlashLightEnabled());
 
         final ImageView imageViewModeIcon = (ImageView)mInflatedView.findViewById(R.id.mode_icon);
+        final ImageView imageViewIconSwitchToReadMode = (ImageView)mInflatedView.findViewById(R.id.icon_switch_to_read_mode);
+
         // set button colors
         String themeId = ((MainActivity)getActivity()).getThemeId();
         if (themeId.equals("light")) {
@@ -141,6 +143,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
             DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
 
             imageViewModeIcon.setColorFilter(ContextCompat.getColor(((MainActivity)getActivity()).getApplicationContext(), R.color.darkColorB));
+            imageViewIconSwitchToReadMode.setColorFilter(ContextCompat.getColor(((MainActivity)getActivity()).getApplicationContext(), R.color.darkColorB));
         }
         else /*if (themeId.equals("dark"))*/ {
             DrawableCompat.setTintList(DrawableCompat.wrap(lightSwitch.getDrawable()), ColorStateList.valueOf(getResources().getColor(R.color.lightColorB)));
@@ -153,6 +156,7 @@ public class SearchFragment extends Fragment implements Observer, View.OnTouchLi
             DrawableCompat.setTintList(DrawableCompat.wrap(historyButton.getBackground()), ColorStateList.valueOf(getResources().getColor(R.color.darkColorB)));
 
             imageViewModeIcon.setColorFilter(ContextCompat.getColor(((MainActivity)getActivity()).getApplicationContext(), R.color.lightColorB));
+            imageViewIconSwitchToReadMode.setColorFilter(ContextCompat.getColor(((MainActivity)getActivity()).getApplicationContext(), R.color.lightColorB));
         }
     }
 

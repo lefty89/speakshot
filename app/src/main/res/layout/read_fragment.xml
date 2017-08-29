@@ -12,6 +12,12 @@
         android:layout_gravity="top|start"
         app:srcCompat="@drawable/ic_volume_up_black_24dp" />
 
+    <ImageView
+        android:layout_width="@dimen/mode_icon_size"
+        android:layout_height="@dimen/mode_icon_size"
+        android:layout_gravity="center_vertical|end"
+        app:srcCompat="@drawable/ic_chevron_right_black_24dp" />
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
