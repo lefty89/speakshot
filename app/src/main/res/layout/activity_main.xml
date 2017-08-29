@@ -62,7 +62,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="@dimen/fab_main_margin"
-                        app:srcCompat="@drawable/ic_analyze" />
+                        app:srcCompat="@drawable/ic_history_black_24dp" />
                 </FrameLayout>
                 <FrameLayout
                     android:layout_width="@dimen/fab_frame_size"
