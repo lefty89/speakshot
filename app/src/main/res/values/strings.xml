@@ -124,4 +124,9 @@
         <item>weiter links-rechts-zurück-vorn neigen</item>  <!-- 1111 : left, to, back, right => never -->
     </string-array>
 
+    <!-- general -->
+    <string name="dialog_delete_image">Do you really want to delete the image?</string>
+    <string name="btn_delete">Delete</string>
+    <string name="btn_search">Search</string>
+    <string name="btn_cancel">Cancel</string>
 </resources>

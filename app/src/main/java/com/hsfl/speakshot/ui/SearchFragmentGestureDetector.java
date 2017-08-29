@@ -75,7 +75,7 @@ public class SearchFragmentGestureDetector implements GestureDetector.OnGestureL
             new AlertDialog.Builder(mSearchFragment.getActivity())
                     .setMessage(mSearchFragment.getResources().getString(R.string.search_mode_dialog_search_term))
                     .setView(txt)
-                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(mSearchFragment.getResources().getString(R.string.btn_search), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             mSearchFragment.searchTerm = txt.getText().toString();
                             if (!mSearchFragment.searchTerm.isEmpty()) {
@@ -84,7 +84,7 @@ public class SearchFragmentGestureDetector implements GestureDetector.OnGestureL
                             }
                         }
                     })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    .setNegativeButton(mSearchFragment.getResources().getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                         }
                     })

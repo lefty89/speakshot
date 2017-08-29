@@ -122,4 +122,10 @@
         <item>weiter links-rechts-zurück neigen</item>       <!-- 1110 : left, right, back => never -->
         <item>weiter links-rechts-zurück-vorn neigen</item>  <!-- 1111 : left, to, back, right => never -->
     </string-array>
+
+    <!-- general -->
+    <string name="dialog_delete_image">Möchtest du das Bild wirklich löschen?</string>
+    <string name="btn_delete">Löschen</string>
+    <string name="btn_search">Suchen</string>
+    <string name="btn_cancel">Abbrechen</string>
 </resources>

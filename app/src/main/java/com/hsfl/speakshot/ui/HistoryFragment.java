@@ -14,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.DialogInterface;
+import android.app.AlertDialog;
 import com.hsfl.speakshot.Constants;
 import com.hsfl.speakshot.MainActivity;
 import com.hsfl.speakshot.R;
@@ -131,14 +133,30 @@ public class HistoryFragment extends Fragment implements Observer {
         final FloatingActionButton deleteButton = (FloatingActionButton)mInflatedView.findViewById(R.id.btn_history_delete);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (deleteImageFromGallery()) {
-                    nextImage(0);
-                    updateBackgroundImage();
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                if (deleteImageFromGallery()) {
+                                    nextImage(0);
+                                    updateBackgroundImage();
 
-                    // gallery is empty
-                    if (mImages.size() == 0)
-                        NavigationService.getInstance().back();
-                }
+                                    // gallery is empty
+                                    if (mImages.size() == 0)
+                                        NavigationService.getInstance().back();
+                                }
+                                break;
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                // do nothing
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage(getResources().getString(R.string.dialog_delete_image)).setPositiveButton(getResources().getString(R.string.btn_delete), dialogClickListener)
+                        .setNegativeButton(getResources().getString(R.string.btn_cancel), dialogClickListener).show();
             }
         });
     }
