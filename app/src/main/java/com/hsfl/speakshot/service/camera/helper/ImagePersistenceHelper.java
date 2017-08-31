@@ -76,7 +76,7 @@ public class ImagePersistenceHelper extends AsyncTask<byte[], Void, Void> {
 
                 // save image into storage
                 Bitmap rotatedBmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
-                rotatedBmp.compress(Bitmap.CompressFormat.PNG, 100, outStream);
+                rotatedBmp.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
 
                 outStream.flush();
                 outStream.close();
