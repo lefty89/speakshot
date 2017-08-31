@@ -47,7 +47,7 @@ public class HistoryFragment extends Fragment implements Observer {
     /**
      * Contains all the files within the defined image folder
      */
-    private ArrayList<File> mImages = new ArrayList<>();
+    private ArrayList<File> mImages = null;
 
     /**
      * Service provider that handles the camera object
@@ -191,6 +191,7 @@ public class HistoryFragment extends Fragment implements Observer {
      * Initialises the gallery
      */
     private void initGallery() {
+        mImages = new ArrayList<>();
         File imgDir = new File(Constants.IMAGE_PATH);
         if (imgDir.exists()) {
             for (File f : imgDir.listFiles()) {
